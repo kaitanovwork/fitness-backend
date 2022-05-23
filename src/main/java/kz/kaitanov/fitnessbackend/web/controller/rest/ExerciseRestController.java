@@ -1,4 +1,4 @@
-package kz.kaitanov.fitnessbackend.web.controller.model;
+package kz.kaitanov.fitnessbackend.web.controller.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
