@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  fitness_backend_db:
+    image: postgres:14.1-alpine
+    container_name: fitness_backend_db
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_DB=fitness_backend_db
+    ports:
+      - '5431:5432'
