@@ -4,9 +4,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import kz.kaitanov.fitnessbackend.model.User;
+import kz.kaitanov.fitnessbackend.model.converter.UserMapper;
 import kz.kaitanov.fitnessbackend.model.dto.request.UserPersistRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.response.UserResponseDto;
-import kz.kaitanov.fitnessbackend.service.interfaces.dto.UserResponseDtoService;
+import kz.kaitanov.fitnessbackend.service.implementations.model.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,31 +17,30 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.validation.Valid;
-import java.util.Optional;
 
-@Tag(name = "UserRegistrationRestController", description = "Проверка данных для регистрации")
+
+@Tag(name = "UserRegistrationRestController", description = "Проверка данных при регистрации пользователя")
 @Validated
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/registration")
 public class UserRegistrationRestController {
 
-    private final UserResponseDtoService userResponseDtoService;
+    private final UserServiceImpl userService;
 
-    @Operation(summary = "Эндпоинт для регистрации")
+    @Operation(summary = "Эндпоинт для регистрации пользователя")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Регистрация разрешена")
+            @ApiResponse(responseCode = "200", description = "Регистрация пользователя прошла успешно")
     })
     @PostMapping
-    public ResponseEntity<Void> registrationValidation(@RequestBody @Valid UserPersistRequestDto userPersistRequestDto) {
-        Optional<UserResponseDto> userFoundByUsername = userResponseDtoService.findByUsername(userPersistRequestDto.username());
-        Optional<UserResponseDto> userFoundByEmail = userResponseDtoService.findByUsername(userPersistRequestDto.email());
-        Optional<UserResponseDto> userFoundByPhone = userResponseDtoService.findByUsername(userPersistRequestDto.phone());
-        if (userFoundByUsername.isPresent() || userFoundByEmail.isPresent() || userFoundByPhone.isPresent()) {
+    public ResponseEntity<UserResponseDto> registrationValidation(@RequestBody @Valid UserPersistRequestDto userPersistRequestDto) {
+        if (userService.existsByUsername(userPersistRequestDto.username()) ||
+                userService.existsByEmail(userPersistRequestDto.email()) ||
+                userService.existsByPhone(userPersistRequestDto.phone())) {
             throw new UsernameNotFoundException("username, email or phone is being used by another user");
         }
-        return ResponseEntity.ok().build();
+        User user = userService.save(UserMapper.toEntity(userPersistRequestDto));
+        return ResponseEntity.ok(UserMapper.toDto(user));
     }
 }
