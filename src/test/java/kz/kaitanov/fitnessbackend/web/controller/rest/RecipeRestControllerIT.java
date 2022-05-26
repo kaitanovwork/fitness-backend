@@ -47,7 +47,7 @@ public class RecipeRestControllerIT {
 
     @Test
     void shouldGetRecipeById() throws Exception {
-        mockMvc.perform(get("/api/v1/recipe/101")).
+        mockMvc.perform(get("/api/v1/recipe/{recipeId}","101")).
                 andExpect(status().isOk())
                 .andExpect(status().isNotFound())
                 .andDo(print());
@@ -55,7 +55,7 @@ public class RecipeRestControllerIT {
 
     @Test
     void shouldGetRecipeByName() throws Exception {
-        mockMvc.perform(get("/api/v1/recipe/name/test4recipe")).
+        mockMvc.perform(get("/api/v1/recipe/name/{name}","test4recipe")).
                 andExpect(status().isOk())
                 .andExpect(status().isNotFound())
                 .andDo(print());
@@ -63,7 +63,7 @@ public class RecipeRestControllerIT {
 
     @Test
     void shouldDeleteRecipeById() throws Exception {
-        mockMvc.perform(get("/api/v1/recipe/104")).
+        mockMvc.perform(get("/api/v1/recipe/{recipeId}","104")).
                 andExpect(status().isOk())
                 .andExpect(status().isNotFound())
                 .andDo(print());

@@ -3,6 +3,7 @@ package kz.kaitanov.fitnessbackend.web.controller.rest;
 import kz.kaitanov.fitnessbackend.annotation.IT;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -19,7 +20,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/ExerciseRestController/clear-exercise-after.sql")
 public class ExerciseRestControllerIT {
 
+    @Autowired
     private final MockMvc mockMvc;
+    @Autowired
     private final ExerciseRestController controller;
 
 
@@ -47,7 +50,7 @@ public class ExerciseRestControllerIT {
 
     @Test
     void shouldGetExerciseById() throws Exception {
-        mockMvc.perform(get("/api/v1/exercise/101"))
+        mockMvc.perform(get("/api/v1/exercise/{exerciseId}","101"))
                 .andExpect(status().isOk())
                 .andExpect(status().isNotFound())
                 .andDo(print());
@@ -56,7 +59,7 @@ public class ExerciseRestControllerIT {
     @Test
     void shouldDeleteExerciseByID() throws Exception {
 
-        mockMvc.perform(delete("/api/v1/exercise/104"))
+        mockMvc.perform(delete("/api/v1/exercise/{exerciseId}","104"))
                 .andExpect(status().isOk())
                 .andExpect(status().isNotFound())
                 .andDo(print());

@@ -34,7 +34,7 @@ public class RoleRestControllerIT {
 
     @Test
     void shouldGetRoleByName() throws Exception {
-        mockMvc.perform(get("/api/v1/role/name/admin")).
+        mockMvc.perform(get("/api/v1/role/name/{name}","admin")).
                 andExpect(status().isOk()).
                 andExpect(status().isNotFound()).
                 andExpect(status().isForbidden()).
@@ -43,7 +43,7 @@ public class RoleRestControllerIT {
 
     @Test
     void shouldGetRoleById() throws Exception {
-        mockMvc.perform(get("/api/v1/role/1")).
+        mockMvc.perform(get("/api/v1/role/{roleId}","1")).
                 andExpect(status().isOk()).
                 andExpect(status().isNotFound()).
                 andExpect(status().isForbidden()).
