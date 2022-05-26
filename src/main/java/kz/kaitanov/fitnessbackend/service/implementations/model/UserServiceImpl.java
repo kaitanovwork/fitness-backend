@@ -1,10 +1,8 @@
 package kz.kaitanov.fitnessbackend.service.implementations.model;
 
 import kz.kaitanov.fitnessbackend.model.User;
-import kz.kaitanov.fitnessbackend.model.dto.response.UserResponseDto;
 import kz.kaitanov.fitnessbackend.model.enums.RoleName;
 import kz.kaitanov.fitnessbackend.repository.model.UserRepository;
-import kz.kaitanov.fitnessbackend.service.interfaces.dto.UserResponseDtoService;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.RoleService;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.UserService;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,7 +10,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.Optional;
 
 @Service
 public class UserServiceImpl extends AbstractServiceImpl<User, Long> implements UserService {
@@ -20,14 +17,12 @@ public class UserServiceImpl extends AbstractServiceImpl<User, Long> implements 
     private final UserRepository userRepository;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
-    private final UserResponseDtoService userResponseDtoService;
 
-    public UserServiceImpl(UserRepository userRepository, RoleService roleService, PasswordEncoder passwordEncoder, UserResponseDtoService userResponseDtoService) {
+    public UserServiceImpl(UserRepository userRepository, RoleService roleService, PasswordEncoder passwordEncoder) {
         super(userRepository);
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
-        this.userResponseDtoService = userResponseDtoService;
     }
 
     @Override
@@ -55,19 +50,16 @@ public class UserServiceImpl extends AbstractServiceImpl<User, Long> implements 
 
     @Override
     public boolean existsByUsername(String username) {
-        Optional<UserResponseDto> userFoundByUsername = userResponseDtoService.findByUsername(username);
-        return userFoundByUsername.isPresent();
+        return userRepository.existsByUsername(username);
     }
 
     @Override
     public boolean existsByEmail(String email) {
-        Optional<UserResponseDto> userFoundByEmail = userResponseDtoService.findByEmail(email);
-        return userFoundByEmail.isPresent();
+        return userRepository.existsByEmail(email);
     }
 
     @Override
     public boolean existsByPhone(String phone) {
-        Optional<UserResponseDto> userFoundByPhone = userResponseDtoService.findByPhone(phone);
-        return userFoundByPhone.isPresent();
+        return userRepository.existsByPhone(phone);
     }
 }
