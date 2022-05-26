@@ -1,0 +1,72 @@
+package kz.kaitanov.fitnessbackend.web.controller.rest;
+
+import kz.kaitanov.fitnessbackend.annotation.IT;
+import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.Test;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.web.servlet.MockMvc;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@IT
+@RequiredArgsConstructor
+@Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/RecipeRestController/create-recipe-before.sql")
+@Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/RecipeRestController/clear-recipe-after.sql")
+public class RecipeRestControllerIT {
+
+    private final MockMvc mockMvc;
+    private final RecipeRestController controller;
+
+    @Test
+    void shouldGetRecipeList() throws Exception {
+        mockMvc.perform(get("/api/v1/recipe")).
+                andExpect(status().isOk())
+                .andExpect(status().isForbidden())
+                .andDo(print());
+    }
+
+    @Test
+    void shouldSaveRecipe() throws Exception {
+        mockMvc.perform(post("/api/v1/recipe")).
+                andExpect(status().isOk())
+                .andExpect(status().isForbidden())
+                .andDo(print());
+    }
+
+    @Test
+    void shouldUpdateRecipe() throws Exception {
+        mockMvc.perform(put("/api/v1/recipe")).
+                andExpect(status().isOk())
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    void shouldGetRecipeById() throws Exception {
+        mockMvc.perform(get("/api/v1/recipe/101")).
+                andExpect(status().isOk())
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    void shouldGetRecipeByName() throws Exception {
+        mockMvc.perform(get("/api/v1/recipe/name/test4recipe")).
+                andExpect(status().isOk())
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    void shouldDeleteRecipeById() throws Exception {
+        mockMvc.perform(get("/api/v1/recipe/104")).
+                andExpect(status().isOk())
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+}
