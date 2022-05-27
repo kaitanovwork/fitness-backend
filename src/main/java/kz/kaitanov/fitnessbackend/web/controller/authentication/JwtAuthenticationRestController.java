@@ -4,12 +4,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import kz.kaitanov.fitnessbackend.JwtException;
 import kz.kaitanov.fitnessbackend.model.dto.request.JwtRequest;
 import kz.kaitanov.fitnessbackend.model.dto.response.JwtResponse;
 import kz.kaitanov.fitnessbackend.web.config.util.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -36,9 +38,13 @@ public class JwtAuthenticationRestController {
     })
     @PostMapping("/authenticate")
     public ResponseEntity<JwtResponse> createAuthenticationToken(@RequestBody @Valid JwtRequest jwtRequest) {
-        authenticate(jwtRequest.username(), jwtRequest.password());
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(jwtRequest.username());
-        return ResponseEntity.ok(new JwtResponse(jwtTokenUtil.generateToken(userDetails)));
+        try {
+            authenticate(jwtRequest.username(), jwtRequest.password());
+            final UserDetails userDetails = userDetailsService.loadUserByUsername(jwtRequest.username());
+            return ResponseEntity.ok(new JwtResponse(jwtTokenUtil.generateToken(userDetails)));
+        } catch (BadCredentialsException ex) {
+            throw new JwtException("BadCredentials");
+        }
     }
 
     private void authenticate(String username, String password) {
