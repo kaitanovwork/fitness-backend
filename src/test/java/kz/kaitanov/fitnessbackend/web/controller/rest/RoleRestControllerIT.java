@@ -1,9 +1,11 @@
 package kz.kaitanov.fitnessbackend.web.controller.rest;
 
-import kz.kaitanov.fitnessbackend.annotation.IT;
+
+import kz.kaitanov.fitnessbackend.SpringSimpleContextTest;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -11,14 +13,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@IT
+
 @RequiredArgsConstructor
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/RoleRestController/create-role-before.sql")
 @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/RoleRestController/clear-role-after.sql")
-public class RoleRestControllerIT {
+public class RoleRestControllerIT extends SpringSimpleContextTest {
 
+    @Autowired
     private final MockMvc mockMvc;
+    @Autowired
     private final RoleRestController roleRestController;
+    @Autowired
     private RoleService roleService;
 
 
@@ -34,7 +39,7 @@ public class RoleRestControllerIT {
 
     @Test
     void shouldGetRoleByName() throws Exception {
-        mockMvc.perform(get("/api/v1/role/name/{name}","admin")).
+        mockMvc.perform(get("/api/v1/role/name/{name}", "admin")).
                 andExpect(status().isOk()).
                 andExpect(status().isNotFound()).
                 andExpect(status().isForbidden()).
@@ -43,7 +48,7 @@ public class RoleRestControllerIT {
 
     @Test
     void shouldGetRoleById() throws Exception {
-        mockMvc.perform(get("/api/v1/role/{roleId}","1")).
+        mockMvc.perform(get("/api/v1/role/{roleId}", "1")).
                 andExpect(status().isOk()).
                 andExpect(status().isNotFound()).
                 andExpect(status().isForbidden()).

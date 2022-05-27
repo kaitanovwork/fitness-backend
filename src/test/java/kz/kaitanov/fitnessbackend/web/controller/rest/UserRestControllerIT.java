@@ -3,7 +3,7 @@ package kz.kaitanov.fitnessbackend.web.controller.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kz.kaitanov.fitnessbackend.annotation.IT;
+import kz.kaitanov.fitnessbackend.SpringSimpleContextTest;
 import kz.kaitanov.fitnessbackend.model.User;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,14 +32,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@IT
+
 @RequiredArgsConstructor
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
         value = "/scripts/UserRestController/create-user-before.sql")
 @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
         value = "/scripts/UserRestController/clear-user-after.sql")
-@WithMockUser("user101")
-public class UserRestControllerIT {
+public class UserRestControllerIT extends SpringSimpleContextTest {
 
 
     @Autowired

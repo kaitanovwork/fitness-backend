@@ -1,6 +1,7 @@
 package kz.kaitanov.fitnessbackend.web.controller.rest;
 
-import kz.kaitanov.fitnessbackend.annotation.IT;
+
+import kz.kaitanov.fitnessbackend.SpringSimpleContextTest;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +15,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@IT
+
 @RequiredArgsConstructor
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/ExerciseRestController/create-exercise-before.sql")
 @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/ExerciseRestController/clear-exercise-after.sql")
-public class ExerciseRestControllerIT {
+public class ExerciseRestControllerIT extends SpringSimpleContextTest {
 
     @Autowired
     private final MockMvc mockMvc;
