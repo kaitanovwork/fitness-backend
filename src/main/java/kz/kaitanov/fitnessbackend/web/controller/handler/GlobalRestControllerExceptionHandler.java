@@ -1,6 +1,6 @@
 package kz.kaitanov.fitnessbackend.web.controller.handler;
 
-import kz.kaitanov.fitnessbackend.JwtException;
+import kz.kaitanov.fitnessbackend.exception.JwtException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;

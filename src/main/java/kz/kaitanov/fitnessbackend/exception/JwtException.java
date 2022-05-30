@@ -1,4 +1,4 @@
-package kz.kaitanov.fitnessbackend;
+package kz.kaitanov.fitnessbackend.exception;
 
 public class JwtException extends RuntimeException{
 
