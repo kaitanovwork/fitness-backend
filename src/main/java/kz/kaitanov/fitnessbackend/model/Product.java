@@ -17,13 +17,12 @@ import java.util.Objects;
 @Getter
 @Setter
 @Entity
-@Table(name = "recipes")
-public class Recipe {
-
+@Table(name = "products")
+public class Product {
     @Positive
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue
+    private long id;
 
     @NotBlank
     @Column(nullable = false)
@@ -41,28 +40,27 @@ public class Recipe {
     @Column(nullable = false)
     private Integer fat;
 
+
     @PositiveOrZero
     @Column(nullable = false)
     private Integer carbohydrate;
+
+    @ManyToMany(mappedBy = "products")
+    List<Recipe> recipes;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Recipe recipe = (Recipe) o;
-        return Objects.equals(name, recipe.name) && Objects.equals(calorie, recipe.calorie) && Objects.equals(protein, recipe.protein) && Objects.equals(fat, recipe.fat) && Objects.equals(carbohydrate, recipe.carbohydrate);
+        Product product = (Product) o;
+        return Objects.equals(name, product.name) &&
+                Objects.equals(calorie, product.calorie) &&
+                Objects.equals(protein, product.protein) &&
+                Objects.equals(fat, product.fat) &&
+                Objects.equals(carbohydrate, product.carbohydrate);
     }
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "recipes_products",
-            joinColumns = @JoinColumn,
-            inverseJoinColumns = @JoinColumn
-    )
-    List<Product> products;
-
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, calorie, protein, fat, carbohydrate);
-    }
+        return Objects.hash(name, calorie, protein, fat, carbohydrate); }
 }
