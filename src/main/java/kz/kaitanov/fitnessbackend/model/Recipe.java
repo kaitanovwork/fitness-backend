@@ -33,6 +33,10 @@ public class Recipe {
     @Column(nullable = false)
     private String name;
 
+    @NotBlank
+    @Column(nullable = false)
+    private String description;
+
     @PositiveOrZero
     @Column(nullable = false)
     private Integer calorie;
@@ -54,11 +58,13 @@ public class Recipe {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Recipe recipe = (Recipe) o;
-        return Objects.equals(name, recipe.name) && Objects.equals(calorie, recipe.calorie) && Objects.equals(protein, recipe.protein) && Objects.equals(fat, recipe.fat) && Objects.equals(carbohydrate, recipe.carbohydrate);
+        return Objects.equals(name, recipe.name) && Objects.equals(calorie, recipe.calorie)
+                && Objects.equals(protein, recipe.protein) && Objects.equals(fat, recipe.fat)
+                && Objects.equals(carbohydrate, recipe.carbohydrate) && Objects.equals(description, recipe.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, calorie, protein, fat, carbohydrate);
+        return Objects.hash(name, description, calorie, protein, fat, carbohydrate);
     }
 }
