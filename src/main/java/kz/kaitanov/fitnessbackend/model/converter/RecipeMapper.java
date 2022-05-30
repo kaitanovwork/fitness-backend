@@ -8,6 +8,7 @@ public final class RecipeMapper {
     public static Recipe toEntity(RecipePersistRequestDto dto) {
         Recipe recipe = new Recipe();
         recipe.setName(dto.name());
+        recipe.setDescription(dto.description());
         recipe.setCalorie(dto.calorie());
         recipe.setProtein(dto.protein());
         recipe.setFat(dto.fat());

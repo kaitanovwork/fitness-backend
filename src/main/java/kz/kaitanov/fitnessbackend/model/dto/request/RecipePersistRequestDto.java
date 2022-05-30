@@ -5,6 +5,7 @@ import javax.validation.constraints.PositiveOrZero;
 
 public record RecipePersistRequestDto(
         @NotBlank String name,
+        @NotBlank String description,
         @PositiveOrZero Integer calorie,
         @PositiveOrZero Integer protein,
         @PositiveOrZero Integer fat,
