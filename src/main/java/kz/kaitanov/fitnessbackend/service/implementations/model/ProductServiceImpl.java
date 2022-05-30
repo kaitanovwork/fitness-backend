@@ -5,6 +5,8 @@ import kz.kaitanov.fitnessbackend.repository.model.ProductRepository;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.ProductService;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class ProductServiceImpl extends AbstractServiceImpl<Product, Long> implements ProductService {
 
@@ -14,7 +16,7 @@ public class ProductServiceImpl extends AbstractServiceImpl<Product, Long> imple
         super(productRepository);
         this.productRepository = productRepository;
     }
-    public Product findByName(String name) {
+    public Optional<Product> findByName(String name) {
         return productRepository.findByName(name);
     }
 }
