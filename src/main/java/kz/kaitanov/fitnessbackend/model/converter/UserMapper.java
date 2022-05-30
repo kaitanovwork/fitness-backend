@@ -2,6 +2,7 @@ package kz.kaitanov.fitnessbackend.model.converter;
 
 import kz.kaitanov.fitnessbackend.model.User;
 import kz.kaitanov.fitnessbackend.model.dto.request.UserPersistRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.request.UserUpdatePasswordRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.UserUpdateProfileRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.UserUpdateRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.response.UserResponseDto;
@@ -43,6 +44,12 @@ public final class UserMapper {
         user.setPhone(dto.phone());
         user.setAge(dto.age());
         user.setGender(dto.gender());
+        return user;
+    }
+
+    public static User toEntity(User user, UserUpdatePasswordRequestDto dto) {
+        user.setId(dto.id());
+        user.setPassword(dto.password());
         return user;
     }
 
