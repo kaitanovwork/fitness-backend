@@ -2,7 +2,7 @@ package kz.kaitanov.fitnessbackend.model.converter;
 
 import kz.kaitanov.fitnessbackend.model.User;
 import kz.kaitanov.fitnessbackend.model.dto.request.UserPersistRequestDto;
-import kz.kaitanov.fitnessbackend.model.dto.request.UserUpdateProfileDto;
+import kz.kaitanov.fitnessbackend.model.dto.request.UserUpdateProfileRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.UserUpdateRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.response.UserResponseDto;
 
@@ -35,7 +35,7 @@ public final class UserMapper {
         return user;
     }
 
-    public static User toEntity(User user, UserUpdateProfileDto dto) {
+    public static User toEntity(User user, UserUpdateProfileRequestDto dto) {
         user.setId(dto.id());
         user.setFirstName(dto.firstName());
         user.setLastName(dto.lastName());

@@ -35,4 +35,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
             WHERE c.phone = :phone
             """)
     boolean existsByPhone(@Param("phone") String phone);
+
+    @Query("""
+            SELECT u
+            FROM User u JOIN FETCH u.role
+            WHERE u.id = :id
+            """)
+    Optional<User> findByIdWithRoles(@Param("id") Long id);
 }

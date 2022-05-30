@@ -6,7 +6,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kz.kaitanov.fitnessbackend.model.User;
 import kz.kaitanov.fitnessbackend.model.converter.UserMapper;
-import kz.kaitanov.fitnessbackend.model.dto.request.UserUpdateProfileDto;
+import kz.kaitanov.fitnessbackend.model.dto.request.UserUpdateProfileRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.response.UserResponseDto;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -33,13 +34,12 @@ public class UserProfileRestController {
             @ApiResponse(responseCode = "404", description = "Пользователь не найден")
     })
     @PutMapping
-    public ResponseEntity<Void> updateUserProfile(@RequestBody @Valid UserUpdateProfileDto userUpdateProfileDto) {
-        if (!userService.existsById(userUpdateProfileDto.id())) {
+    public ResponseEntity<UserResponseDto> updateUserProfile(@RequestBody @Valid UserUpdateProfileRequestDto userUpdateProfileRequestDto) {
+        Optional<User> user = userService.findByIdWithRoles(userUpdateProfileRequestDto.id());
+        if (!user.isPresent()) {
             return ResponseEntity.notFound().build();
         }
-        Optional<User> user = userService.findById(userUpdateProfileDto.id());
-        UserMapper.toEntity(user.get(), userUpdateProfileDto);
-        userService.update(UserMapper.toEntity(user.get(), userUpdateProfileDto));
-        return ResponseEntity.ok().build();
+        User userFromDto = userService.update(UserMapper.toEntity(user.get(), userUpdateProfileRequestDto));
+        return ResponseEntity.ok(UserMapper.toDto(userFromDto));
     }
 }

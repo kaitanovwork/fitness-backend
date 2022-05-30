@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl extends AbstractServiceImpl<User, Long> implements UserService {
@@ -61,5 +62,10 @@ public class UserServiceImpl extends AbstractServiceImpl<User, Long> implements 
     @Override
     public boolean existsByPhone(String phone) {
         return userRepository.existsByPhone(phone);
+    }
+
+    @Override
+    public Optional<User> findByIdWithRoles(Long id) {
+        return userRepository.findByIdWithRoles(id);
     }
 }
