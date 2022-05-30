@@ -21,7 +21,7 @@ import java.util.Objects;
 public class Product {
     @Positive
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @NotBlank

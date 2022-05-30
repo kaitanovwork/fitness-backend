@@ -27,16 +27,20 @@ public class RecipeServiceImpl extends AbstractServiceImpl<Recipe, Long> impleme
     @Override
     @Transactional
     public Recipe save(Recipe recipe) {
-        Integer calorieSum =  recipe.getProducts().stream().mapToInt(Product::getCalorie).sum();
-        recipe.setCalorie(calorieSum);
+        recipe.setFat(recipe.getProducts().stream().mapToInt(Product::getFat).sum());
+        recipe.setProtein(recipe.getProducts().stream().mapToInt(Product::getProtein).sum());
+        recipe.setCarbohydrate(recipe.getProducts().stream().mapToInt(Product::getCarbohydrate).sum());
+        recipe.setCalorie(recipe.getProducts().stream().mapToInt(Product::getProtein).sum());
         return recipeRepository.save(recipe);
     }
 
     @Override
     @Transactional
     public Recipe update (Recipe recipe){
-        Integer calorieUpdateSum =  recipe.getProducts().stream().mapToInt(Product::getCalorie).sum();
-        recipe.setCalorie(calorieUpdateSum);
+        recipe.setFat(recipe.getProducts().stream().mapToInt(Product::getFat).sum());
+        recipe.setProtein(recipe.getProducts().stream().mapToInt(Product::getProtein).sum());
+        recipe.setCarbohydrate(recipe.getProducts().stream().mapToInt(Product::getCarbohydrate).sum());
+        recipe.setCalorie(recipe.getProducts().stream().mapToInt(Product::getProtein).sum());
         return recipeRepository.save(recipe);
     }
 }

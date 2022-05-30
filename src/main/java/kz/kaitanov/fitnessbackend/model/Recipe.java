@@ -21,12 +21,12 @@ import java.util.Objects;
 public class Recipe {
 
     @Positive
-    @Id
+    @Id()
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @PositiveOrZero
@@ -52,7 +52,7 @@ public class Recipe {
         Recipe recipe = (Recipe) o;
         return Objects.equals(name, recipe.name) && Objects.equals(calorie, recipe.calorie) && Objects.equals(protein, recipe.protein) && Objects.equals(fat, recipe.fat) && Objects.equals(carbohydrate, recipe.carbohydrate);
     }
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "recipes_products",
             joinColumns = @JoinColumn,
