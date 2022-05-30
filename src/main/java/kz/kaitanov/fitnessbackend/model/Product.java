@@ -25,7 +25,7 @@ public class Product {
     private long id;
 
     @NotBlank
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @PositiveOrZero

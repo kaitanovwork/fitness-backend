@@ -21,12 +21,12 @@ import java.util.Objects;
 public class Recipe {
 
     @Positive
-    @Id()
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String name;
 
     @PositiveOrZero
