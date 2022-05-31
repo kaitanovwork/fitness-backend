@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         value = "/scripts/UserRestController/create-user-before.sql")
 @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
         value = "/scripts/UserRestController/clear-user-after.sql")
-public class UserRestControllerIT extends SpringSimpleContextTest {
+public class AdminUserRestControllerIT extends SpringSimpleContextTest {
 
 
     @Autowired

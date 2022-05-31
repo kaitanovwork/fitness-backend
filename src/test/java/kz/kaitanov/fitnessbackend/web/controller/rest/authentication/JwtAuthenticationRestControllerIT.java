@@ -1,4 +1,4 @@
-package kz.kaitanov.fitnessbackend.web.controller.authentication;
+package kz.kaitanov.fitnessbackend.web.controller.rest.authentication;
 
 
 import kz.kaitanov.fitnessbackend.SpringSimpleContextTest;

@@ -23,7 +23,7 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        Role adminRole = new Role();
+        /*Role adminRole = new Role();
         Role userRole = new Role();
         adminRole.setName(RoleName.ADMIN);
         userRole.setName(RoleName.USER);
@@ -33,6 +33,6 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
         User user = new User();
         user.setUsername("user1");
         user.setPassword("pass");
-        userService.save(user);
+        userService.save(user);*/
     }
 }
