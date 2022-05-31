@@ -11,6 +11,7 @@ import kz.kaitanov.fitnessbackend.model.dto.request.ProductUpdateRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.response.ProductResponseDto;
 import kz.kaitanov.fitnessbackend.service.interfaces.dto.ProductResponseDtoService;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.ProductService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +26,8 @@ import java.util.Optional;
 @RequestMapping("/api/admin/v1/product")
 public class AdminProductRestController {
 
-    ProductService productService;
-    ProductResponseDtoService productResponseDtoService;
+    private final ProductResponseDtoService productResponseDtoService;
+    private final ProductService productService;
 
     public AdminProductRestController (
             ProductService productService,
@@ -86,7 +87,7 @@ public class AdminProductRestController {
             @ApiResponse(responseCode = "200", description = "Продукт успешно найден"),
             @ApiResponse(responseCode = "404", description = "Продукт не найден")
     })
-    @GetMapping("/productName")
+    @GetMapping("/productName/{productName}")
     public ResponseEntity<ProductResponseDto> getProductByName(@PathVariable String productName) {
         Optional<ProductResponseDto> productResponseDtoOptional = productResponseDtoService.findByName(productName);
         return productResponseDtoOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
