@@ -29,8 +29,8 @@ import java.util.Optional;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/exercise")
-public class ExerciseRestController {
+@RequestMapping("/api/admin/v1/exercise")
+public class AdminExerciseRestController {
 
     private final ExerciseService exerciseService;
 

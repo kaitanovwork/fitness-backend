@@ -19,12 +19,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RequiredArgsConstructor
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/ExerciseRestController/create-exercise-before.sql")
 @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/ExerciseRestController/clear-exercise-after.sql")
-public class ExerciseRestControllerIT extends SpringSimpleContextTest {
+public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
 
     @Autowired
     private final MockMvc mockMvc;
     @Autowired
-    private final ExerciseRestController controller;
+    private final AdminExerciseRestController controller;
 
 
     @Test
