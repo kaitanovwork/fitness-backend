@@ -2,17 +2,14 @@ package kz.kaitanov.fitnessbackend.model;
 
 
 import kz.kaitanov.fitnessbackend.model.enums.ProgramType;
-import kz.kaitanov.fitnessbackend.model.enums.WeekDay;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,13 +21,14 @@ import javax.validation.constraints.Positive;
 import java.util.List;
 import java.util.Objects;
 
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
-@Table(name = "submenu")
-public class SubMenu {
+@Table(name = "menu")
+public class Menu {
 
     @Positive
     @Id
@@ -38,35 +36,25 @@ public class SubMenu {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private ProgramType programType;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private WeekDay weekDay;
-
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "submenus_recipes",
-            joinColumns = @JoinColumn(name = "submenus_id"),
-            inverseJoinColumns = @JoinColumn(name = "resipes_list_id"))
-
-    private List<Recipe> recipesList;
-
-    @ManyToMany(mappedBy = "subMenuList")
-    private List<Menu> menuList;
+    @ManyToMany
+    @JoinTable(name = "menus_submenus",
+            joinColumns = @JoinColumn(name = "menu_list_id"),
+            inverseJoinColumns = @JoinColumn(name = "sub_menu_list_id"))
+    private List<SubMenu> subMenuList;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof SubMenu)) return false;
-        SubMenu subMenu = (SubMenu) o;
-        return programType == subMenu.programType && weekDay == subMenu.weekDay;
+        if (!(o instanceof Menu)) return false;
+        Menu menu = (Menu) o;
+        return programType == menu.programType && subMenuList.equals(menu.subMenuList);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(programType, weekDay);
+        return Objects.hash(programType, subMenuList);
     }
 }
+
