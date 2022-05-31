@@ -63,12 +63,7 @@ public class Recipe {
     @Column(nullable = false)
     private Integer carbohydrate;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "recipes_submenus",
-            joinColumns = @JoinColumn,
-            inverseJoinColumns = @JoinColumn
-    )
+    @ManyToMany(mappedBy = "recipesList")
     List<SubMenu> submenus;
 
     @Override

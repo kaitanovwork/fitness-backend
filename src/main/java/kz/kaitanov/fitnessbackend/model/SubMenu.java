@@ -12,9 +12,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Positive;
@@ -43,7 +46,12 @@ public class SubMenu {
     private WeekDay weekDay;
 
 
-    @ManyToMany(mappedBy = "submenus")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "submenus_recipes",
+            joinColumns = @JoinColumn(name = "submenus_id"),
+            inverseJoinColumns = @JoinColumn(name = "resipes_list_id"))
+
     private List<Recipe> recipesList;
 
     @Override
