@@ -1,10 +1,10 @@
-package kz.kaitanov.fitnessbackend.model.dto.request;
+package kz.kaitanov.fitnessbackend.model.dto.request.user;
 
 import kz.kaitanov.fitnessbackend.model.enums.Gender;
 
 import javax.validation.constraints.NotBlank;
 
-public record UserPersistRequestDto(
+public record UserRegistrationRequestDto(
         @NotBlank String username,
         @NotBlank String password,
         String firstName,

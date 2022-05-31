@@ -1,4 +1,4 @@
-package kz.kaitanov.fitnessbackend.web.controller.authentication;
+package kz.kaitanov.fitnessbackend.web.controller.rest.authentication;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -23,7 +23,7 @@ import javax.validation.Valid;
 @Tag(name = "JwtAuthenticationRestController", description = "Аутентификация пользователя в системе")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/authenticate")
 public class JwtAuthenticationRestController {
 
     private final AuthenticationManager authenticationManager;
@@ -34,7 +34,7 @@ public class JwtAuthenticationRestController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Токен успешно получен")
     })
-    @PostMapping("/authenticate")
+    @PostMapping
     public ResponseEntity<JwtResponse> createAuthenticationToken(@RequestBody @Valid JwtRequest jwtRequest) {
         authenticate(jwtRequest.username(), jwtRequest.password());
         final UserDetails userDetails = userDetailsService.loadUserByUsername(jwtRequest.username());

@@ -1,4 +1,4 @@
-package kz.kaitanov.fitnessbackend.web.config;
+package kz.kaitanov.fitnessbackend.web.config.security;
 
 import kz.kaitanov.fitnessbackend.web.config.util.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;

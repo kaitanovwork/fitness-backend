@@ -1,5 +1,6 @@
 package kz.kaitanov.fitnessbackend.web.controller.handler;
 
+import kz.kaitanov.fitnessbackend.exception.UserRegistrationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,6 +24,12 @@ public class GlobalRestControllerExceptionHandler {
     @ResponseBody
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<Void> usernameNotFoundException(UsernameNotFoundException exception) {
+        return ResponseEntity.badRequest().build();
+    }
+
+    @ResponseBody
+    @ExceptionHandler(UserRegistrationException.class)
+    public ResponseEntity<Void> userRegistrationException(UserRegistrationException exception) {
         return ResponseEntity.badRequest().build();
     }
 

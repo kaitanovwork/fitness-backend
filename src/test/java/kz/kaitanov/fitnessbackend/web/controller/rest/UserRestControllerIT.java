@@ -42,7 +42,7 @@ public class UserRestControllerIT extends SpringSimpleContextTest {
 
 
     @Autowired
-    private UserRestController userRestController;
+    private AdminUserRestController adminUserRestController;
     @Autowired
     private WebApplicationContext webApplicationContext;
     @Autowired
@@ -53,12 +53,12 @@ public class UserRestControllerIT extends SpringSimpleContextTest {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
     }
 
-    @Test  // проверка получения контекста из бина
+    @Test  // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ
     public void givenWac_whenServletContext_thenItProvidesUserRestController() {
         final ServletContext servletContext = webApplicationContext.getServletContext();
         assertNotNull(servletContext);
         assertTrue(servletContext instanceof MockServletContext);
-        assertNotNull(webApplicationContext.getBean("userRestController"));
+        assertNotNull(webApplicationContext.getBean("adminUserRestController"));
     }
 
 //    public static RequestPostProcessor authentication() {

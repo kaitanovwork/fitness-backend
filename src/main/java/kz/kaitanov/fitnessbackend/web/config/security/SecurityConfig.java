@@ -1,4 +1,4 @@
-package kz.kaitanov.fitnessbackend.web.config;
+package kz.kaitanov.fitnessbackend.web.config.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
