@@ -39,7 +39,7 @@ public class UserPasswordRestController {
         if (!user.isPresent()) {
             return ResponseEntity.notFound().build();
         }
-        User userFromDto = userService.update(UserMapper.toEntity(user.get(), userUpdatePasswordRequestDto));
+        User userFromDto = userService.update(user.get());
         return ResponseEntity.ok(UserMapper.toDto(userFromDto));
     }
 }
