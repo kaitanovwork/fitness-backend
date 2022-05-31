@@ -23,8 +23,8 @@ import java.util.Optional;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/role")
-public class RoleRestController {
+@RequestMapping("/api/admin/v1/role")
+public class AdminRoleRestController {
 
     private final RoleService roleService;
 
