@@ -9,8 +9,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.FetchType;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Column;
 import javax.persistence.ManyToMany;
@@ -59,6 +63,14 @@ public class Recipe {
     @Column(nullable = false)
     private Integer carbohydrate;
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "recipes_submenus",
+            joinColumns = @JoinColumn,
+            inverseJoinColumns = @JoinColumn
+    )
+    List<SubMenu> submenus;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -71,7 +83,7 @@ public class Recipe {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "recipes_products",
-            joinColumns = @JoinColumn,
+            joinColumns = @JoinColumn(),
             inverseJoinColumns = @JoinColumn
     )
     List<Product> products;
