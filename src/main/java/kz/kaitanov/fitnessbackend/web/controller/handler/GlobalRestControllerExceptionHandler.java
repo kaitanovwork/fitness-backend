@@ -1,5 +1,6 @@
 package kz.kaitanov.fitnessbackend.web.controller.handler;
 
+import kz.kaitanov.fitnessbackend.exception.JwtException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -28,6 +29,12 @@ public class GlobalRestControllerExceptionHandler {
     @ResponseBody
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Void> constraintViolationException(ConstraintViolationException exception) {
+        return ResponseEntity.badRequest().build();
+    }
+
+    @ResponseBody
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<Object> jwtException(JwtException exception) {
         return ResponseEntity.badRequest().build();
     }
 }
