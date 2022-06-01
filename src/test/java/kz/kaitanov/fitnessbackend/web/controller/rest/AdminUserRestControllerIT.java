@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kz.kaitanov.fitnessbackend.SpringSimpleContextTest;
 import kz.kaitanov.fitnessbackend.model.User;
+import kz.kaitanov.fitnessbackend.web.controller.rest.admin.AdminUserRestController;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
