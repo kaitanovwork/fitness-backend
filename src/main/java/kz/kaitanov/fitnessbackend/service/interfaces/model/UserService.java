@@ -6,6 +6,8 @@ import java.util.Optional;
 
 public interface UserService extends AbstractService<User, Long>, UserDetailsService {
 
+    User updatePassword(User user);
+
     boolean existsByUsername(String username);
 
     boolean existsByEmail(String email);

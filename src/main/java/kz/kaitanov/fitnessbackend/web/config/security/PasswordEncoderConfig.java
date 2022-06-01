@@ -1,4 +1,4 @@
-package kz.kaitanov.fitnessbackend.web.config;
+package kz.kaitanov.fitnessbackend.web.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,5 +12,4 @@ public class PasswordEncoderConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }

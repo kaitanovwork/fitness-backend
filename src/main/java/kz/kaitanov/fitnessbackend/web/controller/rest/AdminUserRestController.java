@@ -6,8 +6,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kz.kaitanov.fitnessbackend.model.User;
 import kz.kaitanov.fitnessbackend.model.converter.UserMapper;
-import kz.kaitanov.fitnessbackend.model.dto.request.UserPersistRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.UserUpdateRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.request.user.UserRegistrationRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.response.UserResponseDto;
 import kz.kaitanov.fitnessbackend.service.interfaces.dto.UserResponseDtoService;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.UserService;
@@ -32,7 +32,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/user")
-public class UserRestController {
+public class AdminUserRestController {
 
     private final UserService userService;
     private final UserResponseDtoService userResponseDtoService;
@@ -42,8 +42,8 @@ public class UserRestController {
             @ApiResponse(responseCode = "200", description = "Новый пользователь успешно создан")
     })
     @PostMapping
-    public ResponseEntity<UserResponseDto> saveUser(@RequestBody @Valid UserPersistRequestDto userPersistRequestDto) {
-        User user = userService.save(UserMapper.toEntity(userPersistRequestDto));
+    public ResponseEntity<UserResponseDto> saveUser(@RequestBody @Valid UserRegistrationRequestDto userRegistrationRequestDto) {
+        User user = userService.save(UserMapper.toEntity(userRegistrationRequestDto));
         return ResponseEntity.ok(UserMapper.toDto(user));
     }
 
