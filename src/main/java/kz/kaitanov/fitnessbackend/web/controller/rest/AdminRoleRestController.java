@@ -19,11 +19,11 @@ import javax.validation.constraints.Positive;
 import java.util.List;
 import java.util.Optional;
 
-@Tag(name = "RoleRestController", description = "CRUD операции над ролями")
+@Tag(name = "AdminRoleRestController", description = "CRUD операции над ролями")
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/admin/v1/role")
+@RequestMapping("/api/v1/admin/role")
 public class AdminRoleRestController {
 
     private final RoleService roleService;
@@ -55,7 +55,6 @@ public class AdminRoleRestController {
     })
     @GetMapping("/name/{name}")
     public ResponseEntity<Role> getRoleByName(@PathVariable RoleName name) {
-        Optional<Role> roleOptional = roleService.findByName(name);
-        return roleOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(roleService.findByName(name));
     }
 }

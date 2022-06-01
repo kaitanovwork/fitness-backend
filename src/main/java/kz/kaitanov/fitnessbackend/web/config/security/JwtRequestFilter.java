@@ -1,6 +1,5 @@
-package kz.kaitanov.fitnessbackend.web.config;
+package kz.kaitanov.fitnessbackend.web.config.security;
 
-import io.jsonwebtoken.ExpiredJwtException;
 import kz.kaitanov.fitnessbackend.web.config.util.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,14 +38,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             jwtToken = requestTokenHeader.substring(7);
             try {
                 username = jwtTokenUtil.getUsernameFromToken(jwtToken);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Unable to get JWT Token");
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad request");
-                return;
-            } catch (ExpiredJwtException e) {
-                System.out.println("JWT Token has expired");
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad request");
-                return;
+            } catch (Exception ignored) {
             }
         }
 
