@@ -18,12 +18,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RequiredArgsConstructor
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/RecipeRestController/create-recipe-before.sql")
 @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/RecipeRestController/clear-recipe-after.sql")
-public class RecipeRestControllerIT extends SpringSimpleContextTest {
+public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
 
     @Autowired
     private final MockMvc mockMvc;
     @Autowired
-    private final RecipeRestController controller;
+    private final AdminRecipeRestController controller;
 
     @Test
     void shouldGetRecipeList() throws Exception {

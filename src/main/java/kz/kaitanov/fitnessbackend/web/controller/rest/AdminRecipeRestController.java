@@ -19,19 +19,18 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import java.util.List;
 import java.util.Optional;
 
-@Tag(name = "RecipeRestController", description = "CRUD операции над рецептами")
+@Tag(name = "AdminRecipeRestController", description = "CRUD операции над рецептами")
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/recipe")
-public class RecipeRestController {
+@RequestMapping("/api/v1/admin/recipe")
+public class AdminRecipeRestController {
 
     private final RecipeService recipeService;
 
