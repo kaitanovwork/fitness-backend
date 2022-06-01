@@ -1,6 +1,5 @@
 package kz.kaitanov.fitnessbackend.model;
 
-
 import kz.kaitanov.fitnessbackend.model.enums.ProgramType;
 import kz.kaitanov.fitnessbackend.model.enums.WeekDay;
 import lombok.AllArgsConstructor;
@@ -12,7 +11,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,7 +18,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.Positive;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -29,10 +27,9 @@ import java.util.Objects;
 @Getter
 @Setter
 @Entity
-@Table(name = "submenu")
+@Table(name = "submenus")
 public class SubMenu {
 
-    @Positive
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -45,22 +42,17 @@ public class SubMenu {
     @Column(nullable = false)
     private WeekDay weekDay;
 
-
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     @JoinTable(
             name = "submenus_recipes",
             joinColumns = @JoinColumn(name = "submenus_id"),
-            inverseJoinColumns = @JoinColumn(name = "resipes_list_id"))
-
-    private List<Recipe> recipesList;
-
-    @ManyToMany(mappedBy = "subMenuList")
-    private List<Menu> menuList;
+            inverseJoinColumns = @JoinColumn(name = "resipes_id"))
+    private List<Recipe> recipes = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof SubMenu)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         SubMenu subMenu = (SubMenu) o;
         return programType == subMenu.programType && weekDay == subMenu.weekDay;
     }

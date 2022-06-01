@@ -25,7 +25,7 @@ import javax.validation.constraints.Positive;
 import java.util.List;
 import java.util.Optional;
 
-@Tag(name = "ExerciseRestController", description = "CRUD операции над упражнениями")
+@Tag(name = "AdminExerciseRestController", description = "CRUD операции над упражнениями")
 @Validated
 @RequiredArgsConstructor
 @RestController

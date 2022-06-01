@@ -6,8 +6,5 @@ import java.util.Optional;
 
 public interface ProductService extends AbstractService<Product, Long> {
 
-    Optional <Product> findByName(String name);
+    Optional<Product> findByName(String name);
 }
-
-
-

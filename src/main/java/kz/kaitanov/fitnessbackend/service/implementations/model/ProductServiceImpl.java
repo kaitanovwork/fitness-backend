@@ -10,12 +10,13 @@ import java.util.Optional;
 @Service
 public class ProductServiceImpl extends AbstractServiceImpl<Product, Long> implements ProductService {
 
-   private final ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
-    public ProductServiceImpl (ProductRepository productRepository) {
+    public ProductServiceImpl(ProductRepository productRepository) {
         super(productRepository);
         this.productRepository = productRepository;
     }
+
     public Optional<Product> findByName(String name) {
         return productRepository.findByName(name);
     }

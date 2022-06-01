@@ -23,6 +23,7 @@ import javax.persistence.JoinColumn;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -63,8 +64,13 @@ public class Recipe {
     @Column(nullable = false)
     private Integer carbohydrate;
 
-    @ManyToMany(mappedBy = "recipesList")
-    List<SubMenu> submenus;
+    @ManyToMany
+    @JoinTable(
+            name = "recipes_products",
+            joinColumns = @JoinColumn(name = "recipes_id"),
+            inverseJoinColumns = @JoinColumn(name = "products_id")
+    )
+    List<Product> products = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {
@@ -75,14 +81,6 @@ public class Recipe {
                 && Objects.equals(protein, recipe.protein) && Objects.equals(fat, recipe.fat)
                 && Objects.equals(carbohydrate, recipe.carbohydrate) && Objects.equals(description, recipe.description);
     }
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "recipes_products",
-            joinColumns = @JoinColumn(),
-            inverseJoinColumns = @JoinColumn
-    )
-    List<Product> products;
-
 
     @Override
     public int hashCode() {
