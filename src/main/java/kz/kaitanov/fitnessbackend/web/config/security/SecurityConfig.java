@@ -1,5 +1,7 @@
 package kz.kaitanov.fitnessbackend.web.config;
 
+import kz.kaitanov.fitnessbackend.web.config.security.JwtAuthenticationEntryPoint;
+import kz.kaitanov.fitnessbackend.web.config.security.JwtRequestFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -44,7 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/api/v1/authenticate").permitAll()
-                .antMatchers("/api/admin/v1/role/**").hasAnyAuthority("ADMIN")
+                .antMatchers("/api/v1/admin/role/**").hasAnyAuthority("ADMIN")
                 .antMatchers("/api/v1/user/**").hasAnyAuthority("ADMIN", "USER")
                 .antMatchers("/api/v1/exercise/**").hasAnyAuthority("ADMIN", "USER")
                 .antMatchers("/api/v1/recipe/**").hasAnyAuthority("ADMIN", "USER")
