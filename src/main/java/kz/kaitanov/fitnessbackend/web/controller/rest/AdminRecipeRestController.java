@@ -29,7 +29,7 @@ import java.util.Optional;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/admin/recipepe")
+@RequestMapping("/api/v1/admin/recipe")
 public class AdminRecipeRestController {
 
     private final RecipeService recipeService;
