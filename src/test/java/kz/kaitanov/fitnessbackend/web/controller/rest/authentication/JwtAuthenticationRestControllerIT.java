@@ -1,7 +1,8 @@
-package kz.kaitanov.fitnessbackend.web.controller.authentication;
+package kz.kaitanov.fitnessbackend.web.controller.rest.authentication;
 
 
 import kz.kaitanov.fitnessbackend.SpringSimpleContextTest;
+import kz.kaitanov.fitnessbackend.web.controller.rest.authentication.JwtAuthenticationRestController;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

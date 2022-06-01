@@ -55,7 +55,6 @@ public class RoleRestController {
     })
     @GetMapping("/name/{name}")
     public ResponseEntity<Role> getRoleByName(@PathVariable RoleName name) {
-        Optional<Role> roleOptional = roleService.findByName(name);
-        return roleOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(roleService.findByName(name));
     }
 }

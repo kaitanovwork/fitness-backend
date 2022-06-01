@@ -1,14 +1,17 @@
 package kz.kaitanov.fitnessbackend.model.converter;
 
 import kz.kaitanov.fitnessbackend.model.User;
-import kz.kaitanov.fitnessbackend.model.dto.request.UserPersistRequestDto;
-import kz.kaitanov.fitnessbackend.model.dto.request.UserUpdateProfileRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.UserUpdateRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.request.user.UserRegistrationRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.request.user.UserUpdateEmailRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.request.user.UserUpdatePasswordRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.request.user.UserUpdatePhoneRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.request.user.UserUpdateProfileRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.response.UserResponseDto;
 
 public final class UserMapper {
 
-    public static User toEntity(UserPersistRequestDto dto) {
+    public static User toEntity(UserRegistrationRequestDto dto) {
         User user = new User();
         user.setUsername(dto.username());
         user.setPassword(dto.password());
@@ -35,14 +38,26 @@ public final class UserMapper {
         return user;
     }
 
-    public static User toEntity(User user, UserUpdateProfileRequestDto dto) {
-        user.setId(dto.id());
+    public static User updateProfile(User user, UserUpdateProfileRequestDto dto) {
         user.setFirstName(dto.firstName());
         user.setLastName(dto.lastName());
-        user.setEmail(dto.email());
-        user.setPhone(dto.phone());
         user.setAge(dto.age());
         user.setGender(dto.gender());
+        return user;
+    }
+
+    public static User updatePassword(User user, UserUpdatePasswordRequestDto dto) {
+        user.setPassword(dto.password());
+        return user;
+    }
+
+    public static User updateEmail(User user, UserUpdateEmailRequestDto dto) {
+        user.setEmail(dto.email());
+        return user;
+    }
+
+    public static User updatePhone(User user, UserUpdatePhoneRequestDto dto) {
+        user.setPhone(dto.phone());
         return user;
     }
 
