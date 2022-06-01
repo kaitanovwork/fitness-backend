@@ -1,4 +1,4 @@
-package kz.kaitanov.fitnessbackend.web.config;
+package kz.kaitanov.fitnessbackend.web.config.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,8 +45,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/api/v1/authenticate").permitAll()
                 .antMatchers("/api/admin/**").hasAnyAuthority("ADMIN")
-                .antMatchers("/api/v1/role/**").hasAnyAuthority("ADMIN", "USER")
                 .antMatchers("/api/v1/user/**").hasAnyAuthority("ADMIN", "USER")
+                .antMatchers("/api/v1/role/**").hasAnyAuthority("ADMIN", "USER")
                 .antMatchers("/api/v1/exercise/**").hasAnyAuthority("ADMIN", "USER")
                 .antMatchers("/api/v1/recipe/**").hasAnyAuthority("ADMIN", "USER")
                 .and()
