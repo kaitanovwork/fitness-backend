@@ -17,12 +17,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RequiredArgsConstructor
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/RoleRestController/create-role-before.sql")
 @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/RoleRestController/clear-role-after.sql")
-public class RoleRestControllerIT extends SpringSimpleContextTest {
+public class AdminRoleRestControllerIT extends SpringSimpleContextTest {
 
     @Autowired
     private final MockMvc mockMvc;
     @Autowired
-    private final RoleRestController roleRestController;
+    private final AdminRoleRestController adminRoleRestController;
     @Autowired
     private RoleService roleService;
 
