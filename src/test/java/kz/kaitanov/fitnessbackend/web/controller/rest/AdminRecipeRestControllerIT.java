@@ -2,6 +2,7 @@ package kz.kaitanov.fitnessbackend.web.controller.rest;
 
 
 import kz.kaitanov.fitnessbackend.SpringSimpleContextTest;
+import kz.kaitanov.fitnessbackend.web.controller.rest.admin.AdminRecipeRestController;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

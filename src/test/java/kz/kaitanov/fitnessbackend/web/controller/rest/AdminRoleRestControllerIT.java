@@ -3,6 +3,7 @@ package kz.kaitanov.fitnessbackend.web.controller.rest;
 
 import kz.kaitanov.fitnessbackend.SpringSimpleContextTest;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.RoleService;
+import kz.kaitanov.fitnessbackend.web.controller.rest.admin.AdminRoleRestController;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

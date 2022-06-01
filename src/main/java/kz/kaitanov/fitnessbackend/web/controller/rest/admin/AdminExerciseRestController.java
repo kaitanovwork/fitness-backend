@@ -1,4 +1,4 @@
-package kz.kaitanov.fitnessbackend.web.controller.rest;
+package kz.kaitanov.fitnessbackend.web.controller.rest.admin;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -29,8 +29,8 @@ import java.util.Optional;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/exercise")
-public class ExerciseRestController {
+@RequestMapping("/api/v1/admin/exercise")
+public class AdminExerciseRestController {
 
     private final ExerciseService exerciseService;
 
