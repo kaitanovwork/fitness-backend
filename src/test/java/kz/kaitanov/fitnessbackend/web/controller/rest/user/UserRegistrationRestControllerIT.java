@@ -11,15 +11,20 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class UserRegistrationRestControllerIT extends SpringSimpleContextTest {
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/user/UserRegistrationRestController/registerNewUser_SuccessfulTest/BeforeTest.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/user/UserRegistrationRestController/registerNewUser_SuccessfulTest/AfterTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            value = "/scripts/user/UserRegistrationRestController/registerNewUser_SuccessfulTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            value = "/scripts/user/UserRegistrationRestController/registerNewUser_SuccessfulTest/AfterTest.sql")
     public void registerNewUser_SuccessfulTest() throws Exception {
-        UserRegistrationRequestDto dto = new UserRegistrationRequestDto("username", "password", "firstName", "lastName", "test@gmail.com", "77028883322", 20, Gender.MALE);
+        UserRegistrationRequestDto dto =
+                new UserRegistrationRequestDto("username", "password", "firstName",
+                        "lastName", "test@gmail.com", "77028883322", 20, Gender.MALE);
 
         mockMvc.perform(post("/api/v1/registration")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -53,11 +58,15 @@ public class UserRegistrationRestControllerIT extends SpringSimpleContextTest {
                 .getSingleResult());
     }
 
+
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/user/UserRegistrationRestController/registerNewUser_WithExistingUsernameTest/BeforeTest.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/user/UserRegistrationRestController/registerNewUser_WithExistingUsernameTest/AfterTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            value = "/scripts/user/UserRegistrationRestController/registerNewUser_WithExistingUsernameTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            value = "/scripts/user/UserRegistrationRestController/registerNewUser_WithExistingUsernameTest/AfterTest.sql")
     public void registerNewUser_WithExistingUsernameTest() throws Exception {
-        UserRegistrationRequestDto dto = new UserRegistrationRequestDto("username", "pass", "first", "last", "te@gmail.com", "77028883", 26, Gender.MALE);
+        UserRegistrationRequestDto dto = new UserRegistrationRequestDto("username", "pass",
+                "first", "last", "te@gmail.com", "77028883", 26, Gender.MALE);
 
         mockMvc.perform(post("/api/v1/registration")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -67,4 +76,41 @@ public class UserRegistrationRestControllerIT extends SpringSimpleContextTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.error", Is.is("username is being used by another user")));
     }
+
+    @Test
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            value = "/scripts/user/UserRegistrationRestController/registerNewUser_WithExistingEmailTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            value = "/scripts/user/UserRegistrationRestController/registerNewUser_WithExistingEmailTest/AfterTest.sql")
+    public void registerNewUser_WithExistingEmailTest() throws Exception {
+        UserRegistrationRequestDto dto = new UserRegistrationRequestDto("username1",
+                "pass1", "first1", "last1", "te@gmail.com", "770288831", 26, Gender.MALE);
+
+        mockMvc.perform(post("/api/v1/registration")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error", Is.is("email is being used by another user")));
+    }
+
+    @Test
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+            value = "/scripts/user/UserRegistrationRestController/registerNewUser_WithExistingPhoneTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
+            value = "/scripts/user/UserRegistrationRestController/registerNewUser_WithExistingPhoneTest/AfterTest.sql")
+    public void registerNewUser_WithExistingPhoneTest() throws Exception {
+        UserRegistrationRequestDto dto = new UserRegistrationRequestDto("username1", "pass1",
+                "first1", "last1", "te@gmail.com", "77028883322", 26, Gender.MALE);
+
+        mockMvc.perform(post("/api/v1/registration")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error", Is.is("phone is being used by another user")));
+    }
+
 }
