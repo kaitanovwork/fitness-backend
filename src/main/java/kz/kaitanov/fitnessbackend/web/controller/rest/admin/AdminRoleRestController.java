@@ -19,7 +19,7 @@ import javax.validation.constraints.Positive;
 import java.util.List;
 import java.util.Optional;
 
-@Tag(name = "RoleRestController", description = "CRUD операции над ролями")
+@Tag(name = "AdminRoleRestController", description = "CRUD операции над ролями")
 @Validated
 @RequiredArgsConstructor
 @RestController
