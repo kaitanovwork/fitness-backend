@@ -21,7 +21,7 @@ public class JwtAuthenticationRestControllerIT extends SpringSimpleContextTest {
             value = "/scripts/authentication/JwtAuthenticationRestController/сreateAuthenticationToken_SuccessfulTest/AfterTest.sql")
     public void сreateAuthenticationToken_SuccessfulTest() throws Exception {
 
-        JwtRequest jwtRequest = new JwtRequest("username", "password");
+        JwtRequest jwtRequest = new JwtRequest("username", "pass");
 
         mockMvc.perform(post("/api/v1/authenticate")
                         .contentType(MediaType.APPLICATION_JSON)
