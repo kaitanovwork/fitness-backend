@@ -2,58 +2,139 @@ package kz.kaitanov.fitnessbackend.web.controller.rest;
 
 
 import kz.kaitanov.fitnessbackend.SpringSimpleContextTest;
+import kz.kaitanov.fitnessbackend.model.Role;
+import kz.kaitanov.fitnessbackend.model.dto.request.JwtRequest;
+import kz.kaitanov.fitnessbackend.model.dto.response.Response;
+import kz.kaitanov.fitnessbackend.model.enums.RoleName;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.RoleService;
+import kz.kaitanov.fitnessbackend.service.interfaces.model.UserService;
 import kz.kaitanov.fitnessbackend.web.controller.rest.admin.AdminRoleRestController;
+import kz.kaitanov.fitnessbackend.web.controller.rest.authentication.JwtAuthenticationRestController;
 import lombok.RequiredArgsConstructor;
+import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+
+import java.util.ArrayList;
+
+import java.util.List;
+import java.util.Objects;
+
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @RequiredArgsConstructor
-@Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/RoleRestController/create-role-before.sql")
-@Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/RoleRestController/clear-role-after.sql")
+@TestPropertySource("/application-test.properties")
 public class AdminRoleRestControllerIT extends SpringSimpleContextTest {
 
     @Autowired
-    private final MockMvc mockMvc;
+    RoleService roleService;
+
     @Autowired
-    private final AdminRoleRestController adminRoleRestController;
+    AdminRoleRestController adminRoleRestController;
+
     @Autowired
-    private RoleService roleService;
+    JwtAuthenticationRestController jwtAuthenticationRestController;
 
+
+    @Autowired
+    UserService userService;
 
     @Test
-    void shouldGetAllRoleList() throws Exception {
-//        List<Role> roleList = new ArrayList<>();
-
-        mockMvc.perform(get("/api/v1/role")).
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminRoleRestController/getRoleList_ShouldGetAllRoleListTest/create-role-before.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminRoleRestController/getRoleList_ShouldGetAllRoleListTest/clear-role-after.sql")
+    void getRoleList_ShouldGetAllRoleListTest() throws Exception {
+        JwtRequest jwt  = new JwtRequest("username", "password");
+        String token = Objects.requireNonNull(jwtAuthenticationRestController.createAuthenticationToken(jwt).getBody()).jwtToken();
+        List<Role> roleList = new ArrayList<>();
+        roleList.add(new Role(101L, RoleName.ADMIN));
+        roleList.add(new Role(102L, RoleName.USER));
+        mockMvc.perform(get("/api/v1/admin/role").
+                        accept(MediaType.APPLICATION_JSON).
+                        header("Authorization", "Bearer " + token)).
+                andDo(print()).
                 andExpect(status().isOk()).
-                andExpect(status().isForbidden()).
-                andDo(print());
+                andExpect(content().json(objectMapper.writeValueAsString(Response.ok(roleList))));
     }
 
     @Test
-    void shouldGetRoleByName() throws Exception {
-        mockMvc.perform(get("/api/v1/role/name/{name}", "admin")).
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,value = "/scripts/admin/AdminRoleRestController/getRoleByName_ShouldGetRoleByName/create-role-before.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminRoleRestController/getRoleByName_ShouldGetRoleByName/clear-role-after.sql")
+    void getRoleByName_ShouldGetRoleByName() throws Exception {
+        JwtRequest jwt  = new JwtRequest("username", "password");
+        String token = Objects.requireNonNull(jwtAuthenticationRestController.createAuthenticationToken(jwt).getBody()).jwtToken();
+        mockMvc.perform(get("/api/v1/admin/role/name/{name}", "ADMIN").
+                        accept(MediaType.APPLICATION_JSON).
+                        header("Authorization", "Bearer " + token)).
+                andDo(print()).
                 andExpect(status().isOk()).
-                andExpect(status().isNotFound()).
-                andExpect(status().isForbidden()).
-                andDo(print());
+                andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true))).
+                andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200))).
+                andExpect(MockMvcResultMatchers.jsonPath("$.data.name", Is.is(RoleName.ADMIN.toString())));
+
+
     }
 
     @Test
-    void shouldGetRoleById() throws Exception {
-        mockMvc.perform(get("/api/v1/role/{roleId}", "1")).
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,value = "/scripts/admin/AdminRoleRestController/getRoleById_ShouldGetRoleById/create-role-before.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminRoleRestController/getRoleById_ShouldGetRoleById/clear-role-after.sql")
+        void getRoleByName_ShouldGetRoleById() throws Exception {
+        JwtRequest jwt  = new JwtRequest("username", "password");
+        String token = Objects.requireNonNull(jwtAuthenticationRestController.createAuthenticationToken(jwt).getBody()).jwtToken();
+        assertThat(adminRoleRestController).isNotNull();
+        mockMvc.perform(get("/api/v1/admin/role/{roleId}", "101").
+                        accept(MediaType.APPLICATION_JSON).
+                        header("Authorization", "Bearer " + token)).
+                andDo(print()).
                 andExpect(status().isOk()).
-                andExpect(status().isNotFound()).
-                andExpect(status().isForbidden()).
-                andDo(print());
+                andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200))).
+                andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true))).
+                andExpect(MockMvcResultMatchers.jsonPath("$.data.name", Is.is(RoleName.ADMIN.toString())));
     }
 
+    @Test
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,value = "/scripts/admin/AdminRoleRestController/getRoleByName_WithNonExistentName/create-role-before.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminRoleRestController/getRoleByName_WithNonExistentName/clear-role-after.sql")
+    void getRoleByName_WithNonExistentName() throws Exception {
+        JwtRequest jwt  = new JwtRequest("username", "password");
+        String token = Objects.requireNonNull(jwtAuthenticationRestController.createAuthenticationToken(jwt).getBody()).jwtToken();
+        assertThat(adminRoleRestController).isNotNull();
+        mockMvc.perform(get("/api/v1/admin/role/name/{name}", "SUBADMIN").
+                        accept(MediaType.APPLICATION_JSON).
+                        header("Authorization", "Bearer " + token)).
+                andDo(print()).
+                andExpect(status().isOk()).
+                andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false))).
+                andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400))).
+                andExpect(MockMvcResultMatchers.jsonPath("$.error", Is.is("Role with name SUBADMIN not found")));
+    }
+
+    @Test
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,value = "/scripts/admin/AdminRoleRestController/getRoleById_WithNonExistentId/create-role-before.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminRoleRestController/getRoleById_WithNonExistentId/clear-role-after.sql")
+    void getRoleById_WithNonExistentId() throws Exception {
+        JwtRequest jwt  = new JwtRequest("username", "password");
+        String token = Objects.requireNonNull(jwtAuthenticationRestController.createAuthenticationToken(jwt).getBody()).jwtToken();
+        assertThat(adminRoleRestController).isNotNull();
+        mockMvc.perform(get("/api/v1/admin/role/{roleId}", "103").
+                        accept(MediaType.APPLICATION_JSON).
+                        header("Authorization", "Bearer " + token)).
+                andDo(print()).
+                andExpect(status().isOk()).
+                andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false))).
+                andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400))).
+                andExpect(MockMvcResultMatchers.jsonPath("$.error", Is.is("Role by id 103 not found")));
+    }
 }
+
+

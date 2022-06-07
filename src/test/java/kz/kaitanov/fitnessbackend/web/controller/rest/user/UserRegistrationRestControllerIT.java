@@ -18,7 +18,7 @@ public class UserRegistrationRestControllerIT extends SpringSimpleContextTest {
     @Test
     @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/user/UserRegistrationRestController/registerNewUser_SuccessfulTest/BeforeTest.sql")
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/user/UserRegistrationRestController/registerNewUser_SuccessfulTest/AfterTest.sql")
-    public void registerNewUser_SuccessfulTest() throws Exception {
+    public void  registerNewUser_SuccessfulTest() throws Exception {
         UserRegistrationRequestDto dto = new UserRegistrationRequestDto("username", "password", "firstName", "lastName", "test@gmail.com", "77028883322", 20, Gender.MALE);
 
         mockMvc.perform(post("/api/v1/registration")

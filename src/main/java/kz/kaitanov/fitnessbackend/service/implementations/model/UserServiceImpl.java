@@ -29,7 +29,7 @@ public class UserServiceImpl extends AbstractServiceImpl<User, Long> implements 
     @Override
     public User save(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole(roleService.findByName(RoleName.USER));
+        user.setRole(roleService.findByName(RoleName.USER).orElse(null));
         return super.save(user);
     }
 
