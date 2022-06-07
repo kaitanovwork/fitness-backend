@@ -49,10 +49,11 @@ public class SpringSimpleContextTest {
         postgreSQLContainer.start();
     }
 
-    public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:14.1-alpine")
-            .withDatabaseName("fitness_backend_test_db")
+    public static PostgreSQLContainer<?>
+            postgreSQLContainer = new PostgreSQLContainer<>("postgres:14.1-alpine")
+            .withDatabaseName("postgres")
             .withUsername("postgres")
-            .withPassword("123")
+            .withPassword("1234")
             .withExposedPorts(5432)
             .withReuse(true)
             .withCreateContainerCmdModifier(cmd -> cmd.withHostConfig(

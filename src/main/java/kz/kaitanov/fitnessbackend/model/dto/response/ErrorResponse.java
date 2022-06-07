@@ -7,7 +7,7 @@ import java.util.Objects;
 
 @Getter
 @Setter
-public class ErrorResponse<T> extends Response<T> {
+public class ErrorResponse<T>  extends Response<T> {
 
     private String error;
 

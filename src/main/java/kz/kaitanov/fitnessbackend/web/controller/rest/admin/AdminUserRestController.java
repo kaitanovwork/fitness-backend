@@ -27,7 +27,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
-@Tag(name = "UserRestController", description = "CRUD  операции над пользователями")
+@Tag(name = "AdminUserRestController", description = "CRUD  операции над пользователями")
 @Validated
 @RequiredArgsConstructor
 @RestController
