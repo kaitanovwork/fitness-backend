@@ -1,8 +1,8 @@
-truncate postgres.public.users restart identity cascade;
-truncate postgres.public.roles restart identity cascade;
+truncate fitness_backend_test_db.public.users restart identity cascade;
+truncate fitness_backend_test_db.public.roles restart identity cascade;
 
 
-insert into postgres.public.roles (id, name)
+insert into fitness_backend_test_db.public.roles (id, name)
 VALUES (101, 'ADMIN'),
        (102, 'USER');
 
