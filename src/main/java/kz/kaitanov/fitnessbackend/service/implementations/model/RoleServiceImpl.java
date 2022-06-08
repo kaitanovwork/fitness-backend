@@ -6,6 +6,8 @@ import kz.kaitanov.fitnessbackend.repository.model.RoleRepository;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.RoleService;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class RoleServiceImpl extends AbstractServiceImpl<Role, Long> implements RoleService {
 
@@ -17,7 +19,7 @@ public class RoleServiceImpl extends AbstractServiceImpl<Role, Long> implements 
     }
 
     @Override
-    public Role findByName(RoleName name) {
+    public Optional<Role> findByName(RoleName name) {
         return roleRepository.findByName(name);
     }
 }
