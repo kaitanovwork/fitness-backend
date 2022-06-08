@@ -7,9 +7,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kz.kaitanov.fitnessbackend.model.Exercise;
 import kz.kaitanov.fitnessbackend.model.converter.ExerciseMapper;
 import kz.kaitanov.fitnessbackend.model.dto.request.ExercisePersistRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.response.Response;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.ExerciseService;
+import kz.kaitanov.fitnessbackend.web.config.util.ApiValidationUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,11 +37,11 @@ public class AdminExerciseRestController {
 
     @Operation(summary = "Создание нового упражнения")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Новое упражнение успешно создано")
+            @ApiResponse(responseCode = "201", description = "Новое упражнение успешно создано")
     })
     @PostMapping
-    public ResponseEntity<Exercise> saveExercise(@RequestBody @Valid ExercisePersistRequestDto exercisePersistRequestDto) {
-        return ResponseEntity.ok(exerciseService.save(ExerciseMapper.toEntity(exercisePersistRequestDto)));
+    public Response<Exercise> saveExercise(@RequestBody @Valid ExercisePersistRequestDto exercisePersistRequestDto) {
+        return Response.ok(exerciseService.save(ExerciseMapper.toEntity(exercisePersistRequestDto)));
     }
 
     @Operation(summary = "Обновление существующего упражнения")
@@ -49,11 +50,9 @@ public class AdminExerciseRestController {
             @ApiResponse(responseCode = "404", description = "Упражнение не найдено")
     })
     @PutMapping
-    public ResponseEntity<Exercise> updateExercise(@RequestBody @Valid Exercise exercise) {
-        if (!exerciseService.existsById(exercise.getId())) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(exerciseService.update(exercise));
+    public Response<Exercise> updateExercise(@RequestBody @Valid Exercise exercise) {
+        ApiValidationUtil.requireTrue(exerciseService.existsById(exercise.getId()), String.format("Exercise by id %d not found", exercise.getId()));
+        return Response.ok(exerciseService.update(exercise));
     }
 
     @Operation(summary = "Получение списка всех упражнений")
@@ -61,8 +60,8 @@ public class AdminExerciseRestController {
             @ApiResponse(responseCode = "200", description = "Список всех упражнений успешно получен")
     })
     @GetMapping
-    public ResponseEntity<List<Exercise>> getExerciseList() {
-        return ResponseEntity.ok(exerciseService.findAll());
+    public Response<List<Exercise>> getExerciseList() {
+        return Response.ok(exerciseService.findAll());
     }
 
     @Operation(summary = "Получение упражнения по id")
@@ -71,9 +70,10 @@ public class AdminExerciseRestController {
             @ApiResponse(responseCode = "404", description = "Упражнение не найдено")
     })
     @GetMapping(value = "/{exerciseId}")
-    public ResponseEntity<Exercise> getExerciseById(@PathVariable @Positive Long exerciseId) {
-        Optional<Exercise> exerciseOptional = exerciseService.findById(exerciseId);
-        return exerciseOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public Response<Exercise> getExerciseById(@PathVariable @Positive Long exerciseId) {
+        Optional<Exercise> exercise = exerciseService.findById(exerciseId);
+        ApiValidationUtil.requireTrue(exercise.isPresent(), String.format("Exercise by id %d not found", exerciseId));
+        return Response.ok(exercise.get());
     }
 
     @Operation(summary = "Удаление упражнения по id")
@@ -82,11 +82,9 @@ public class AdminExerciseRestController {
             @ApiResponse(responseCode = "404", description = "Упражнение не найдено")
     })
     @DeleteMapping(value = "/{exerciseId}")
-    public ResponseEntity<Void> deleteExerciseById(@PathVariable @Positive Long exerciseId) {
-        if (!exerciseService.existsById(exerciseId)) {
-            return ResponseEntity.notFound().build();
-        }
+    public Response<Void> deleteExerciseById(@PathVariable @Positive Long exerciseId) {
+        ApiValidationUtil.requireTrue(exerciseService.existsById(exerciseId), String.format("Exercise by id %d not found", exerciseId));
         exerciseService.deleteById(exerciseId);
-        return ResponseEntity.ok().build();
+        return Response.ok();
     }
 }
