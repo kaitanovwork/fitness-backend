@@ -17,6 +17,11 @@ public class ProductServiceImpl extends AbstractServiceImpl<Product, Long> imple
         this.productRepository = productRepository;
     }
 
+    @Override
+    public boolean existsByName(String name) {
+        return productRepository.existsByName(name);
+    }
+
     public Optional<Product> findByName(String name) {
         return productRepository.findByName(name);
     }

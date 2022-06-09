@@ -6,8 +6,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kz.kaitanov.fitnessbackend.model.Exercise;
 import kz.kaitanov.fitnessbackend.model.converter.ExerciseMapper;
-import kz.kaitanov.fitnessbackend.model.dto.request.ExercisePersistRequestDto;
-import kz.kaitanov.fitnessbackend.model.dto.response.Response;
+import kz.kaitanov.fitnessbackend.model.dto.request.exercise.ExercisePersistRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.request.exercise.ExerciseUpdateNameRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.request.exercise.ExerciseUpdateRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.response.api.Response;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.ExerciseService;
 import kz.kaitanov.fitnessbackend.web.config.util.ApiValidationUtil;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +34,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/admin/exercise")
 public class AdminExerciseRestController {
-
+    //TODO подправить описание swagger AdminExerciseRestController
     private final ExerciseService exerciseService;
 
     @Operation(summary = "Создание нового упражнения")
@@ -40,8 +42,9 @@ public class AdminExerciseRestController {
             @ApiResponse(responseCode = "200", description = "Новое упражнение успешно создано")
     })
     @PostMapping
-    public Response<Exercise> saveExercise(@RequestBody @Valid ExercisePersistRequestDto exercisePersistRequestDto) {
-        return Response.ok(exerciseService.save(ExerciseMapper.toEntity(exercisePersistRequestDto)));
+    public Response<Exercise> saveExercise(@RequestBody @Valid ExercisePersistRequestDto dto) {
+        ApiValidationUtil.requireFalse(exerciseService.existsByName(dto.name()), "name is being used by another exercise");
+        return Response.ok(exerciseService.save(ExerciseMapper.toEntity(dto)));
     }
 
     @Operation(summary = "Обновление существующего упражнения")
@@ -50,9 +53,23 @@ public class AdminExerciseRestController {
             @ApiResponse(responseCode = "404", description = "Упражнение не найдено")
     })
     @PutMapping
-    public Response<Exercise> updateExercise(@RequestBody @Valid Exercise exercise) {
-        ApiValidationUtil.requireTrue(exerciseService.existsById(exercise.getId()), String.format("Exercise by id %d not found", exercise.getId()));
-        return Response.ok(exerciseService.update(exercise));
+    public Response<Exercise> updateExercise(@RequestBody @Valid ExerciseUpdateRequestDto dto) {
+        Optional<Exercise> exercise = exerciseService.findById(dto.id());
+        ApiValidationUtil.requireTrue(exercise.isPresent(), String.format("Exercise by id %d not found", dto.id()));
+        return Response.ok(exerciseService.update(ExerciseMapper.updateExercise(exercise.get(), dto)));
+    }
+
+    @Operation(summary = "Эндпоинт для обновление наименования")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Наименование продукта успешно обновлено"),
+            @ApiResponse(responseCode = "400", description = "Клиент допустил ошибки в запросе")
+    })
+    @PutMapping("/name")
+    public Response<Exercise> updateProductName(@RequestBody @Valid ExerciseUpdateNameRequestDto dto) {
+        ApiValidationUtil.requireFalse(exerciseService.existsByName(dto.name()), "name is being used by another exercise");
+        Optional<Exercise> exercise = exerciseService.findById(dto.id());
+        ApiValidationUtil.requireTrue(exercise.isPresent(), String.format("Exercise by id %d not found", dto.id()));
+        return Response.ok(exerciseService.update(ExerciseMapper.updateName(exercise.get(), dto)));
     }
 
     @Operation(summary = "Получение списка всех упражнений")
@@ -71,8 +88,9 @@ public class AdminExerciseRestController {
     })
     @GetMapping(value = "/{exerciseId}")
     public Response<Exercise> getExerciseById(@PathVariable @Positive Long exerciseId) {
-        ApiValidationUtil.requireTrue(exerciseService.existsById(exerciseId), String.format("Exercise by id %d not found", exerciseId));
-        return Response.ok(exerciseService.findById(exerciseId).get());
+        Optional<Exercise> exercise = exerciseService.findById(exerciseId);
+        ApiValidationUtil.requireTrue(exercise.isPresent(), String.format("Exercise by id %d not found", exerciseId));
+        return Response.ok(exercise.get());
     }
 
     @Operation(summary = "Удаление упражнения по id")

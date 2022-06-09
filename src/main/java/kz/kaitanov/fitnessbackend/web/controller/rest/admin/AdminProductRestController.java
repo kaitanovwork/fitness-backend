@@ -6,8 +6,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kz.kaitanov.fitnessbackend.model.Product;
 import kz.kaitanov.fitnessbackend.model.converter.ProductMapper;
-import kz.kaitanov.fitnessbackend.model.dto.request.ProductPersistRequestDto;
-import kz.kaitanov.fitnessbackend.model.dto.response.Response;
+import kz.kaitanov.fitnessbackend.model.dto.request.product.ProductPersistRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.request.product.ProductUpdateNameRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.request.product.ProductUpdateRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.response.api.Response;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.ProductService;
 import kz.kaitanov.fitnessbackend.web.config.util.ApiValidationUtil;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +34,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/admin/product")
 public class AdminProductRestController {
-
+    //TODO подправить описание swagger AdminProductRestController
     private final ProductService productService;
 
     @Operation(summary = "Создание нового продукта")
@@ -40,6 +43,7 @@ public class AdminProductRestController {
     })
     @PostMapping
     public Response<Product> saveProduct(@RequestBody @Valid ProductPersistRequestDto dto) {
+        ApiValidationUtil.requireFalse(productService.existsByName(dto.name()), "name is being used by another product");
         return Response.ok(productService.save(ProductMapper.toEntity(dto)));
     }
 
@@ -48,10 +52,24 @@ public class AdminProductRestController {
             @ApiResponse(responseCode = "200", description = "Сущестующий продкут успешно обновлен"),
             @ApiResponse(responseCode = "404", description = "Продукт не найден")
     })
-    @PutMapping("/{productId}")
-    public Response<Product> updateProduct(@PathVariable("productId") Long productId, @RequestBody @Valid Product product) {
-        ApiValidationUtil.requireTrue(productService.existsById(productId), String.format("Product by id %d not found", productId));
-        return Response.ok(productService.update(product));
+    @PutMapping
+    public Response<Product> updateProduct(@RequestBody @Valid ProductUpdateRequestDto dto) {
+        Optional<Product> product = productService.findById(dto.id());
+        ApiValidationUtil.requireTrue(product.isPresent(), String.format("Product by id %d not found", dto.id()));
+        return Response.ok(productService.update(ProductMapper.updateProduct(product.get(), dto)));
+    }
+
+    @Operation(summary = "Эндпоинт для обновление наименования")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Наименование продукта успешно обновлено"),
+            @ApiResponse(responseCode = "400", description = "Клиент допустил ошибки в запросе")
+    })
+    @PutMapping("/name")
+    public Response<Product> updateProductName(@RequestBody @Valid ProductUpdateNameRequestDto dto) {
+        ApiValidationUtil.requireFalse(productService.existsByName(dto.name()), "name is being used by another product");
+        Optional<Product> product = productService.findById(dto.id());
+        ApiValidationUtil.requireTrue(product.isPresent(), String.format("Product by id %d not found", dto.id()));
+        return Response.ok(productService.update(ProductMapper.updateName(product.get(), dto)));
     }
 
     @Operation(summary = "Получене списка всех продуктов")
@@ -69,7 +87,7 @@ public class AdminProductRestController {
             @ApiResponse(responseCode = "404", description = "Продукт не найден")
     })
     @GetMapping("/{productId}")
-    public Response<Product> getProductById(@PathVariable Long productId) {
+    public Response<Product> getProductById(@PathVariable @Positive Long productId) {
         Optional<Product> product = productService.findById(productId);
         ApiValidationUtil.requireTrue(product.isPresent(), String.format("Product by id %d not found", productId));
         return Response.ok(product.get());
@@ -94,6 +112,7 @@ public class AdminProductRestController {
     })
     @DeleteMapping("/{productId}")
     public Response<Void> deleteProductById(@PathVariable Long productId) {
+        ApiValidationUtil.requireTrue(productService.existsById(productId), String.format("Product by id %d not found", productId));
         productService.deleteById(productId);
         return Response.ok();
     }
