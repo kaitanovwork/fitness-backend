@@ -11,7 +11,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class UserRegistrationRestControllerIT extends SpringSimpleContextTest {
@@ -57,7 +56,6 @@ public class UserRegistrationRestControllerIT extends SpringSimpleContextTest {
                 .setParameter("gender", dto.gender())
                 .getSingleResult());
     }
-
 
     @Test
     @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
@@ -112,5 +110,4 @@ public class UserRegistrationRestControllerIT extends SpringSimpleContextTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.error", Is.is("phone is being used by another user")));
     }
-
 }
