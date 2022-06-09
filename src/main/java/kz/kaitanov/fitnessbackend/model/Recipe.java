@@ -5,23 +5,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.GenerationType;
-import javax.persistence.FetchType;
-
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.persistence.Column;
-import javax.persistence.ManyToMany;
-import javax.persistence.JoinTable;
-import javax.persistence.JoinColumn;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +29,6 @@ import java.util.Objects;
 @Table(name = "recipes")
 public class Recipe {
 
-    @Positive
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -48,18 +41,22 @@ public class Recipe {
     @Column(nullable = false)
     private String description;
 
+    @NotNull
     @PositiveOrZero
     @Column(nullable = false)
     private Integer calorie;
 
+    @NotNull
     @PositiveOrZero
     @Column(nullable = false)
     private Integer protein;
 
+    @NotNull
     @PositiveOrZero
     @Column(nullable = false)
     private Integer fat;
 
+    @NotNull
     @PositiveOrZero
     @Column(nullable = false)
     private Integer carbohydrate;

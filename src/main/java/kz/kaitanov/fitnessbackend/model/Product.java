@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.Objects;
 
@@ -31,18 +32,22 @@ public class Product {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @NotNull
     @PositiveOrZero
     @Column(nullable = false)
     private Integer calorie;
 
+    @NotNull
     @PositiveOrZero
     @Column(nullable = false)
     private Integer protein;
 
+    @NotNull
     @PositiveOrZero
     @Column(nullable = false)
     private Integer fat;
 
+    @NotNull
     @PositiveOrZero
     @Column(nullable = false)
     private Integer carbohydrate;

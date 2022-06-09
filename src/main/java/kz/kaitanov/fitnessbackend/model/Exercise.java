@@ -15,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.util.Objects;
 
@@ -26,7 +27,6 @@ import java.util.Objects;
 @Table(name = "exercises")
 public class Exercise {
 
-    @Positive
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -39,14 +39,17 @@ public class Exercise {
     @Column(nullable = false)
     private String muscleGroup;
 
+    @NotNull
     @Positive
     @Column(nullable = false)
     private Integer repeatCount;
 
+    @NotNull
     @Positive
     @Column(nullable = false)
     private Integer approachCount;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Area area;

@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kz.kaitanov.fitnessbackend.model.Role;
-import kz.kaitanov.fitnessbackend.model.dto.response.Response;
+import kz.kaitanov.fitnessbackend.model.dto.response.api.Response;
 import kz.kaitanov.fitnessbackend.model.enums.RoleName;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.RoleService;
 import kz.kaitanov.fitnessbackend.web.config.util.ApiValidationUtil;

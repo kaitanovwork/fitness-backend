@@ -1,4 +1,4 @@
-package kz.kaitanov.fitnessbackend.model.dto.response;
+package kz.kaitanov.fitnessbackend.model.dto.response.api;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kz.kaitanov.fitnessbackend.model.User;
 import kz.kaitanov.fitnessbackend.model.converter.UserMapper;
-import kz.kaitanov.fitnessbackend.model.dto.request.UserUpdateRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.request.user.UserUpdateRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.user.UserRegistrationRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.response.UserResponseDto;
 import kz.kaitanov.fitnessbackend.service.interfaces.dto.UserResponseDtoService;
