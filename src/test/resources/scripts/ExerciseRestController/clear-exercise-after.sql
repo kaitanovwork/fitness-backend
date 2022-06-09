@@ -1,1 +1,5 @@
-truncate fitness_backend_db_test.public.exercises RESTART IDENTITY;
+truncate fitness_backend_test_db.public.exercises RESTART IDENTITY;
+
+TRUNCATE TABLE users CASCADE;
+
+TRUNCATE TABLE roles CASCADE;
