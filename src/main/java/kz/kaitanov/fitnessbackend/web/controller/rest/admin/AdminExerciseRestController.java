@@ -37,7 +37,7 @@ public class AdminExerciseRestController {
 
     @Operation(summary = "Создание нового упражнения")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Новое упражнение успешно создано")
+            @ApiResponse(responseCode = "200", description = "Новое упражнение успешно создано")
     })
     @PostMapping
     public Response<Exercise> saveExercise(@RequestBody @Valid ExercisePersistRequestDto exercisePersistRequestDto) {
@@ -71,9 +71,8 @@ public class AdminExerciseRestController {
     })
     @GetMapping(value = "/{exerciseId}")
     public Response<Exercise> getExerciseById(@PathVariable @Positive Long exerciseId) {
-        Optional<Exercise> exercise = exerciseService.findById(exerciseId);
-        ApiValidationUtil.requireTrue(exercise.isPresent(), String.format("Exercise by id %d not found", exerciseId));
-        return Response.ok(exercise.get());
+        ApiValidationUtil.requireTrue(exerciseService.existsById(exerciseId), String.format("Exercise by id %d not found", exerciseId));
+        return Response.ok(exerciseService.findById(exerciseId).get());
     }
 
     @Operation(summary = "Удаление упражнения по id")
