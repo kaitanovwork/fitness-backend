@@ -1,12 +1,10 @@
-package kz.kaitanov.fitnessbackend.web.controller.rest;
-
+package kz.kaitanov.fitnessbackend.web.controller.rest.admin;
 
 import kz.kaitanov.fitnessbackend.SpringSimpleContextTest;
 import kz.kaitanov.fitnessbackend.model.Exercise;
-import kz.kaitanov.fitnessbackend.model.dto.request.ExercisePersistRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.JwtRequest;
+import kz.kaitanov.fitnessbackend.model.dto.request.exercise.ExercisePersistRequestDto;
 import kz.kaitanov.fitnessbackend.model.enums.Area;
-import lombok.RequiredArgsConstructor;
 import org.hamcrest.core.Is;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
@@ -25,27 +23,16 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
-@RequiredArgsConstructor
 public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
 
-
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/ExerciseRestController/create-exercise-before.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/ExerciseRestController/clear-exercise-after.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/create-exercise-before.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/clear-exercise-after.sql")
     public void getExerciseList_SuccessfulTest() throws Exception {
-
-        JwtRequest jwtRequest = new JwtRequest("username", "pass");
-        MvcResult mvcResult = mockMvc.perform(post("/api/v1/authenticate")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(jwtRequest)))
-                .andReturn();
-
-        JSONObject json = new JSONObject(mvcResult.getResponse().getContentAsString());
-        String token = json.getString("jwtToken");
+        String token = getToken("username", "pass");
 
         mockMvc.perform(get("/api/v1/admin/exercise")
-                        .header("authorization", "Bearer " + token))
+                        .header("Authorization", token))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
@@ -57,24 +44,16 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
     }
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/ExerciseRestController/create-exercise-before.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/ExerciseRestController/clear-exercise-after.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/create-exercise-before.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/clear-exercise-after.sql")
     public void saveExercise_SuccessfulTest() throws Exception {
+        String token = getToken("username", "pass");
         ExercisePersistRequestDto dto = new ExercisePersistRequestDto("push", "back", 3, 10, Area.GYM);
-
-        JwtRequest jwtRequest = new JwtRequest("username", "pass");
-        MvcResult mvcResult = mockMvc.perform(post("/api/v1/authenticate")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(jwtRequest)))
-                .andReturn();
-
-        JSONObject json = new JSONObject(mvcResult.getResponse().getContentAsString());
-        String token = json.getString("jwtToken");
 
         mockMvc.perform(post("/api/v1/admin/exercise")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto))
-                        .header("authorization", "Bearer " + token))
+                        .header("authorization", token))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
@@ -86,10 +65,11 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
 
         assertTrue(entityManager.createQuery(
                         """
-                                SELECT COUNT(u.id) > 0
-                                FROM Exercise u
-                                WHERE u.name = :name AND u.muscleGroup = :muscleGroup AND u.repeatCount = :repeatCount AND u.approachCount = :approachCount
-                                AND u.area = :area""",
+                                SELECT COUNT(e.id) > 0
+                                FROM Exercise e
+                                WHERE e.name = :name AND e.muscleGroup = :muscleGroup AND e.repeatCount = :repeatCount AND e.approachCount = :approachCount
+                                AND e.area = :area
+                                """,
                         Boolean.class)
                 .setParameter("name", dto.name())
                 .setParameter("muscleGroup", dto.muscleGroup())
@@ -99,10 +79,9 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
                 .getSingleResult());
     }
 
-
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/ExerciseRestController/create-exercise-before.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/ExerciseRestController/clear-exercise-after.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/create-exercise-before.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/clear-exercise-after.sql")
     public void updateExercise_WithExistingExerciseTest() throws Exception {
 
         Exercise exercise = new Exercise();
@@ -154,8 +133,8 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
     }
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/ExerciseRestController/create-exercise-before.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/ExerciseRestController/clear-exercise-after.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/create-exercise-before.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/clear-exercise-after.sql")
     public void updateExercise_WithNotExistingExerciseTest() throws Exception {
 
         Exercise exercise = new Exercise();
@@ -188,8 +167,8 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
 
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/ExerciseRestController/create-exercise-before.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/ExerciseRestController/clear-exercise-after.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/create-exercise-before.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/clear-exercise-after.sql")
     public void getExerciseById_WithExistingExerciseTest() throws Exception {
 
         Exercise exercise = new Exercise();
@@ -226,8 +205,8 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
     }
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/ExerciseRestController/create-exercise-before.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/ExerciseRestController/clear-exercise-after.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/create-exercise-before.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/clear-exercise-after.sql")
     public void getExerciseById_WithNotExistingExerciseTest() throws Exception {
 
 
@@ -249,8 +228,8 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
     }
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/ExerciseRestController/create-exercise-before.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/ExerciseRestController/clear-exercise-after.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/create-exercise-before.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/clear-exercise-after.sql")
     public void deleteExerciseById_WithExistingExerciseTest() throws Exception {
 
         JwtRequest jwtRequest = new JwtRequest("username", "pass");
@@ -279,8 +258,8 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
     }
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/ExerciseRestController/create-exercise-before.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/ExerciseRestController/clear-exercise-after.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/create-exercise-before.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/clear-exercise-after.sql")
     public void deleteExerciseById_WithNotExistingExerciseTest() throws Exception {
 
         JwtRequest jwtRequest = new JwtRequest("username", "pass");

@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kz.kaitanov.fitnessbackend.model.Product;
 import kz.kaitanov.fitnessbackend.model.converter.ProductMapper;
 import kz.kaitanov.fitnessbackend.model.dto.request.product.ProductPersistRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.request.product.ProductUpdateNameRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.product.ProductUpdateRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.response.api.Response;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.ProductService;
@@ -33,7 +34,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/admin/product")
 public class AdminProductRestController {
-
+    //TODO подправить описание swagger AdminProductRestController
     private final ProductService productService;
 
     @Operation(summary = "Создание нового продукта")
@@ -53,8 +54,22 @@ public class AdminProductRestController {
     })
     @PutMapping
     public Response<Product> updateProduct(@RequestBody @Valid ProductUpdateRequestDto dto) {
-        ApiValidationUtil.requireTrue(productService.existsById(dto.id()), String.format("Product by id %d not found", dto.id()));
-        return Response.ok(productService.update(ProductMapper.toEntity(dto)));
+        Optional<Product> product = productService.findById(dto.id());
+        ApiValidationUtil.requireTrue(product.isPresent(), String.format("Product by id %d not found", dto.id()));
+        return Response.ok(productService.update(ProductMapper.updateProduct(product.get(), dto)));
+    }
+
+    @Operation(summary = "Эндпоинт для обновление наименования")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Наименование продукта успешно обновлено"),
+            @ApiResponse(responseCode = "400", description = "Клиент допустил ошибки в запросе")
+    })
+    @PutMapping("/name")
+    public Response<Product> updateProductName(@RequestBody @Valid ProductUpdateNameRequestDto dto) {
+        ApiValidationUtil.requireFalse(productService.existsByName(dto.name()), "name is being used by another product");
+        Optional<Product> product = productService.findById(dto.id());
+        ApiValidationUtil.requireTrue(product.isPresent(), String.format("Product by id %d not found", dto.id()));
+        return Response.ok(productService.update(ProductMapper.updateName(product.get(), dto)));
     }
 
     @Operation(summary = "Получене списка всех продуктов")

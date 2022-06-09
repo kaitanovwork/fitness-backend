@@ -5,9 +5,8 @@ import kz.kaitanov.fitnessbackend.model.Recipe;
 import kz.kaitanov.fitnessbackend.repository.model.RecipeRepository;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.RecipeService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RecipeServiceImpl extends AbstractServiceImpl<Recipe, Long> implements RecipeService {
@@ -20,27 +19,33 @@ public class RecipeServiceImpl extends AbstractServiceImpl<Recipe, Long> impleme
     }
 
     @Override
-    public List<Recipe> findAllByName(String name) {
-        return recipeRepository.findAllByName(name);
+    public boolean existsByName(String name) {
+        return recipeRepository.existsByName(name);
     }
 
     @Override
-    @Transactional
-    public Recipe save(Recipe recipe) {
-        recipe.setFat(recipe.getProducts().stream().mapToInt(Product::getFat).sum());
-        recipe.setProtein(recipe.getProducts().stream().mapToInt(Product::getProtein).sum());
-        recipe.setCarbohydrate(recipe.getProducts().stream().mapToInt(Product::getCarbohydrate).sum());
-        recipe.setCalorie(recipe.getProducts().stream().mapToInt(Product::getProtein).sum());
-        return recipeRepository.save(recipe);
+    public Recipe addProductToRecipe(Recipe recipe, Product product) {
+        recipe.addProduct(product);
+        calcCalorie(recipe);
+        return update(recipe);
     }
 
     @Override
-    @Transactional
-    public Recipe update (Recipe recipe){
-        recipe.setFat(recipe.getProducts().stream().mapToInt(Product::getFat).sum());
+    public Recipe deleteProductFromRecipe(Recipe recipe, Product product) {
+        recipe.deleteProduct(product);
+        calcCalorie(recipe);
+        return update(recipe);
+    }
+
+    @Override
+    public Optional<Recipe> findByIdWithProducts(Long id) {
+        return recipeRepository.findByIdWithProducts(id);
+    }
+
+    private void calcCalorie(Recipe recipe) {
+        recipe.setCalorie(recipe.getProducts().stream().mapToInt(Product::getCalorie).sum());
         recipe.setProtein(recipe.getProducts().stream().mapToInt(Product::getProtein).sum());
+        recipe.setFat(recipe.getProducts().stream().mapToInt(Product::getFat).sum());
         recipe.setCarbohydrate(recipe.getProducts().stream().mapToInt(Product::getCarbohydrate).sum());
-        recipe.setCalorie(recipe.getProducts().stream().mapToInt(Product::getProtein).sum());
-        return recipeRepository.save(recipe);
     }
 }

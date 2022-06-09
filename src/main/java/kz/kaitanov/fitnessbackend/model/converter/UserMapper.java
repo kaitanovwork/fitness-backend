@@ -1,12 +1,12 @@
 package kz.kaitanov.fitnessbackend.model.converter;
 
 import kz.kaitanov.fitnessbackend.model.User;
-import kz.kaitanov.fitnessbackend.model.dto.request.user.UserUpdateRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.user.UserRegistrationRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.user.UserUpdateEmailRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.user.UserUpdatePasswordRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.user.UserUpdatePhoneRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.user.UserUpdateProfileRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.request.user.UserUpdateRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.response.UserResponseDto;
 
 public final class UserMapper {

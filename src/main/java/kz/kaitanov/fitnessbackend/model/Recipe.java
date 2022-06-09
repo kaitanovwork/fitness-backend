@@ -15,8 +15,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -34,31 +32,17 @@ public class Recipe {
     private Long id;
 
     @NotBlank
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
-    @NotBlank
-    @Column(nullable = false)
     private String description;
 
-    @NotNull
-    @PositiveOrZero
-    @Column(nullable = false)
     private Integer calorie;
 
-    @NotNull
-    @PositiveOrZero
-    @Column(nullable = false)
     private Integer protein;
 
-    @NotNull
-    @PositiveOrZero
-    @Column(nullable = false)
     private Integer fat;
 
-    @NotNull
-    @PositiveOrZero
-    @Column(nullable = false)
     private Integer carbohydrate;
 
     @ManyToMany
@@ -67,7 +51,17 @@ public class Recipe {
             joinColumns = @JoinColumn(name = "recipes_id"),
             inverseJoinColumns = @JoinColumn(name = "products_id")
     )
-    List<Product> products = new ArrayList<>();
+    private List<Product> products = new ArrayList<>();
+
+    public void addProduct(Product product) {
+        if (!products.contains(product)) {
+            products.add(product);
+        }
+    }
+
+    public void deleteProduct(Product product) {
+        products.remove(product);
+    }
 
     @Override
     public boolean equals(Object o) {

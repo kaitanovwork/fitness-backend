@@ -41,7 +41,7 @@ public class AdminRoleRestController {
     @Operation(summary = "Получение роли по id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Роль успешно получена"),
-            @ApiResponse(responseCode = "404", description = "Роль не найдена")
+            @ApiResponse(responseCode = "400", description = "Роль не найдена")
     })
     @GetMapping("/{roleId}")
     public Response<Role> getRoleById(@PathVariable @Positive Long roleId) {

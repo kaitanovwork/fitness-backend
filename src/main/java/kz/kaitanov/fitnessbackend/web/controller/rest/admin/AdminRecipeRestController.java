@@ -4,12 +4,17 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import kz.kaitanov.fitnessbackend.model.Product;
 import kz.kaitanov.fitnessbackend.model.Recipe;
 import kz.kaitanov.fitnessbackend.model.converter.RecipeMapper;
-import kz.kaitanov.fitnessbackend.model.dto.request.RecipePersistRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.request.recipe.RecipePersistRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.request.recipe.RecipeUpdateNameRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.request.recipe.RecipeUpdateRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.response.api.Response;
+import kz.kaitanov.fitnessbackend.service.interfaces.model.ProductService;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.RecipeService;
+import kz.kaitanov.fitnessbackend.web.config.util.ApiValidationUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,8 +24,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import java.util.List;
 import java.util.Optional;
@@ -31,16 +36,18 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/admin/recipe")
 public class AdminRecipeRestController {
-
+    //TODO подправить описание swagger AdminRecipeRestController
     private final RecipeService recipeService;
+    private final ProductService productService;
 
     @Operation(summary = "Создание нового рецепта")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Новый рецепт успешно создан")
     })
     @PostMapping
-    public ResponseEntity<Recipe> saveRecipe(@RequestBody @Valid RecipePersistRequestDto recipePersistRequestDto) {
-        return ResponseEntity.ok(recipeService.save(RecipeMapper.toEntity(recipePersistRequestDto)));
+    public Response<Recipe> saveRecipe(@RequestBody @Valid RecipePersistRequestDto dto) {
+        ApiValidationUtil.requireFalse(recipeService.existsByName(dto.name()), "name is being used by another recipe");
+        return Response.ok(recipeService.save(RecipeMapper.toEntity(dto)));
     }
 
     @Operation(summary = "Обновление существующего рецепта")
@@ -49,11 +56,51 @@ public class AdminRecipeRestController {
             @ApiResponse(responseCode = "404", description = "Рецпет не найден")
     })
     @PutMapping
-    public ResponseEntity<Recipe> updateRecipe(@RequestBody @Valid Recipe recipe) {
-        if (!recipeService.existsById(recipe.getId())) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(recipeService.update(recipe));
+    public Response<Recipe> updateRecipe(@RequestBody @Valid RecipeUpdateRequestDto dto) {
+        Optional<Recipe> recipe = recipeService.findById(dto.id());
+        ApiValidationUtil.requireTrue(recipe.isPresent(), String.format("Recipe by id %d not found", dto.id()));
+        return Response.ok(recipeService.update(RecipeMapper.updateRecipe(recipe.get(), dto)));
+    }
+
+    @Operation(summary = "Эндпоинт для обновление наименования")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Наименование рецепта успешно обновлено"),
+            @ApiResponse(responseCode = "400", description = "Клиент допустил ошибки в запросе")
+    })
+    @PutMapping("/name")
+    public Response<Recipe> updateRecipeName(@RequestBody @Valid RecipeUpdateNameRequestDto dto) {
+        ApiValidationUtil.requireFalse(recipeService.existsByName(dto.name()), "name is being used by another recipe");
+        Optional<Recipe> recipe = recipeService.findById(dto.id());
+        ApiValidationUtil.requireTrue(recipe.isPresent(), String.format("Recipe by id %d not found", dto.id()));
+        return Response.ok(recipeService.update(RecipeMapper.updateName(recipe.get(), dto)));
+    }
+
+    @Operation(summary = "Эндпоинт для обновление наименования")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Наименование рецепта успешно обновлено"),
+            @ApiResponse(responseCode = "400", description = "Клиент допустил ошибки в запросе")
+    })
+    @PutMapping("/{recipeId}/product/{productId}")
+    public Response<Recipe> addProductToRecipe(@PathVariable @Positive Long recipeId, @PathVariable @Positive Long productId) {
+        Optional<Recipe> recipe = recipeService.findById(recipeId);
+        ApiValidationUtil.requireTrue(recipe.isPresent(), String.format("Recipe by id %d not found", recipeId));
+        Optional<Product> product = productService.findById(productId);
+        ApiValidationUtil.requireTrue(product.isPresent(), String.format("Product by id %d not found", productId));
+        return Response.ok(recipeService.addProductToRecipe(recipe.get(), product.get()));
+    }
+
+    @Operation(summary = "Эндпоинт для обновление наименования")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Наименование рецепта успешно обновлено"),
+            @ApiResponse(responseCode = "400", description = "Клиент допустил ошибки в запросе")
+    })
+    @DeleteMapping("/{recipeId}/product/{productId}")
+    public Response<Recipe> deleteProductFromRecipe(@PathVariable @Positive Long recipeId, @PathVariable @Positive Long productId) {
+        Optional<Recipe> recipe = recipeService.findByIdWithProducts(recipeId);
+        ApiValidationUtil.requireTrue(recipe.isPresent(), String.format("Recipe by id %d not found", recipeId));
+        Optional<Product> product = productService.findById(productId);
+        ApiValidationUtil.requireTrue(product.isPresent(), String.format("Product by id %d not found", productId));
+        return Response.ok(recipeService.deleteProductFromRecipe(recipe.get(), product.get()));
     }
 
     @Operation(summary = "Получение списка всех рецептов")
@@ -61,8 +108,8 @@ public class AdminRecipeRestController {
             @ApiResponse(responseCode = "200", description = "Список всех рецептов успешно получен")
     })
     @GetMapping
-    public ResponseEntity<List<Recipe>> getRecipeList() {
-        return ResponseEntity.ok(recipeService.findAll());
+    public Response<List<Recipe>> getRecipeList() {
+        return Response.ok(recipeService.findAll());
     }
 
     @Operation(summary = "Получение рецепта по id")
@@ -71,9 +118,10 @@ public class AdminRecipeRestController {
             @ApiResponse(responseCode = "404", description = "Рецепт не найден")
     })
     @GetMapping("/{recipeId}")
-    public ResponseEntity<Recipe> getRecipeById(@PathVariable @Positive Long recipeId) {
-        Optional<Recipe> recipeOptional = recipeService.findById(recipeId);
-        return recipeOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public Response<Recipe> getRecipeById(@PathVariable @Positive Long recipeId) {
+        Optional<Recipe> recipe = recipeService.findById(recipeId);
+        ApiValidationUtil.requireTrue(recipe.isPresent(), String.format("Recipe by id %d not found", recipeId));
+        return Response.ok(recipe.get());
     }
 
     @Operation(summary = "Удаление рецепта по id")
@@ -82,21 +130,9 @@ public class AdminRecipeRestController {
             @ApiResponse(responseCode = "404", description = "Рецепт не найден")
     })
     @DeleteMapping("/{recipeId}")
-    public ResponseEntity<Void> deleteRecipeById(@PathVariable @Positive Long recipeId) {
-        if (!recipeService.existsById(recipeId)) {
-            return ResponseEntity.notFound().build();
-        }
+    public Response<Void> deleteRecipeById(@PathVariable @Positive Long recipeId) {
+        ApiValidationUtil.requireTrue(recipeService.existsById(recipeId), String.format("Recipe by id %d not found", recipeId));
         recipeService.deleteById(recipeId);
-        return ResponseEntity.ok().build();
-    }
-
-    @Operation(summary = "Получение рецепта по названию")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Рецепт успешно получен"),
-            @ApiResponse(responseCode = "404", description = "Рецепт не найден")
-    })
-    @GetMapping("/name/{recipeName}")
-    public ResponseEntity<List<Recipe>> getRecipeListByName(@PathVariable @NotBlank String recipeName) {
-        return ResponseEntity.ok(recipeService.findAllByName(recipeName));
+        return Response.ok();
     }
 }
