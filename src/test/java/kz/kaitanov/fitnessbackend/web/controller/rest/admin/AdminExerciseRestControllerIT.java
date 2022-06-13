@@ -4,6 +4,8 @@ import kz.kaitanov.fitnessbackend.SpringSimpleContextTest;
 import kz.kaitanov.fitnessbackend.model.Exercise;
 import kz.kaitanov.fitnessbackend.model.dto.request.JwtRequest;
 import kz.kaitanov.fitnessbackend.model.dto.request.exercise.ExercisePersistRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.request.exercise.ExerciseUpdateNameRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.request.exercise.ExerciseUpdateRequestDto;
 import kz.kaitanov.fitnessbackend.model.enums.Area;
 import org.hamcrest.core.Is;
 import org.json.JSONObject;
@@ -26,8 +28,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/create-exercise-before.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/clear-exercise-after.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/getExerciseList_SuccessfulTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/getExerciseList_SuccessfulTest/AfterTest.sql")
     public void getExerciseList_SuccessfulTest() throws Exception {
         String token = getToken("username", "pass");
 
@@ -44,8 +46,8 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
     }
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/create-exercise-before.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/clear-exercise-after.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/saveExercise_SuccessfulTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/saveExercise_SuccessfulTest/AfterTest.sql")
     public void saveExercise_SuccessfulTest() throws Exception {
         String token = getToken("username", "pass");
         ExercisePersistRequestDto dto = new ExercisePersistRequestDto("push", "back", 3, 10, Area.GYM);
@@ -80,120 +82,133 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
     }
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/create-exercise-before.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/clear-exercise-after.sql")
-    public void updateExercise_WithExistingExerciseTest() throws Exception {
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/saveExercise_WithExistingNameTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/saveExercise_WithExistingNameTest/AfterTest.sql")
+    public void saveExercise_WithExistingNameTest() throws Exception {
+        String token = getToken("username", "pass");
+        ExercisePersistRequestDto dto = new ExercisePersistRequestDto("TestExercise1", "back", 3, 10, Area.GYM);
 
-        Exercise exercise = new Exercise();
-        exercise.setId(101L);
-        exercise.setApproachCount(15);
-        exercise.setMuscleGroup("Biceps");
-        exercise.setRepeatCount(20);
-        exercise.setName("TestExercise1");
-        exercise.setArea(Area.HOME);
-
-        String jsonExercise = objectMapper.writeValueAsString(exercise);
-
-        JwtRequest jwtRequest = new JwtRequest("username", "pass");
-        MvcResult mvcResult = mockMvc.perform(post("/api/v1/authenticate")
+        mockMvc.perform(post("/api/v1/admin/exercise")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(jwtRequest)))
-                .andReturn();
+                        .content(objectMapper.writeValueAsString(dto))
+                        .header("authorization", token))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error", Is.is("name is being used by another exercise")));
+    }
 
-        JSONObject json = new JSONObject(mvcResult.getResponse().getContentAsString());
-        String token = json.getString("jwtToken");
+
+    @Test
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/updateExercise_SuccessfulTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/updateExercise_SuccessfulTest/AfterTest.sql")
+    public void updateExercise_SuccessfulTest() throws Exception {
+        String token = getToken("username", "pass");
+        ExerciseUpdateRequestDto exerciseUpdateRequestDto = new ExerciseUpdateRequestDto(101L, "Biceps", 20, 15, Area.HOME);
 
         mockMvc.perform(put("/api/v1/admin/exercise")
-                        .header("authorization", "Bearer " + token)
+                        .header("authorization", token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonExercise))
+                        .content(objectMapper.writeValueAsString(exerciseUpdateRequestDto)))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.name", Is.is(exercise.getName())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.muscleGroup", Is.is(exercise.getMuscleGroup())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.repeatCount", Is.is(exercise.getRepeatCount())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.approachCount", Is.is(exercise.getApproachCount())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.area", Is.is(exercise.getArea().name())));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.id", Is.is(101)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.muscleGroup", Is.is(exerciseUpdateRequestDto.muscleGroup())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.repeatCount", Is.is(exerciseUpdateRequestDto.repeatCount())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.approachCount", Is.is(exerciseUpdateRequestDto.approachCount())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.area", Is.is(exerciseUpdateRequestDto.area().name())));
 
         assertTrue(entityManager.createQuery(
                         """
                                 SELECT COUNT(u.id) > 0
                                 FROM Exercise u
-                                WHERE u.name = :name AND u.muscleGroup = :muscleGroup AND u.repeatCount = :repeatCount AND u.approachCount = :approachCount
+                                WHERE u.id = :id AND u.muscleGroup = :muscleGroup AND u.repeatCount = :repeatCount AND u.approachCount = :approachCount
                                 AND u.area = :area""",
                         Boolean.class)
-                .setParameter("name", exercise.getName())
-                .setParameter("muscleGroup", exercise.getMuscleGroup())
-                .setParameter("repeatCount", exercise.getRepeatCount())
-                .setParameter("approachCount", exercise.getApproachCount())
-                .setParameter("area", exercise.getArea())
+                .setParameter("id", exerciseUpdateRequestDto.id())
+                .setParameter("muscleGroup", exerciseUpdateRequestDto.muscleGroup())
+                .setParameter("repeatCount", exerciseUpdateRequestDto.repeatCount())
+                .setParameter("approachCount", exerciseUpdateRequestDto.approachCount())
+                .setParameter("area", exerciseUpdateRequestDto.area())
                 .getSingleResult());
 
     }
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/create-exercise-before.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/clear-exercise-after.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/updateExercise_WithNotExistingExerciseTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/updateExercise_WithNotExistingExerciseTest/AfterTest.sql")
     public void updateExercise_WithNotExistingExerciseTest() throws Exception {
 
-        Exercise exercise = new Exercise();
-        exercise.setId(105L);
-        exercise.setApproachCount(15);
-        exercise.setMuscleGroup("Biceps");
-        exercise.setRepeatCount(20);
-        exercise.setName("TestExercise1");
-        exercise.setArea(Area.HOME);
-
-        String jsonExercise = objectMapper.writeValueAsString(exercise);
-
-        JwtRequest jwtRequest = new JwtRequest("username", "pass");
-        MvcResult mvcResult = mockMvc.perform(post("/api/v1/authenticate")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(jwtRequest)))
-                .andReturn();
-
-        JSONObject json = new JSONObject(mvcResult.getResponse().getContentAsString());
-        String token = json.getString("jwtToken");
+        String token = getToken("username", "pass");
+        ExerciseUpdateRequestDto exerciseUpdateRequestDto = new ExerciseUpdateRequestDto(102L, "Biceps", 20, 15, Area.HOME);
 
         mockMvc.perform(put("/api/v1/admin/exercise")
-                        .header("authorization", "Bearer " + token)
+                        .header("authorization", token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonExercise))
+                        .content(objectMapper.writeValueAsString(exerciseUpdateRequestDto)))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error", Is.is("Exercise by id 102 not found")));
+    }
+
+    @Test
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/updateExerciseName_SuccessfulTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/updateExerciseName_SuccessfulTest/AfterTest.sql")
+    public void updateExerciseName_SuccessfulTest() throws Exception {
+        String token = getToken("username", "pass");
+        ExerciseUpdateNameRequestDto exerciseUpdateNameRequestDto = new ExerciseUpdateNameRequestDto(101L, "TestExercise");
+
+        mockMvc.perform(put("/api/v1/admin/exercise/name")
+                        .header("authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(exerciseUpdateNameRequestDto)))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.id", Is.is(101)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.name", Is.is(exerciseUpdateNameRequestDto.name())));
+
+        assertTrue(entityManager.createQuery(
+                        """
+                                SELECT COUNT(u.id) > 0
+                                FROM Exercise u
+                                WHERE u.id = :id AND u.name = :name""",
+                        Boolean.class)
+                .setParameter("id", exerciseUpdateNameRequestDto.id())
+                .setParameter("name", exerciseUpdateNameRequestDto.name())
+                .getSingleResult());
+    }
+
+    @Test
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/updateExercise_WithNotExistingExerciseTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/updateExercise_WithNotExistingExerciseTest/AfterTest.sql")
+    public void updateExerciseName_WithNotExistingExerciseTest() throws Exception {
+        String token = getToken("username", "pass");
+        ExerciseUpdateNameRequestDto exerciseUpdateNameRequestDto = new ExerciseUpdateNameRequestDto(102L, "TestExercise");
+
+        mockMvc.perform(put("/api/v1/admin/exercise/name")
+                        .header("authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(exerciseUpdateNameRequestDto)))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error", Is.is("Exercise by id 102 not found")));
     }
 
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/create-exercise-before.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/clear-exercise-after.sql")
-    public void getExerciseById_WithExistingExerciseTest() throws Exception {
-
-        Exercise exercise = new Exercise();
-        exercise.setId(101L);
-        exercise.setApproachCount(10);
-        exercise.setMuscleGroup("Biceps");
-        exercise.setRepeatCount(10);
-        exercise.setName("TestExercise1");
-        exercise.setArea(Area.HOME);
-
-        JwtRequest jwtRequest = new JwtRequest("username", "pass");
-        MvcResult mvcResult = mockMvc.perform(post("/api/v1/authenticate")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(jwtRequest)))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn();
-
-        JSONObject json = new JSONObject(mvcResult.getResponse().getContentAsString());
-        String token = json.getString("jwtToken");
-
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/getExerciseById_SuccessfulTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/getExerciseById_SuccessfulTest/AfterTest.sql")
+    public void getExerciseById_SuccessfulTest() throws Exception {
+        String token = getToken("username", "pass");
+        Exercise exercise = new Exercise(101L, "TestExercise1", "Biceps", 10, 10, Area.HOME);
 
         mockMvc.perform(get("/api/v1/admin/exercise/{exerciseId}", "101")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("authorization", "Bearer " + token))
+                        .header("authorization", token))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
@@ -205,44 +220,27 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
     }
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/create-exercise-before.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/clear-exercise-after.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/getExerciseById_WithNotExistingExerciseTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/getExerciseById_WithNotExistingExerciseTest/AfterTest.sql")
     public void getExerciseById_WithNotExistingExerciseTest() throws Exception {
+        String token = getToken("username", "pass");
 
-
-        JwtRequest jwtRequest = new JwtRequest("username", "pass");
-        MvcResult mvcResult = mockMvc.perform(post("/api/v1/authenticate")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(jwtRequest)))
-                .andReturn();
-
-        JSONObject json = new JSONObject(mvcResult.getResponse().getContentAsString());
-        String token = json.getString("jwtToken");
-
-
-        mockMvc.perform(get("/api/v1/admin/exercise/{exerciseId}", "105")
-                        .header("authorization", "Bearer " + token))
+        mockMvc.perform(get("/api/v1/admin/exercise/{exerciseId}", "102")
+                        .header("authorization", token))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error", Is.is("Exercise by id 102 not found")));
     }
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/create-exercise-before.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/clear-exercise-after.sql")
-    public void deleteExerciseById_WithExistingExerciseTest() throws Exception {
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/deleteExerciseById_SuccessfulTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/deleteExerciseById_SuccessfulTest/AfterTest.sql")
+    public void deleteExerciseById_SuccessfulTest() throws Exception {
+        String token = getToken("username", "pass");
 
-        JwtRequest jwtRequest = new JwtRequest("username", "pass");
-        MvcResult mvcResult = mockMvc.perform(post("/api/v1/authenticate")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(jwtRequest)))
-                .andReturn();
-
-        JSONObject json = new JSONObject(mvcResult.getResponse().getContentAsString());
-        String token = json.getString("jwtToken");
-
-        mockMvc.perform(delete("/api/v1/admin/exercise/{exerciseId}", "104")
-                        .header("authorization", "Bearer " + token))
+        mockMvc.perform(delete("/api/v1/admin/exercise/{exerciseId}", "101")
+                        .header("authorization", token))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)));
@@ -253,29 +251,22 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
                                 FROM Exercise u
                                 WHERE u.id = :id""",
                         Boolean.class)
-                .setParameter("id", 104L)
+                .setParameter("id", 101L)
                 .getSingleResult());
     }
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/create-exercise-before.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/ExerciseRestController/clear-exercise-after.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/deleteExerciseById_WithNotExistingExerciseTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/deleteExerciseById_WithNotExistingExerciseTest/AfterTest.sql")
     public void deleteExerciseById_WithNotExistingExerciseTest() throws Exception {
+        String token = getToken("username", "pass");
 
-        JwtRequest jwtRequest = new JwtRequest("username", "pass");
-        MvcResult mvcResult = mockMvc.perform(post("/api/v1/authenticate")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(jwtRequest)))
-                .andReturn();
-
-        JSONObject json = new JSONObject(mvcResult.getResponse().getContentAsString());
-        String token = json.getString("jwtToken");
-
-        mockMvc.perform(delete("/api/v1/admin/exercise/{exerciseId}", "105")
-                        .header("authorization", "Bearer " + token))
+        mockMvc.perform(delete("/api/v1/admin/exercise/{exerciseId}", "102")
+                        .header("authorization", token))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error", Is.is("Exercise by id 102 not found")));
     }
 
 }
