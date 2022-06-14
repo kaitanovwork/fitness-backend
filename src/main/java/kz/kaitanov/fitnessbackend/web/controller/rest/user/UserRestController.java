@@ -10,7 +10,7 @@ import kz.kaitanov.fitnessbackend.model.dto.request.user.UserUpdateEmailRequestD
 import kz.kaitanov.fitnessbackend.model.dto.request.user.UserUpdatePasswordRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.user.UserUpdatePhoneRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.user.UserUpdateProfileRequestDto;
-import kz.kaitanov.fitnessbackend.model.dto.response.Response;
+import kz.kaitanov.fitnessbackend.model.dto.response.api.Response;
 import kz.kaitanov.fitnessbackend.model.dto.response.UserResponseDto;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.UserService;
 import kz.kaitanov.fitnessbackend.web.config.util.ApiValidationUtil;

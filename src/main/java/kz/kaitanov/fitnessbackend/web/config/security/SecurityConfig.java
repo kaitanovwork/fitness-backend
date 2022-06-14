@@ -42,13 +42,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf().disable()
+                .cors().disable()
                 .authorizeRequests()
                 .antMatchers("/api/v1/authenticate").permitAll()
                 .antMatchers("/api/v1/admin/**").hasAnyAuthority("ADMIN")
                 .antMatchers("/api/v1/user/**").hasAnyAuthority("ADMIN", "USER")
-                .antMatchers("/api/v1/role/**").hasAnyAuthority("ADMIN", "USER")
-                .antMatchers("/api/v1/exercise/**").hasAnyAuthority("ADMIN", "USER")
-                .antMatchers("/api/v1/recipe/**").hasAnyAuthority("ADMIN", "USER")
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .and()

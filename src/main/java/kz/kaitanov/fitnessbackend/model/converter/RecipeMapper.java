@@ -1,7 +1,9 @@
 package kz.kaitanov.fitnessbackend.model.converter;
 
 import kz.kaitanov.fitnessbackend.model.Recipe;
-import kz.kaitanov.fitnessbackend.model.dto.request.RecipePersistRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.request.recipe.RecipePersistRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.request.recipe.RecipeUpdateNameRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.request.recipe.RecipeUpdateRequestDto;
 
 public final class RecipeMapper {
 
@@ -9,10 +11,16 @@ public final class RecipeMapper {
         Recipe recipe = new Recipe();
         recipe.setName(dto.name());
         recipe.setDescription(dto.description());
-        recipe.setCalorie(dto.calorie());
-        recipe.setProtein(dto.protein());
-        recipe.setFat(dto.fat());
-        recipe.setCarbohydrate(dto.carbohydrate());
+        return recipe;
+    }
+
+    public static Recipe updateRecipe(Recipe recipe, RecipeUpdateRequestDto dto) {
+        recipe.setDescription(dto.description());
+        return recipe;
+    }
+
+    public static Recipe updateName(Recipe recipe, RecipeUpdateNameRequestDto dto) {
+        recipe.setName(dto.name());
         return recipe;
     }
 }

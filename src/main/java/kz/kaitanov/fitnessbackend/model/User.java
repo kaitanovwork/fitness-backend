@@ -19,6 +19,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
@@ -35,9 +37,11 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
     @Column(unique = true, nullable = false)
     private String username;
 
+    @NotBlank
     @Column(nullable = false)
     private String password;
 
@@ -56,6 +60,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;

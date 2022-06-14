@@ -1,1 +1,0 @@
-truncate fitness_backend_db_test.public.exercises RESTART IDENTITY;

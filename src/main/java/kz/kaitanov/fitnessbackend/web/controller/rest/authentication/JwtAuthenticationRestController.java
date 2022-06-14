@@ -6,9 +6,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kz.kaitanov.fitnessbackend.model.dto.request.JwtRequest;
 import kz.kaitanov.fitnessbackend.model.dto.response.JwtResponse;
+import kz.kaitanov.fitnessbackend.model.dto.response.api.Response;
 import kz.kaitanov.fitnessbackend.web.config.util.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,10 +35,10 @@ public class JwtAuthenticationRestController {
             @ApiResponse(responseCode = "200", description = "Токен успешно получен")
     })
     @PostMapping
-    public ResponseEntity<JwtResponse> createAuthenticationToken(@RequestBody @Valid JwtRequest jwtRequest) {
+    public Response<JwtResponse> createAuthenticationToken(@RequestBody @Valid JwtRequest jwtRequest) {
         authenticate(jwtRequest.username(), jwtRequest.password());
         final UserDetails userDetails = userDetailsService.loadUserByUsername(jwtRequest.username());
-        return ResponseEntity.ok(new JwtResponse(jwtTokenUtil.generateToken(userDetails)));
+        return Response.ok(new JwtResponse(jwtTokenUtil.generateToken(userDetails)));
     }
 
     private void authenticate(String username, String password) {
