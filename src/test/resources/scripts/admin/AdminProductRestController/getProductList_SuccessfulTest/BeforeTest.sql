@@ -9,7 +9,7 @@ VALUES (101, 20, 'email@email.ru', 'firstName', 'MALE', 'lastName',
 
 INSERT INTO products (id, name, calorie, protein, fat, carbohydrate)
 VALUES (101, 'Onion', 20, 25, 1, 5),
-       (102, 'Carrot', 55, 13, 1, 1)
+       (102, 'Carrot', 55, 13, 1, 1);
 
 
 

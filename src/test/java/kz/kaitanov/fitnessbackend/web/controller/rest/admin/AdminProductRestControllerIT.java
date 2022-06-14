@@ -118,7 +118,7 @@ public class AdminProductRestControllerIT extends SpringSimpleContextTest {
                 .setParameter("name", dto.name())
                 .setParameter("id", dto.id())
                 .getSingleResult());
-        }
+    }
 
     @Test
     @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminProductRestController/getProductList_SuccessfulTest/BeforeTest.sql")
@@ -157,8 +157,6 @@ public class AdminProductRestControllerIT extends SpringSimpleContextTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.protein", Is.is(25)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.fat", Is.is(1)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.carbohydrate", Is.is(5)));
-
-
     }
 
     @Test
@@ -206,23 +204,7 @@ public class AdminProductRestControllerIT extends SpringSimpleContextTest {
     @Test
     @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminProductRestController/saveProduct_WithExistingName/BeforeTest.sql")
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminProductRestController/saveProduct_WithExistingName/AfterTest.sql")
-    public void saveProduct_WithExistingUsernameTest() throws Exception {
-        ProductPersistRequestDto dto = new ProductPersistRequestDto("Onion", 20, 3, 0, 1);
-        String token = getToken("username", "password");
-        mockMvc.perform(post("/api/v1/admin/product")
-                        .header("Authorization", token)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.error", Is.is("Name is being used by another product")));
-    }
-
-    @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminProductRestController/saveProduct_WithExistingName/BeforeTest.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminProductRestController/saveProduct_WithExistingName/AfterTest.sql")
-    public void updateProduct_WithExistingUsernameTest() throws Exception {
+    public void saveProduct_WithExistingNameTest() throws Exception {
         ProductPersistRequestDto dto = new ProductPersistRequestDto("Onion", 20, 3, 0, 1);
         String token = getToken("username", "password");
         mockMvc.perform(post("/api/v1/admin/product")
@@ -268,8 +250,8 @@ public class AdminProductRestControllerIT extends SpringSimpleContextTest {
     }
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminProductRestController/updateProductName_WithTheSameName/BeforeTest.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminProductRestController/updateProductName_WithTheSameName/AfterTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminProductRestController/updateProductName_WithNonExistingId/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminProductRestController/updateProductName_WithNonExistingId/AfterTest.sql")
     public void updateProductName_WithNonExistingId() throws Exception {
         ProductUpdateNameRequestDto dto = new ProductUpdateNameRequestDto(102L, "Carrot");
         String token = getToken("username", "password");

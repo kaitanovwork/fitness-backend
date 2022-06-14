@@ -34,7 +34,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/admin/product")
 public class AdminProductRestController {
-    //TODO подправить описание swagger AdminProductRestController
+
     private final ProductService productService;
 
     @Operation(summary = "Создание нового продукта")
