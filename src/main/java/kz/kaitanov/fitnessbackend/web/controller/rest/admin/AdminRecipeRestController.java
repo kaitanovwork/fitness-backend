@@ -42,7 +42,8 @@ public class AdminRecipeRestController {
 
     @Operation(summary = "Эндпоинт для создание нового рецепта")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Новый рецепт успешно создан")
+            @ApiResponse(responseCode = "200", description = "Новый рецепт успешно создан"),
+            @ApiResponse(responseCode = "400", description = "Наименование используется в другом рецепте")
     })
     @PostMapping
     public Response<Recipe> saveRecipe(@RequestBody @Valid RecipePersistRequestDto dto) {

@@ -1,7 +1,6 @@
 package kz.kaitanov.fitnessbackend.web.controller.rest.admin;
 
 import kz.kaitanov.fitnessbackend.SpringSimpleContextTest;
-import kz.kaitanov.fitnessbackend.model.Recipe;
 import kz.kaitanov.fitnessbackend.model.dto.request.recipe.RecipePersistRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.recipe.RecipeUpdateNameRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.recipe.RecipeUpdateRequestDto;
@@ -15,7 +14,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import static org.hamcrest.Matchers.hasItems;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
@@ -32,7 +30,6 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto))
                         .header("authorization", token))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
@@ -63,7 +60,6 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto))
                         .header("authorization", token))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
@@ -82,7 +78,6 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto))
                         .header("authorization", token))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
@@ -113,7 +108,6 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto))
                         .header("authorization", token))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
@@ -132,7 +126,6 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto))
                         .header("authorization", token))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
@@ -163,7 +156,6 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto))
                         .header("authorization", token))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
@@ -182,7 +174,6 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto))
                         .header("authorization", token))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
@@ -198,7 +189,6 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/admin/recipe/{recipeId}/product/{productId}", 101, 101)
                         .header("authorization", token))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
@@ -230,7 +220,6 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/admin/recipe/{recipeId}/product/{productId}", 102, 101)
                         .header("authorization", token))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
@@ -246,7 +235,6 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/admin/recipe/{recipeId}/product/{productId}", 101, 102)
                         .header("authorization", token))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
@@ -262,7 +250,6 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/admin/recipe/{recipeId}/product/{productId}", 101, 101)
                         .header("authorization", token))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)));
@@ -288,7 +275,6 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/admin/recipe/{recipeId}/product/{productId}", 102, 101)
                         .header("authorization", token))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
@@ -304,7 +290,6 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/admin/recipe/{recipeId}/product/{productId}", 101, 102)
                         .header("authorization", token))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
@@ -320,7 +305,6 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/admin/recipe")
                         .header("authorization", token))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
@@ -337,30 +321,20 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminRecipeRestController/getRecipeById_SuccessfulTest/AfterTest.sql")
     public void getRecipeById_SuccessfulTest() throws Exception {
 
-        Recipe recipe = new Recipe();
-        recipe.setId(101L);
-        recipe.setCalorie(1500);
-        recipe.setCarbohydrate(200);
-        recipe.setDescription("With chicken");
-        recipe.setFat(200);
-        recipe.setName("Caesar salad");
-        recipe.setProtein(200);
-
         String token = getToken("username", "password");
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/admin/recipe/{recipeId}", 101)
                         .header("authorization", token))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.id", Is.is(101)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.calorie", Is.is(recipe.getCalorie())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.carbohydrate", Is.is(recipe.getCarbohydrate())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.description", Is.is(recipe.getDescription())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.fat", Is.is(recipe.getFat())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.name", Is.is(recipe.getName())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.protein", Is.is(recipe.getProtein())));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.calorie", Is.is(1500)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.carbohydrate", Is.is(200)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.description", Is.is("With chicken")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.fat", Is.is(200)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.name", Is.is("Caesar salad")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.protein", Is.is(200)));
     }
 
     @Test
@@ -372,7 +346,6 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/admin/recipe/{recipeId}", 102)
                         .header("authorization", token))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
@@ -388,7 +361,6 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/admin/recipe/{recipeId}", 101)
                         .header("authorization", token))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)));
@@ -412,7 +384,6 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/admin/recipe/{recipeId}", 102)
                         .header("authorization", token))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
