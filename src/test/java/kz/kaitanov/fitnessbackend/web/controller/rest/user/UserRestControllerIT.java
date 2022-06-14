@@ -134,6 +134,31 @@ public class UserRestControllerIT extends SpringSimpleContextTest {
     }
 
     @Test
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/UserRestController/updateUserEmail_WithExistedEmailTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/UserRestController/updateUserEmail_WithExistedEmailTest/AfterTest.sql")
+    public void updateUserPhone_WithExistedEmailTest() throws Exception {
+        JwtRequest jwt = new JwtRequest("user101", "pass");
+        String token = Objects.requireNonNull(jwtAuthenticationRestController.createAuthenticationToken(jwt).getBody()).jwtToken();
+        UserUpdatePhoneRequestDto dto = new UserUpdatePhoneRequestDto("89050001122");
+        mockMvc.perform(put("/api/v1/user/phone")
+                        .contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + token)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.phone", Is.is(dto.phone())));
+
+        assertTrue(entityManager.createQuery(
+                        """
+                                SELECT COUNT(u.phone) > 0
+                                FROM User u
+                                WHERE u.phone = :phone
+                                """, Boolean.class)
+                .setParameter("phone", dto.phone())
+                .getSingleResult());
+    }
+
+    @Test
     @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/UserRestController/updateUserPhone_SuccessfulTest/BeforeTest.sql")
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/UserRestController/updateUserPhone_SuccessfulTest/AfterTest.sql")
     public void updateUserPhone_SuccessfulTest() throws Exception {
@@ -157,5 +182,31 @@ public class UserRestControllerIT extends SpringSimpleContextTest {
                 .setParameter("phone", dto.phone())
                 .getSingleResult());
     }
+
+    @Test
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/UserRestController/updateUserPhone_WithExistedPhoneTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/UserRestController/updateUserPhone_WithExistedPhoneTest/AfterTest.sql")
+    public void updateUserPhone_WithExistedPhoneTest() throws Exception {
+        JwtRequest jwt = new JwtRequest("user101", "pass");
+        String token = Objects.requireNonNull(jwtAuthenticationRestController.createAuthenticationToken(jwt).getBody()).jwtToken();
+        UserUpdatePhoneRequestDto dto = new UserUpdatePhoneRequestDto("89050001122");
+        mockMvc.perform(put("/api/v1/user/phone")
+                        .contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + token)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.phone", Is.is(dto.phone())));
+
+        assertTrue(entityManager.createQuery(
+                        """
+                                SELECT COUNT(u.phone) > 0
+                                FROM User u
+                                WHERE u.phone = :phone
+                                """, Boolean.class)
+                .setParameter("phone", dto.phone())
+                .getSingleResult());
+    }
+
 
 }
