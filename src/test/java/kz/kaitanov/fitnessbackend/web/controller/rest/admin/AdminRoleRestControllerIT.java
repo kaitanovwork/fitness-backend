@@ -5,6 +5,7 @@ import kz.kaitanov.fitnessbackend.model.enums.RoleName;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.hamcrest.Matchers.hasItems;
@@ -25,6 +26,8 @@ public class AdminRoleRestControllerIT extends SpringSimpleContextTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].id", hasItems(101, 102)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].name", hasItems("ADMIN", "USER")));
+
+
     }
 
     @Test
