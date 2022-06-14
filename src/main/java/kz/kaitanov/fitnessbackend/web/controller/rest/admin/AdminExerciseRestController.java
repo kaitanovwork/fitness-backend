@@ -34,7 +34,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/admin/exercise")
 public class AdminExerciseRestController {
-    //TODO подправить описание swagger AdminExerciseRestController
     private final ExerciseService exerciseService;
 
     @Operation(summary = "Создание нового упражнения")

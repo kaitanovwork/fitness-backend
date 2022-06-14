@@ -113,7 +113,7 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.id", Is.is(101)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.id", Is.is(exerciseUpdateRequestDto.id().intValue())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.muscleGroup", Is.is(exerciseUpdateRequestDto.muscleGroup())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.repeatCount", Is.is(exerciseUpdateRequestDto.repeatCount())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.approachCount", Is.is(exerciseUpdateRequestDto.approachCount())))
@@ -167,7 +167,7 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.id", Is.is(101)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.id", Is.is(exerciseUpdateNameRequestDto.id().intValue())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.name", Is.is(exerciseUpdateNameRequestDto.name())));
 
         assertTrue(entityManager.createQuery(
