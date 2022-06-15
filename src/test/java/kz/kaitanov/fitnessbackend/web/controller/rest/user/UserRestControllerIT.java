@@ -83,7 +83,7 @@ public class UserRestControllerIT extends SpringSimpleContextTest {
     @Test
     @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/UserRestController/updateUserPassword_WithEmptyPasswordValueTest/BeforeTest.sql")
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/UserRestController/updateUserPassword_WithEmptyPasswordValueTest/AfterTest.sql")
-    public void updateUserPassword_WithEmptyPasswordValue() throws Exception {
+    public void updateUserPassword_WithEmptyPasswordValueTest() throws Exception {
         String token = getToken("user101", "pass");
         UserUpdatePasswordRequestDto dto = new UserUpdatePasswordRequestDto("");
         mockMvc.perform(put("/api/v1/user/password")
@@ -180,14 +180,5 @@ public class UserRestControllerIT extends SpringSimpleContextTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.error", Is.is("phone is being used by another user")));
-
-        assertTrue(entityManager.createQuery(
-                        """
-                                SELECT COUNT(u.phone) > 0
-                                FROM User u
-                                WHERE u.phone = :phone
-                                """, Boolean.class)
-                .setParameter("phone", dto.phone())
-                .getSingleResult());
     }
 }
