@@ -34,23 +34,24 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/admin/product")
 public class AdminProductRestController {
-    //TODO подправить описание swagger AdminProductRestController
+
     private final ProductService productService;
 
     @Operation(summary = "Создание нового продукта")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Новое упражнение успешно создано")
+            @ApiResponse(responseCode = "200", description = "Новый продукт успешно создан"),
+            @ApiResponse(responseCode = "400", description = "Продукт с таким именем уже существует")
     })
     @PostMapping
     public Response<Product> saveProduct(@RequestBody @Valid ProductPersistRequestDto dto) {
-        ApiValidationUtil.requireFalse(productService.existsByName(dto.name()), "name is being used by another product");
+        ApiValidationUtil.requireFalse(productService.existsByName(dto.name()), "Name is being used by another product");
         return Response.ok(productService.save(ProductMapper.toEntity(dto)));
     }
 
     @Operation(summary = "Обновление существующего продукта")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Сущестующий продкут успешно обновлен"),
-            @ApiResponse(responseCode = "404", description = "Продукт не найден")
+            @ApiResponse(responseCode = "400", description = "Продукт с указанным id не найден")
     })
     @PutMapping
     public Response<Product> updateProduct(@RequestBody @Valid ProductUpdateRequestDto dto) {
@@ -59,16 +60,16 @@ public class AdminProductRestController {
         return Response.ok(productService.update(ProductMapper.updateProduct(product.get(), dto)));
     }
 
-    @Operation(summary = "Эндпоинт для обновление наименования")
+    @Operation(summary = "Обновление существующего продукта по имени")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Наименование продукта успешно обновлено"),
-            @ApiResponse(responseCode = "400", description = "Клиент допустил ошибки в запросе")
+            @ApiResponse(responseCode = "400", description = "Продукт с указанным id не найден, либо продукт с указанным именем уже существует")
     })
     @PutMapping("/name")
     public Response<Product> updateProductName(@RequestBody @Valid ProductUpdateNameRequestDto dto) {
-        ApiValidationUtil.requireFalse(productService.existsByName(dto.name()), "name is being used by another product");
+        ApiValidationUtil.requireFalse(productService.existsByName(dto.name()), "Name is being used by another product");
         Optional<Product> product = productService.findById(dto.id());
-        ApiValidationUtil.requireTrue(product.isPresent(), String.format("Product by id %d not found", dto.id()));
+        ApiValidationUtil.requireTrue(product.isPresent(), String.format("Product with id %d not found", dto.id()));
         return Response.ok(productService.update(ProductMapper.updateName(product.get(), dto)));
     }
 
@@ -84,35 +85,35 @@ public class AdminProductRestController {
     @Operation(summary = "Получение продукта по id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Продукт успешно получен"),
-            @ApiResponse(responseCode = "404", description = "Продукт не найден")
+            @ApiResponse(responseCode = "400", description = "Продукт с указанным id не найден")
     })
     @GetMapping("/{productId}")
     public Response<Product> getProductById(@PathVariable @Positive Long productId) {
         Optional<Product> product = productService.findById(productId);
-        ApiValidationUtil.requireTrue(product.isPresent(), String.format("Product by id %d not found", productId));
+        ApiValidationUtil.requireTrue(product.isPresent(), String.format("Product with id %d not found", productId));
         return Response.ok(product.get());
     }
 
     @Operation(summary = "Получение продукта по имени")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Продукт успешно найден"),
-            @ApiResponse(responseCode = "404", description = "Продукт не найден")
+            @ApiResponse(responseCode = "400", description = "Продукт с указанным именем не найден ")
     })
     @GetMapping("/productName/{productName}")
     public Response<Product> getProductByName(@PathVariable String productName) {
         Optional<Product> product = productService.findByName(productName);
-        ApiValidationUtil.requireTrue(product.isPresent(), String.format("Product by name %s not found", productName));
+        ApiValidationUtil.requireTrue(product.isPresent(), String.format("Product with name %s not found", productName));
         return Response.ok(product.get());
     }
 
     @Operation(summary = "Удаление продукта по id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Продукт успешно удален"),
-            @ApiResponse(responseCode = "404", description = "Продукт не найден")
+            @ApiResponse(responseCode = "400", description = "Продукт с указанным id не найден")
     })
     @DeleteMapping("/{productId}")
     public Response<Void> deleteProductById(@PathVariable Long productId) {
-        ApiValidationUtil.requireTrue(productService.existsById(productId), String.format("Product by id %d not found", productId));
+        ApiValidationUtil.requireTrue(productService.existsById(productId), String.format("Product with id %d not found", productId));
         productService.deleteById(productId);
         return Response.ok();
     }
