@@ -132,15 +132,6 @@ public class UserRestControllerIT extends SpringSimpleContextTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.error", Is.is("email is being used by another user")));
-
-        assertTrue(entityManager.createQuery(
-                        """
-                                SELECT COUNT(u.email) > 0
-                                FROM User u
-                                WHERE u.email = :email
-                                """, Boolean.class)
-                .setParameter("email", dto.email())
-                .getSingleResult());
     }
 
     @Test
