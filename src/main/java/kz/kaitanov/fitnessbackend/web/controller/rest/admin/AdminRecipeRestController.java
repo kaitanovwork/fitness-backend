@@ -36,13 +36,14 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/admin/recipe")
 public class AdminRecipeRestController {
-    //TODO подправить описание swagger AdminRecipeRestController
+
     private final RecipeService recipeService;
     private final ProductService productService;
 
-    @Operation(summary = "Создание нового рецепта")
+    @Operation(summary = "Эндпоинт для создание нового рецепта")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Новый рецепт успешно создан")
+            @ApiResponse(responseCode = "200", description = "Новый рецепт успешно создан"),
+            @ApiResponse(responseCode = "400", description = "Наименование используется в другом рецепте")
     })
     @PostMapping
     public Response<Recipe> saveRecipe(@RequestBody @Valid RecipePersistRequestDto dto) {
@@ -50,10 +51,10 @@ public class AdminRecipeRestController {
         return Response.ok(recipeService.save(RecipeMapper.toEntity(dto)));
     }
 
-    @Operation(summary = "Обновление существующего рецепта")
+    @Operation(summary = "Эндпоинт для обновление существующего рецепта")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Существующий рецепт успешно обновлен"),
-            @ApiResponse(responseCode = "404", description = "Рецпет не найден")
+            @ApiResponse(responseCode = "200", description = "Рецепт успешно обновлен"),
+            @ApiResponse(responseCode = "400", description = "Рецпет не найден")
     })
     @PutMapping
     public Response<Recipe> updateRecipe(@RequestBody @Valid RecipeUpdateRequestDto dto) {
@@ -62,10 +63,10 @@ public class AdminRecipeRestController {
         return Response.ok(recipeService.update(RecipeMapper.updateRecipe(recipe.get(), dto)));
     }
 
-    @Operation(summary = "Эндпоинт для обновление наименования")
+    @Operation(summary = "Эндпоинт для обновление наименования рецепта")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Наименование рецепта успешно обновлено"),
-            @ApiResponse(responseCode = "400", description = "Клиент допустил ошибки в запросе")
+            @ApiResponse(responseCode = "400", description = "Наименование используется в другом рецепте или рецепт не найден")
     })
     @PutMapping("/name")
     public Response<Recipe> updateRecipeName(@RequestBody @Valid RecipeUpdateNameRequestDto dto) {
@@ -75,10 +76,10 @@ public class AdminRecipeRestController {
         return Response.ok(recipeService.update(RecipeMapper.updateName(recipe.get(), dto)));
     }
 
-    @Operation(summary = "Эндпоинт для обновление наименования")
+    @Operation(summary = "Эндпоинт для добавления продукта в рецепт")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Наименование рецепта успешно обновлено"),
-            @ApiResponse(responseCode = "400", description = "Клиент допустил ошибки в запросе")
+            @ApiResponse(responseCode = "200", description = "Продукт успешно добавлен"),
+            @ApiResponse(responseCode = "400", description = "Рецепт или продукт не найден")
     })
     @PutMapping("/{recipeId}/product/{productId}")
     public Response<Recipe> addProductToRecipe(@PathVariable @Positive Long recipeId, @PathVariable @Positive Long productId) {
@@ -89,10 +90,10 @@ public class AdminRecipeRestController {
         return Response.ok(recipeService.addProductToRecipe(recipe.get(), product.get()));
     }
 
-    @Operation(summary = "Эндпоинт для обновление наименования")
+    @Operation(summary = "Эндпоинт для удаления продукта из рецепта по id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Наименование рецепта успешно обновлено"),
-            @ApiResponse(responseCode = "400", description = "Клиент допустил ошибки в запросе")
+            @ApiResponse(responseCode = "200", description = "Продукт успешно удален"),
+            @ApiResponse(responseCode = "400", description = "Рецепт или продукт не найден")
     })
     @DeleteMapping("/{recipeId}/product/{productId}")
     public Response<Recipe> deleteProductFromRecipe(@PathVariable @Positive Long recipeId, @PathVariable @Positive Long productId) {
@@ -103,7 +104,7 @@ public class AdminRecipeRestController {
         return Response.ok(recipeService.deleteProductFromRecipe(recipe.get(), product.get()));
     }
 
-    @Operation(summary = "Получение списка всех рецептов")
+    @Operation(summary = "Эндпоинт для получения списка всех рецептов")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Список всех рецептов успешно получен")
     })
@@ -112,10 +113,10 @@ public class AdminRecipeRestController {
         return Response.ok(recipeService.findAll());
     }
 
-    @Operation(summary = "Получение рецепта по id")
+    @Operation(summary = "Эндпоинт для получения рецепта по id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Рецепт успешно получен"),
-            @ApiResponse(responseCode = "404", description = "Рецепт не найден")
+            @ApiResponse(responseCode = "400", description = "Рецепт не найден")
     })
     @GetMapping("/{recipeId}")
     public Response<Recipe> getRecipeById(@PathVariable @Positive Long recipeId) {
@@ -124,10 +125,10 @@ public class AdminRecipeRestController {
         return Response.ok(recipe.get());
     }
 
-    @Operation(summary = "Удаление рецепта по id")
+    @Operation(summary = "Эндпоинт для удаления рецепта по id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Рецепт успешно удален"),
-            @ApiResponse(responseCode = "404", description = "Рецепт не найден")
+            @ApiResponse(responseCode = "400", description = "Рецепт не найден")
     })
     @DeleteMapping("/{recipeId}")
     public Response<Void> deleteRecipeById(@PathVariable @Positive Long recipeId) {
