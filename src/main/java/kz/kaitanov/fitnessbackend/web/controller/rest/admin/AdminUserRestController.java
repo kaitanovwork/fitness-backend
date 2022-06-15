@@ -7,9 +7,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kz.kaitanov.fitnessbackend.model.User;
 import kz.kaitanov.fitnessbackend.model.converter.UserMapper;
 import kz.kaitanov.fitnessbackend.model.dto.request.user.UserRegistrationRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.request.user.UserUpdateCoachRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.user.UserUpdateRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.response.UserResponseDto;
 import kz.kaitanov.fitnessbackend.service.interfaces.dto.UserResponseDtoService;
+import kz.kaitanov.fitnessbackend.service.interfaces.model.RoleService;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +38,7 @@ public class AdminUserRestController {
 
     private final UserService userService;
     private final UserResponseDtoService userResponseDtoService;
+    private final RoleService roleService;
 
     @Operation(summary = "Создание нового пользователя")
     @ApiResponses(value = {
@@ -127,4 +130,32 @@ public class AdminUserRestController {
         userService.deleteById(userId);
         return ResponseEntity.ok().build();
     }
+
+    @Operation(summary = "Добавление тренера пользователю")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Тренер успешно добавлен"),
+            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+    })
+    @PutMapping("/{userId}/coach/{coachId}")
+    public ResponseEntity<UserResponseDto> updateUserCoach(@PathVariable Long userId,
+                                                           @PathVariable Long coachId,
+                                                           @RequestBody @Valid UserUpdateCoachRequestDto dto) {
+
+
+        if (dto.id() == userId && !userService.existsById(dto.id())) {
+            return ResponseEntity.notFound().build();
+        }
+        Optional<User> userCoach = userService.findById(coachId);
+
+        if (userCoach == null && userService.roleMatching(coachId)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        userService.addCoach(dto, userCoach);
+//                UserMapper.toEntity(userUpdateRequestDto));
+        return ResponseEntity.ok(UserMapper.toDto(dto));
+
+
+    }
+
 }
