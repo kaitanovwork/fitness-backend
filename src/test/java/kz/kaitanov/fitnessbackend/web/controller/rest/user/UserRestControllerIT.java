@@ -26,7 +26,8 @@ public class UserRestControllerIT extends SpringSimpleContextTest {
         String token = getToken("user101", "pass");
         UserUpdateProfileRequestDto dto = new UserUpdateProfileRequestDto("firstName", "lastName", 20, Gender.MALE);
         mockMvc.perform(put("/api/v1/user/profile")
-                        .contentType(MediaType.APPLICATION_JSON).header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", token)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
@@ -54,7 +55,7 @@ public class UserRestControllerIT extends SpringSimpleContextTest {
     public void updateUserPassword_SuccessfulTest() throws Exception {
         String token = getToken("user101", "pass");
         UserUpdatePasswordRequestDto dto = new UserUpdatePasswordRequestDto("Artemiy");
-        String password1 = entityManager.createQuery(
+        String oldPassword = entityManager.createQuery(
                         """
                                 SELECT u.password
                                 FROM User u
@@ -63,11 +64,12 @@ public class UserRestControllerIT extends SpringSimpleContextTest {
                 .setParameter("id", 101L)
                 .getSingleResult();
         mockMvc.perform(put("/api/v1/user/password")
-                        .contentType(MediaType.APPLICATION_JSON).header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", token)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)));
-        String password = entityManager.createQuery(
+        String newPassword = entityManager.createQuery(
                         """
                                 SELECT u.password
                                 FROM User u
@@ -75,17 +77,18 @@ public class UserRestControllerIT extends SpringSimpleContextTest {
                                 """, String.class)
                 .setParameter("id", 101L)
                 .getSingleResult();
-        assertNotSame(password, password1);
+        assertNotSame(newPassword, oldPassword);
     }
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/UserRestController/updateUserPassword_SuccessfulTest/BeforeTest.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/UserRestController/updateUserPassword_SuccessfulTest/AfterTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/UserRestController/updateUserPassword_WithEmptyPasswordValueTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/UserRestController/updateUserPassword_WithEmptyPasswordValueTest/AfterTest.sql")
     public void updateUserPassword_WithEmptyPasswordValue() throws Exception {
         String token = getToken("user101", "pass");
         UserUpdatePasswordRequestDto dto = new UserUpdatePasswordRequestDto("");
         mockMvc.perform(put("/api/v1/user/password")
-                        .contentType(MediaType.APPLICATION_JSON).header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", token)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)));
@@ -99,7 +102,8 @@ public class UserRestControllerIT extends SpringSimpleContextTest {
         String token = getToken("user101", "pass");
         UserUpdateEmailRequestDto dto = new UserUpdateEmailRequestDto("user101@newEmail.ru");
         mockMvc.perform(put("/api/v1/user/email")
-                        .contentType(MediaType.APPLICATION_JSON).header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", token)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
@@ -118,11 +122,12 @@ public class UserRestControllerIT extends SpringSimpleContextTest {
     @Test
     @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/UserRestController/updateUserEmail_WithExistedEmailTest/BeforeTest.sql")
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/UserRestController/updateUserEmail_WithExistedEmailTest/AfterTest.sql")
-    public void updateUserPhone_WithExistedEmailTest() throws Exception {
+    public void updateUserEmail_WithExistedEmailTest() throws Exception {
         String token = getToken("user101", "pass");
         UserUpdateEmailRequestDto dto = new UserUpdateEmailRequestDto("user101test@gmail.com");
         mockMvc.perform(put("/api/v1/user/email")
-                        .contentType(MediaType.APPLICATION_JSON).header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", token)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
@@ -145,7 +150,8 @@ public class UserRestControllerIT extends SpringSimpleContextTest {
         String token = getToken("user101", "pass");
         UserUpdatePhoneRequestDto dto = new UserUpdatePhoneRequestDto("89050001122");
         mockMvc.perform(put("/api/v1/user/phone")
-                        .contentType(MediaType.APPLICATION_JSON).header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", token)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
@@ -166,13 +172,14 @@ public class UserRestControllerIT extends SpringSimpleContextTest {
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/UserRestController/updateUserPhone_WithExistedPhoneTest/AfterTest.sql")
     public void updateUserPhone_WithExistedPhoneTest() throws Exception {
         String token = getToken("user101", "pass");
-        UserUpdatePhoneRequestDto dto = new UserUpdatePhoneRequestDto("89050001122");
+        UserUpdatePhoneRequestDto dto = new UserUpdatePhoneRequestDto("89999999101");
         mockMvc.perform(put("/api/v1/user/phone")
-                        .contentType(MediaType.APPLICATION_JSON).header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", token)
                         .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.phone", Is.is(dto.phone())));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error", Is.is("phone is being used by another user")));
 
         assertTrue(entityManager.createQuery(
                         """

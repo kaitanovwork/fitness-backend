@@ -1,12 +1,8 @@
-truncate fitness_backend_test_db.public.roles restart identity cascade;
-truncate fitness_backend_test_db.public.users restart identity cascade;
-
-
-insert into fitness_backend_test_db.public.roles(id, name)
+INSERT INTO roles(id, name)
 VALUES (1, 'ADMIN'),
        (2, 'USER');
 
-insert into fitness_backend_test_db.public.users(id, age, email, first_name, gender, last_name, password, phone,
+INSERT INTO users(id, age, email, first_name, gender, last_name, password, phone,
                                                  username, role_id)
 VALUES (101, 18, 'user101test@gmail.com', 'user101test', 'MALE', 'user101test',
         '$2a$12$oKyYPTUSdVEH.mccvYPH3ePnQ22J/msCAKOS4fc1/zMVBINq7oKNa', '89999999101', 'user101', 1),
@@ -16,7 +12,3 @@ VALUES (101, 18, 'user101test@gmail.com', 'user101test', 'MALE', 'user101test',
         '$2a$12$oKyYPTUSdVEH.mccvYPH3ePnQ22J/msCAKOS4fc1/zMVBINq7oKNa', '89999999103', 'user103', 2),
        (104, 21, 'user104test@gmail.com', 'user104test', 'FEMALE', 'user104test',
         '$2a$12$oKyYPTUSdVEH.mccvYPH3ePnQ22J/msCAKOS4fc1/zMVBINq7oKNa', '89999999104', 'user104', 2);
-
-
-
--- ������ �� ������������ "1"

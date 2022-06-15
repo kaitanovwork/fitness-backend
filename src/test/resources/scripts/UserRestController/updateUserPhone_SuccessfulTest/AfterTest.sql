@@ -1,2 +1,2 @@
-truncate fitness_backend_test_db.public.roles restart identity cascade;
-truncate fitness_backend_test_db.public.users restart identity cascade;
+TRUNCATE TABLE roles CASCADE;
+TRUNCATE TABLE users CASCADE;
