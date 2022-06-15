@@ -73,10 +73,6 @@ public class UserServiceImpl extends AbstractServiceImpl<User, Long> implements 
         return super.update(user);
     }
 
-    @Override
-    public boolean roleMatching(Long id) {
-        return userRepository.roleMatching(id);
-    }
 
 
 

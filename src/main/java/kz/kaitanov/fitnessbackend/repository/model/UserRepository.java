@@ -44,12 +44,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
             """)
     Optional<User> findByIdWithRoles(@Param("id") Long id);
 
-    @Query( nativeQuery = true,value = """
-            select u
-            from users u
-            JOIN roles r on u.role_id = r.id
-            where r.name = 'COACH'
-            """)
-    boolean roleMatching(@Param("id") Long id);
-
 }

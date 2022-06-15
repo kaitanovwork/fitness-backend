@@ -4,17 +4,21 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import kz.kaitanov.fitnessbackend.model.Product;
+import kz.kaitanov.fitnessbackend.model.Recipe;
 import kz.kaitanov.fitnessbackend.model.User;
 import kz.kaitanov.fitnessbackend.model.converter.UserMapper;
 import kz.kaitanov.fitnessbackend.model.dto.request.user.UserRegistrationRequestDto;
-import kz.kaitanov.fitnessbackend.model.dto.request.user.UserUpdateCoachRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.user.UserUpdateRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.response.UserResponseDto;
+import kz.kaitanov.fitnessbackend.model.dto.response.api.Response;
 import kz.kaitanov.fitnessbackend.service.interfaces.dto.UserResponseDtoService;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.RoleService;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.UserService;
+import kz.kaitanov.fitnessbackend.web.config.util.ApiValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -134,28 +138,24 @@ public class AdminUserRestController {
     @Operation(summary = "Добавление тренера пользователю")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Тренер успешно добавлен"),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+            @ApiResponse(responseCode = "400", description = "Пользователь не найден")
     })
     @PutMapping("/{userId}/coach/{coachId}")
     public ResponseEntity<UserResponseDto> updateUserCoach(@PathVariable Long userId,
                                                            @PathVariable Long coachId,
-                                                           @RequestBody @Valid UserUpdateCoachRequestDto dto) {
+                                                           @RequestBody @Valid UserResponseDto dto) {
 
-
-        if (dto.id() == userId && !userService.existsById(dto.id())) {
+        Optional<User> user = userService.findById(userId);
+        ApiValidationUtil.requireTrue(user.isPresent(), String.format("User by id %d not found", userId));
+        Optional<User> coach = userService.findByIdWithRoles(coachId);
+        ApiValidationUtil.requireTrue(coach.isPresent(), String.format("Coach by id %d not found", coachId));
+        if (!coach.get().getRole().getName().equals("COACH")){
             return ResponseEntity.notFound().build();
         }
-        Optional<User> userCoach = userService.findById(coachId);
 
-        if (userCoach == null && userService.roleMatching(coachId)) {
-            return ResponseEntity.notFound().build();
-        }
-
-        userService.addCoach(dto, userCoach);
-//                UserMapper.toEntity(userUpdateRequestDto));
-        return ResponseEntity.ok(UserMapper.toDto(dto));
-
-
+        User userUpd = userService.addCoach(user.get(), coach.get());
+        // как вернуть userresponcedto?
+        return  ResponseEntity.ok()
     }
 
 }

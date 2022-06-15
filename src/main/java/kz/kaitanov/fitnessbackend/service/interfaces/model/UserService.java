@@ -19,5 +19,4 @@ public interface UserService extends AbstractService<User, Long>, UserDetailsSer
 
     User addCoach(User user, User coach);
 
-    boolean roleMatching(Long id);
 }
