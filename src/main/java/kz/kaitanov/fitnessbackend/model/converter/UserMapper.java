@@ -70,7 +70,8 @@ public final class UserMapper {
                 user.getEmail(),
                 user.getPhone(),
                 user.getAge(),
-                user.getGender()
+                user.getGender(),
+                user.getCoach()
         );
     }
 }
