@@ -12,6 +12,7 @@ import kz.kaitanov.fitnessbackend.model.dto.response.UserResponseDto;
 import kz.kaitanov.fitnessbackend.service.interfaces.dto.UserResponseDtoService;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -67,6 +68,17 @@ public class AdminUserRestController {
     })
     @GetMapping
     public ResponseEntity<List<UserResponseDto>> getUserList() {
+        return ResponseEntity.ok(userResponseDtoService.findAll());
+    }
+
+    @Operation(summary = "Получение постраничного списка всех пользователей")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Постраничный список всех пользователей успешно получен")
+    })
+    @GetMapping
+    public ResponseEntity<List<UserResponseDto>> getPaginatedUserList() {
+        Pageable pageable =
+
         return ResponseEntity.ok(userResponseDtoService.findAll());
     }
 
