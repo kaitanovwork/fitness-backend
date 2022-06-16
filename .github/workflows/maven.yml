@@ -21,6 +21,7 @@ jobs:
       run: mvn -B package --file pom.xml
       
   tests:
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
