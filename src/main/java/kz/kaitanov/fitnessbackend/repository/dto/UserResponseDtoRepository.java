@@ -4,12 +4,13 @@ import kz.kaitanov.fitnessbackend.model.User;
 import kz.kaitanov.fitnessbackend.model.dto.response.UserResponseDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface UserResponseDtoRepository extends JpaRepository<User, Long> {
+public interface UserResponseDtoRepository extends JpaRepository<User, Long>, PagingAndSortingRepository<User, Long> {
 
     @Query("""
             SELECT new kz.kaitanov.fitnessbackend.model.dto.response.UserResponseDto(u.id, u.username, u.firstName, u.lastName, u.email, u.phone, u.age, u.gender)
