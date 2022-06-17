@@ -9,10 +9,13 @@ import kz.kaitanov.fitnessbackend.model.converter.UserMapper;
 import kz.kaitanov.fitnessbackend.model.dto.request.user.UserRegistrationRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.user.UserUpdateRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.response.UserResponseDto;
+import kz.kaitanov.fitnessbackend.model.dto.response.api.Response;
 import kz.kaitanov.fitnessbackend.service.interfaces.dto.UserResponseDtoService;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -75,22 +79,17 @@ public class AdminUserRestController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Постраничный список всех пользователей успешно получен")
     })
-    @GetMapping
-    public ResponseEntity<List<UserResponseDto>> getPaginatedUserList() {
-        Pageable pageable =
-
-        return ResponseEntity.ok(userResponseDtoService.findAll());
-    }
-
-    @Operation(summary = "Получение пользователя по id")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Пользователь успешно получен"),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
-    })
-    @GetMapping("/{userId}")
-    public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long userId) {
-        Optional<UserResponseDto> userResponseDtoOptional = userResponseDtoService.findById(userId);
-        return userResponseDtoOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    @GetMapping("/users")
+    public Response<Page<UserResponseDto>> getPaginatedUsers(
+            @RequestParam (required = false, defaultValue = "1", value = "page") Optional<Integer> page,
+            @RequestParam (required = false, defaultValue = "1", value = "sortBy") Optional<String>  sortBy
+    ) {
+        return Response.ok(userResponseDtoService.findAllPaginated(
+                PageRequest.of(
+                        page.orElse(1),
+                        5,
+                        Sort.Direction.ASC,
+                        sortBy.orElse("id"))));
     }
 
     @Operation(summary = "Получение пользователя по username")

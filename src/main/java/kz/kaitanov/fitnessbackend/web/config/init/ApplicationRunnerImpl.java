@@ -10,6 +10,7 @@ import kz.kaitanov.fitnessbackend.service.interfaces.model.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
@@ -20,10 +21,11 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
     private final RoleService roleService;
     private final ExerciseService exerciseService;
     private final RecipeService recipeService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(ApplicationArguments args) {
-        /*Role adminRole = new Role();
+        Role adminRole = new Role();
         Role userRole = new Role();
         adminRole.setName(RoleName.ADMIN);
         userRole.setName(RoleName.USER);
@@ -33,6 +35,18 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
         User user = new User();
         user.setUsername("user1");
         user.setPassword("pass");
-        userService.save(user);*/
+        user.setRole(adminRole);
+        userService.save(user);
+//        User user = new User();
+//        user.setUsername("user");
+//        user.setPassword(passwordEncoder.encode("password"));
+//        user.setRole(userRole);
+//        User admin = new User();
+//        admin.setUsername("admin");
+//        admin.setPassword(passwordEncoder.encode("password"));
+//        admin.setRole(adminRole);
+//        saveUser(user);
+//        saveUser(admin);
+
     }
 }
