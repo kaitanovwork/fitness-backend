@@ -10,6 +10,7 @@ import kz.kaitanov.fitnessbackend.model.dto.request.user.UserRegistrationRequest
 import kz.kaitanov.fitnessbackend.model.dto.request.user.UserUpdateRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.response.UserResponseDto;
 import kz.kaitanov.fitnessbackend.model.dto.response.api.Response;
+import kz.kaitanov.fitnessbackend.model.enums.RoleName;
 import kz.kaitanov.fitnessbackend.service.interfaces.dto.UserResponseDtoService;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.RoleService;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.UserService;
@@ -147,7 +148,7 @@ public class AdminUserRestController {
         ApiValidationUtil.requireTrue(user.isPresent(), String.format("User by id %d not found", userId));
         Optional<User> coach = userService.findByIdWithRoles(coachId);
         ApiValidationUtil.requireTrue(coach.isPresent(), String.format("Coach by id %d not found", coachId));
-        ApiValidationUtil.requireTrue(coach.get().getRole().getName().equals("COACH"),
+        ApiValidationUtil.requireTrue(coach.get().getRole().getName().equals(RoleName.COACH),
                 String.format("Coach by id %d not found", coachId));
         return Response.ok(UserMapper.toDto(userService.addCoach(user.get(), coach.get())));
     }

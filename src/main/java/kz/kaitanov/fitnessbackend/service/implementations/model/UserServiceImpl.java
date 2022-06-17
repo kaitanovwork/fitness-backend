@@ -67,13 +67,10 @@ public class UserServiceImpl extends AbstractServiceImpl<User, Long> implements 
     }
 
     @Override
-    public User addCoach(User user, User coach){
-        userRepository.findById(user.getId());
+    public User addCoach(User user, User coach) {
         user.setCoach(coach);
         return super.update(user);
     }
-
-
 
 
 }
