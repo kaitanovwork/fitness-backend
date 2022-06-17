@@ -148,7 +148,7 @@ public class AdminUserRestController {
         ApiValidationUtil.requireTrue(user.isPresent(), String.format("User by id %d not found", userId));
         Optional<User> coach = userService.findByIdWithRoles(coachId);
         ApiValidationUtil.requireTrue(coach.isPresent(), String.format("Coach by id %d not found", coachId));
-        ApiValidationUtil.requireTrue(coach.get().getRole().getName().equals(RoleName.COACH),
+        ApiValidationUtil.requireTrue(coach.get().getRole().equals(RoleName.COACH),
                 String.format("Coach by id %d not found", coachId));
         return Response.ok(UserMapper.toDto(userService.addCoach(user.get(), coach.get())));
     }
