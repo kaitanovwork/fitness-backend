@@ -65,4 +65,12 @@ public class UserServiceImpl extends AbstractServiceImpl<User, Long> implements 
     public Optional<User> findByIdWithRoles(Long id) {
         return userRepository.findByIdWithRoles(id);
     }
+
+    @Override
+    public User addCoach(User user, User coach) {
+        user.setCoach(coach);
+        return super.update(user);
+    }
+
+
 }

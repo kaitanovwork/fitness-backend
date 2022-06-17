@@ -1,5 +1,6 @@
 package kz.kaitanov.fitnessbackend.model.dto.response;
 
+import kz.kaitanov.fitnessbackend.model.User;
 import kz.kaitanov.fitnessbackend.model.enums.Gender;
 
 public record UserResponseDto(
@@ -10,5 +11,6 @@ public record UserResponseDto(
         String email,
         String phone,
         Integer age,
-        Gender gender) {
+        Gender gender,
+        User coach) {
 }
