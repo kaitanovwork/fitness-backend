@@ -81,12 +81,12 @@ public class AdminUserRestController {
     })
     @GetMapping("/users")
     public Response<Page<UserResponseDto>> getPaginatedUsers(
-            @RequestParam (required = false, defaultValue = "1", value = "page") Optional<Integer> page,
-            @RequestParam (required = false, defaultValue = "1", value = "sortBy") Optional<String>  sortBy
+            @RequestParam (required = false, defaultValue = "0", value = "page") Optional<Integer> page,
+            @RequestParam (required = false, defaultValue = "0", value = "sortBy") Optional<String>  sortBy
     ) {
         return Response.ok(userResponseDtoService.findAllPaginated(
                 PageRequest.of(
-                        page.orElse(1),
+                        page.orElse(0),
                         5,
                         Sort.Direction.ASC,
                         sortBy.orElse("id"))));
