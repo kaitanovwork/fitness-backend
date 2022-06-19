@@ -29,13 +29,10 @@ public class UserResponseDtoServiceImpl implements UserResponseDtoService {
     public Page<UserResponseDto> findAllPaginated(PageRequest pageRequest) {
         Page<User> pageResponse = Optional.of(userResponseDtoRepository.findAll(pageRequest))
                 .orElseThrow(() -> new IllegalArgumentException("No users found"));
-
-
         return new PageImpl<>(pageResponse.stream()
                 .map(userResponseDtoRepository -> createUserResponseDto(Optional.ofNullable(userResponseDtoRepository)))
                 .collect(Collectors.toList()));
     }
-
 
     private static UserResponseDto createUserResponseDto(Optional<User> usersOptional) {
         User user = usersOptional.get();
