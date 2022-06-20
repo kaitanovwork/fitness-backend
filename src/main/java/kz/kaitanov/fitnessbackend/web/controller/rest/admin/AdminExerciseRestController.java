@@ -34,12 +34,12 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/admin/exercise")
 public class AdminExerciseRestController {
-    //TODO подправить описание swagger AdminExerciseRestController
     private final ExerciseService exerciseService;
 
     @Operation(summary = "Создание нового упражнения")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Новое упражнение успешно создано")
+            @ApiResponse(responseCode = "200", description = "Новое упражнение успешно создано"),
+            @ApiResponse(responseCode = "400", description = "Упражнение с таким именем уже существует")
     })
     @PostMapping
     public Response<Exercise> saveExercise(@RequestBody @Valid ExercisePersistRequestDto dto) {
@@ -50,7 +50,7 @@ public class AdminExerciseRestController {
     @Operation(summary = "Обновление существующего упражнения")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Существующее упражнение успешно обновлено"),
-            @ApiResponse(responseCode = "404", description = "Упражнение не найдено")
+            @ApiResponse(responseCode = "400", description = "Упражнение с таким именем не найдено")
     })
     @PutMapping
     public Response<Exercise> updateExercise(@RequestBody @Valid ExerciseUpdateRequestDto dto) {
@@ -61,11 +61,11 @@ public class AdminExerciseRestController {
 
     @Operation(summary = "Эндпоинт для обновление наименования")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Наименование продукта успешно обновлено"),
-            @ApiResponse(responseCode = "400", description = "Клиент допустил ошибки в запросе")
+            @ApiResponse(responseCode = "200", description = "Наименование упражнения успешно обновлено"),
+            @ApiResponse(responseCode = "400", description = "Упраженение с таким id не найдено")
     })
     @PutMapping("/name")
-    public Response<Exercise> updateProductName(@RequestBody @Valid ExerciseUpdateNameRequestDto dto) {
+    public Response<Exercise> updateExerciseName(@RequestBody @Valid ExerciseUpdateNameRequestDto dto) {
         ApiValidationUtil.requireFalse(exerciseService.existsByName(dto.name()), "name is being used by another exercise");
         Optional<Exercise> exercise = exerciseService.findById(dto.id());
         ApiValidationUtil.requireTrue(exercise.isPresent(), String.format("Exercise by id %d not found", dto.id()));
@@ -84,7 +84,7 @@ public class AdminExerciseRestController {
     @Operation(summary = "Получение упражнения по id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Упражнение успешно получено"),
-            @ApiResponse(responseCode = "404", description = "Упражнение не найдено")
+            @ApiResponse(responseCode = "400", description = "Упражнение c таким id не найдено")
     })
     @GetMapping(value = "/{exerciseId}")
     public Response<Exercise> getExerciseById(@PathVariable @Positive Long exerciseId) {
@@ -96,7 +96,7 @@ public class AdminExerciseRestController {
     @Operation(summary = "Удаление упражнения по id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Упражнение успешно удалено"),
-            @ApiResponse(responseCode = "404", description = "Упражнение не найдено")
+            @ApiResponse(responseCode = "400", description = "Упражнение c таким id не существует")
     })
     @DeleteMapping(value = "/{exerciseId}")
     public Response<Void> deleteExerciseById(@PathVariable @Positive Long exerciseId) {
