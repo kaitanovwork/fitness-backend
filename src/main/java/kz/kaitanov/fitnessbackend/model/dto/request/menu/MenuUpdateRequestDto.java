@@ -7,6 +7,5 @@ import javax.validation.constraints.Positive;
 
 public record MenuUpdateRequestDto(
         @NotNull @Positive Long id,
-        @NotNull ProgramType programType
-        ) {
+        @NotNull ProgramType programType) {
 }

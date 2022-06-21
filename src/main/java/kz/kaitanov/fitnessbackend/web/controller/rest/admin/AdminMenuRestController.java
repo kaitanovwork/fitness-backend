@@ -10,7 +10,6 @@ import kz.kaitanov.fitnessbackend.model.converter.MenuMapper;
 import kz.kaitanov.fitnessbackend.model.dto.request.menu.MenuPersistRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.menu.MenuUpdateRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.response.api.Response;
-import kz.kaitanov.fitnessbackend.service.implementations.model.MenuServiceImp;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.MenuService;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.SubMenuService;
 import kz.kaitanov.fitnessbackend.web.config.util.ApiValidationUtil;
@@ -37,15 +36,12 @@ import java.util.Optional;
 @RequestMapping(value = "/api/v1/admin/menu")
 public class AdminMenuRestController {
 
-
     private final MenuService menuService;
     private final SubMenuService subMenuService;
 
-
     @Operation(summary = "Эндпоинт для создание нового меню")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Новое меню успешно создано"),
-            @ApiResponse(responseCode = "400", description = "Меню с таким id уже существует")
+            @ApiResponse(responseCode = "200", description = "Новое меню успешно создано")
     })
     @PostMapping
     public Response<Menu> saveMenu(@RequestBody @Valid MenuPersistRequestDto dto) {
@@ -71,7 +67,7 @@ public class AdminMenuRestController {
     })
     @PutMapping("/{menuId}/subMenu/{subMenuId}")
     public Response<Menu> addSubMenuToMenu(@PathVariable @Positive Long menuId, @PathVariable @Positive Long subMenuId) {
-        Optional<Menu> menu = menuService.findById(menuId);
+        Optional<Menu> menu = menuService.findByIdWithSubMenus(menuId);
         ApiValidationUtil.requireTrue(menu.isPresent(), String.format("Menu by id %d not found", menuId));
         Optional<SubMenu> subMenu = subMenuService.findById(subMenuId);
         ApiValidationUtil.requireTrue(subMenu.isPresent(), String.format("SubMenu by id %d not found", subMenuId));

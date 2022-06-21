@@ -68,4 +68,3 @@ public class Menu {
         return Objects.hash(id, programType);
     }
 }
-

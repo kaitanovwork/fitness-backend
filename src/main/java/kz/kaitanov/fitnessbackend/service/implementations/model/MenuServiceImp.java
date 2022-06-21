@@ -1,13 +1,9 @@
 package kz.kaitanov.fitnessbackend.service.implementations.model;
 
 import kz.kaitanov.fitnessbackend.model.Menu;
-import kz.kaitanov.fitnessbackend.model.Recipe;
 import kz.kaitanov.fitnessbackend.model.SubMenu;
 import kz.kaitanov.fitnessbackend.repository.model.MenuRepository;
-import kz.kaitanov.fitnessbackend.repository.model.RecipeRepository;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.MenuService;
-import kz.kaitanov.fitnessbackend.service.interfaces.model.RecipeService;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -19,13 +15,7 @@ public class MenuServiceImp extends AbstractServiceImpl<Menu, Long> implements M
 
     public MenuServiceImp(MenuRepository menuRepository) {
         super(menuRepository);
-        this.menuRepository = menuRepository ;
-    }
-
-
-    @Override
-    public boolean existsById(Long id) {
-        return menuRepository.existsById(id);
+        this.menuRepository = menuRepository;
     }
 
     @Override

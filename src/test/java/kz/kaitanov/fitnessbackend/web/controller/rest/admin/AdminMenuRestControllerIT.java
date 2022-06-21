@@ -1,11 +1,9 @@
 package kz.kaitanov.fitnessbackend.web.controller.rest.admin;
 
 import kz.kaitanov.fitnessbackend.SpringSimpleContextTest;
-import kz.kaitanov.fitnessbackend.model.Exercise;
 import kz.kaitanov.fitnessbackend.model.Menu;
 import kz.kaitanov.fitnessbackend.model.dto.request.menu.MenuPersistRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.menu.MenuUpdateRequestDto;
-import kz.kaitanov.fitnessbackend.model.enums.Area;
 import kz.kaitanov.fitnessbackend.model.enums.ProgramType;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
@@ -17,7 +15,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import static org.hamcrest.Matchers.hasItems;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -44,9 +41,9 @@ public class AdminMenuRestControllerIT extends SpringSimpleContextTest {
 
         assertTrue(entityManager.createQuery(
                         """
-                                SELECT COUNT(r.id) > 0
-                                FROM Menu r
-                                WHERE r.programType = :programType
+                                SELECT COUNT(m.id) > 0
+                                FROM Menu m
+                                WHERE m.programType = :programType
                                 """,
                         Boolean.class)
                 .setParameter("programType", dto.programType())
@@ -73,9 +70,10 @@ public class AdminMenuRestControllerIT extends SpringSimpleContextTest {
 
         assertTrue(entityManager.createQuery(
                         """
-                                SELECT COUNT(u.id) > 0
-                                FROM Menu u
-                                WHERE u.id = :id AND u.programType = :programType""",
+                                SELECT COUNT(m.id) > 0
+                                FROM Menu m
+                                WHERE m.id = :id AND m.programType = :programType
+                                """,
                         Boolean.class)
                 .setParameter("id", dto.id())
                 .setParameter("programType", dto.programType())
@@ -119,9 +117,9 @@ public class AdminMenuRestControllerIT extends SpringSimpleContextTest {
 
         assertTrue(entityManager.createQuery(
                         """
-                                SELECT COUNT(r.id) > 0
-                                FROM Menu r
-                                WHERE r.id = :id AND r.subMenus.size = :subMenus
+                                SELECT COUNT(m.id) > 0
+                                FROM Menu m
+                                WHERE m.id = :id AND m.subMenus.size = :subMenus
                                 """,
                         Boolean.class)
                 .setParameter("id", 101L)
@@ -174,9 +172,9 @@ public class AdminMenuRestControllerIT extends SpringSimpleContextTest {
 
         assertTrue(entityManager.createQuery(
                         """
-                                SELECT COUNT(r.id) > 0
-                                FROM Menu r
-                                WHERE r.id = :id AND r.subMenus.size = :subMenus
+                                SELECT COUNT(m.id) > 0
+                                FROM Menu m
+                                WHERE m.id = :id AND m.subMenus.size = :subMenus
                                 """,
                         Boolean.class)
                 .setParameter("id", 101L)
@@ -229,9 +227,10 @@ public class AdminMenuRestControllerIT extends SpringSimpleContextTest {
 
         assertFalse(entityManager.createQuery(
                         """
-                                SELECT COUNT(r.id) > 0
-                                FROM Menu r
-                                WHERE r.id = :id""",
+                                SELECT COUNT(m.id) > 0
+                                FROM Menu m
+                                WHERE m.id = :id
+                                """,
                         Boolean.class)
                 .setParameter("id", 101L)
                 .getSingleResult());
