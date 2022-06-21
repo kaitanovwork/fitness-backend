@@ -9,10 +9,13 @@ import kz.kaitanov.fitnessbackend.model.converter.UserMapper;
 import kz.kaitanov.fitnessbackend.model.dto.request.user.UserRegistrationRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.user.UserUpdateRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.response.UserResponseDto;
+import kz.kaitanov.fitnessbackend.model.dto.response.api.Response;
+import kz.kaitanov.fitnessbackend.model.enums.RoleName;
 import kz.kaitanov.fitnessbackend.service.interfaces.dto.UserResponseDtoService;
+import kz.kaitanov.fitnessbackend.service.interfaces.model.RoleService;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.UserService;
+import kz.kaitanov.fitnessbackend.web.config.util.ApiValidationUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,29 +39,30 @@ public class AdminUserRestController {
 
     private final UserService userService;
     private final UserResponseDtoService userResponseDtoService;
+    private final RoleService roleService;
 
     @Operation(summary = "Создание нового пользователя")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Новый пользователь успешно создан")
     })
     @PostMapping
-    public ResponseEntity<UserResponseDto> saveUser(@RequestBody @Valid UserRegistrationRequestDto userRegistrationRequestDto) {
+    public Response<UserResponseDto> saveUser(@RequestBody @Valid UserRegistrationRequestDto userRegistrationRequestDto) {
         User user = userService.save(UserMapper.toEntity(userRegistrationRequestDto));
-        return ResponseEntity.ok(UserMapper.toDto(user));
+        return Response.ok(UserMapper.toDto(user));
     }
 
     @Operation(summary = "Обновление существующего пользователя")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Существующий пользователь успешно обновлен"),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+            @ApiResponse(responseCode = "400", description = "Пользователь не найден")
     })
     @PutMapping
-    public ResponseEntity<UserResponseDto> updateUser(@RequestBody @Valid UserUpdateRequestDto userUpdateRequestDto) {
-        if (!userService.existsById(userUpdateRequestDto.id())) {
-            return ResponseEntity.notFound().build();
-        }
+    public Response<UserResponseDto> updateUser(@RequestBody @Valid UserUpdateRequestDto userUpdateRequestDto) {
+        ApiValidationUtil.requireTrue(userService.existsById(userUpdateRequestDto.id()),
+                String.format("User by id %d not found", userUpdateRequestDto.id()));
+
         User user = userService.update(UserMapper.toEntity(userUpdateRequestDto));
-        return ResponseEntity.ok(UserMapper.toDto(user));
+        return Response.ok(UserMapper.toDto(user));
     }
 
     @Operation(summary = "Получение списка всех пользователей")
@@ -66,65 +70,87 @@ public class AdminUserRestController {
             @ApiResponse(responseCode = "200", description = "Список всех пользователей успешно получен")
     })
     @GetMapping
-    public ResponseEntity<List<UserResponseDto>> getUserList() {
-        return ResponseEntity.ok(userResponseDtoService.findAll());
+    public Response<List<UserResponseDto>> getUserList() {
+        return Response.ok(userResponseDtoService.findAll());
     }
 
     @Operation(summary = "Получение пользователя по id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Пользователь успешно получен"),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+            @ApiResponse(responseCode = "400", description = "Пользователь не найден")
     })
     @GetMapping("/{userId}")
-    public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long userId) {
+    public Response<UserResponseDto> getUserById(@PathVariable Long userId) {
         Optional<UserResponseDto> userResponseDtoOptional = userResponseDtoService.findById(userId);
-        return userResponseDtoOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        ApiValidationUtil.requireTrue(userResponseDtoOptional.isPresent(), String.format("User by id %d not found", userId));
+        return Response.ok(userResponseDtoOptional.get());
+
     }
 
     @Operation(summary = "Получение пользователя по username")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Пользователь успешно получен"),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+            @ApiResponse(responseCode = "400", description = "Пользователь не найден")
     })
     @GetMapping("/username/{username}")
-    public ResponseEntity<UserResponseDto> getUserByUsername(@PathVariable String username) {
+    public Response<UserResponseDto> getUserByUsername(@PathVariable String username) {
         Optional<UserResponseDto> userResponseDtoOptional = userResponseDtoService.findByUsername(username);
-        return userResponseDtoOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        ApiValidationUtil.requireTrue(userResponseDtoOptional.isPresent(), String.format("User by username %s not found", username));
+        return Response.ok(userResponseDtoOptional.get());
     }
 
     @Operation(summary = "Получение пользователя по email")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Пользователь успешно получен"),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+            @ApiResponse(responseCode = "400", description = "Пользователь не найден")
     })
     @GetMapping("/email/{email}")
-    public ResponseEntity<UserResponseDto> getUserByEmail(@PathVariable String email) {
+    public Response<UserResponseDto> getUserByEmail(@PathVariable String email) {
         Optional<UserResponseDto> userResponseDtoOptional = userResponseDtoService.findByEmail(email);
-        return userResponseDtoOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        ApiValidationUtil.requireTrue(userResponseDtoOptional.isPresent(), String.format("User by email %s not found", email));
+        return Response.ok(userResponseDtoOptional.get());
     }
 
     @Operation(summary = "Получение пользователя по phone")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Пользователь успешно получен"),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+            @ApiResponse(responseCode = "400", description = "Пользователь не найден")
     })
     @GetMapping("/phone/{phone}")
-    public ResponseEntity<UserResponseDto> getUserByPhone(@PathVariable String phone) {
+    public Response<UserResponseDto> getUserByPhone(@PathVariable String phone) {
         Optional<UserResponseDto> userResponseDtoOptional = userResponseDtoService.findByPhone(phone);
-        return userResponseDtoOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        ApiValidationUtil.requireTrue(userResponseDtoOptional.isPresent(), String.format("User by phone %s not found", phone));
+        return Response.ok(userResponseDtoOptional.get());
     }
 
     @Operation(summary = "Удаление пользователя по id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Пользователь успешно удален"),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+            @ApiResponse(responseCode = "400", description = "Пользователь не найден")
     })
     @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> deleteUserById(@PathVariable Long userId) {
-        if (!userService.existsById(userId)) {
-            return ResponseEntity.notFound().build();
-        }
+    public Response<Void> deleteUserById(@PathVariable Long userId) {
+        ApiValidationUtil.requireTrue(userService.existsById(userId), String.format("User by id %d not found", userId));
         userService.deleteById(userId);
-        return ResponseEntity.ok().build();
+        return Response.ok();
     }
+
+    @Operation(summary = "Добавление тренера пользователю")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Тренер успешно добавлен"),
+            @ApiResponse(responseCode = "400", description = "Пользователь не найден")
+    })
+    @PutMapping("/{userId}/coach/{coachId}")
+    public Response<UserResponseDto> updateUserCoach(@PathVariable Long userId,
+                                                     @PathVariable Long coachId) {
+
+        Optional<User> user = userService.findById(userId);
+        ApiValidationUtil.requireTrue(user.isPresent(), String.format("User by id %d not found", userId));
+        Optional<User> coach = userService.findByIdWithRoles(coachId);
+        ApiValidationUtil.requireTrue(coach.isPresent(), String.format("Coach by id %d not found", coachId));
+        ApiValidationUtil.requireTrue(coach.get().getRole().equals(RoleName.COACH),
+                String.format("Coach by id %d not found", coachId));
+        return Response.ok(UserMapper.toDto(userService.addCoach(user.get(), coach.get())));
+    }
+
 }

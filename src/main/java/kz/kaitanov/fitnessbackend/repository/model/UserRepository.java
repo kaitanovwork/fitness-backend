@@ -43,4 +43,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
             WHERE u.id = :id
             """)
     Optional<User> findByIdWithRoles(@Param("id") Long id);
+
 }

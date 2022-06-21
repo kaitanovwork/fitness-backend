@@ -16,4 +16,7 @@ public interface UserService extends AbstractService<User, Long>, UserDetailsSer
     boolean existsByPhone(String phone);
 
     Optional<User> findByIdWithRoles(Long id);
+
+    User addCoach(User user, User coach);
+
 }
