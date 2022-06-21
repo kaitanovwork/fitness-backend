@@ -43,7 +43,7 @@ public class UserServiceImpl extends AbstractServiceImpl<User, Long> implements 
     @Override
     public User updatePassword(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return super.update(user);
+        return update(user);
     }
 
     @Override
@@ -69,8 +69,6 @@ public class UserServiceImpl extends AbstractServiceImpl<User, Long> implements 
     @Override
     public User addCoach(User user, User coach) {
         user.setCoach(coach);
-        return super.update(user);
+        return update(user);
     }
-
-
 }

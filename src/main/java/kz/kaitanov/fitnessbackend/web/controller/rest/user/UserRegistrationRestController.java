@@ -39,7 +39,6 @@ public class UserRegistrationRestController {
         ApiValidationUtil.requireFalse(userService.existsByUsername(dto.username()), "username is being used by another user");
         ApiValidationUtil.requireFalse(dto.email() != null && userService.existsByEmail(dto.email()), "email is being used by another user");
         ApiValidationUtil.requireFalse(dto.phone() != null && userService.existsByPhone(dto.phone()), "phone is being used by another user");
-        User newUser = userService.save(UserMapper.toEntity(dto));
-        return Response.ok(UserMapper.toDto(newUser));
+        return Response.ok(UserMapper.toDto(userService.save(UserMapper.toEntity(dto))));
     }
 }

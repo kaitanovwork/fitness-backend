@@ -104,6 +104,7 @@ public class AdminRecipeRestController {
         return Response.ok(recipeService.deleteProductFromRecipe(recipe.get(), product.get()));
     }
 
+    //TODO добавить пагинацию
     @Operation(summary = "Эндпоинт для получения списка всех рецептов")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Список всех рецептов успешно получен")
@@ -136,4 +137,7 @@ public class AdminRecipeRestController {
         recipeService.deleteById(recipeId);
         return Response.ok();
     }
+
+    //TODO добавить эндпоинт для добавления продуктов пачкой
+    //TODO добавить эндпоинт для удаления продуктов пачкой
 }
