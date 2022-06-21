@@ -17,7 +17,7 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
     @Query("""
             SELECT r
-            FROM Recipe r JOIN FETCH r.products
+            FROM Recipe r LEFT JOIN FETCH r.products
             WHERE r.id = :id
             """)
     Optional<Recipe> findByIdWithProducts(Long id);

@@ -83,7 +83,7 @@ public class AdminRecipeRestController {
     })
     @PutMapping("/{recipeId}/product/{productId}")
     public Response<Recipe> addProductToRecipe(@PathVariable @Positive Long recipeId, @PathVariable @Positive Long productId) {
-        Optional<Recipe> recipe = recipeService.findById(recipeId);
+        Optional<Recipe> recipe = recipeService.findByIdWithProducts(recipeId);
         ApiValidationUtil.requireTrue(recipe.isPresent(), String.format("Recipe by id %d not found", recipeId));
         Optional<Product> product = productService.findById(productId);
         ApiValidationUtil.requireTrue(product.isPresent(), String.format("Product by id %d not found", productId));

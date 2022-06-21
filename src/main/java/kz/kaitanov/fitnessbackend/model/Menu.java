@@ -45,6 +45,16 @@ public class Menu {
             inverseJoinColumns = @JoinColumn(name = "submenus_id"))
     private List<SubMenu> subMenus = new ArrayList<>();
 
+    public void addSubMenu(SubMenu subMenu) {
+        if (!subMenus.contains(subMenu)) {
+            subMenus.add(subMenu);
+        }
+    }
+
+    public void deleteSubMenu(SubMenu subMenu) {
+        subMenus.remove(subMenu);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -58,4 +68,3 @@ public class Menu {
         return Objects.hash(id, programType);
     }
 }
-

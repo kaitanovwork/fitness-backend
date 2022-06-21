@@ -34,6 +34,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/admin/exercise")
 public class AdminExerciseRestController {
+
     private final ExerciseService exerciseService;
 
     @Operation(summary = "Создание нового упражнения")

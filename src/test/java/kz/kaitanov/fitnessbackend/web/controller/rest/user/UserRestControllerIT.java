@@ -19,8 +19,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 public class UserRestControllerIT extends SpringSimpleContextTest {
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/UserRestController/updateUserProfile_SuccessfulTest/BeforeTest.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/UserRestController/updateUserProfile_SuccessfulTest/AfterTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/user/UserRestController/updateUserProfile_SuccessfulTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/user/UserRestController/updateUserProfile_SuccessfulTest/AfterTest.sql")
     public void updateUserProfile_SuccessfulTest() throws Exception {
 
         String token = getToken("user101", "pass");
@@ -50,8 +50,8 @@ public class UserRestControllerIT extends SpringSimpleContextTest {
     }
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/UserRestController/updateUserPassword_SuccessfulTest/BeforeTest.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/UserRestController/updateUserPassword_SuccessfulTest/AfterTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/user/UserRestController/updateUserPassword_SuccessfulTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/user/UserRestController/updateUserPassword_SuccessfulTest/AfterTest.sql")
     public void updateUserPassword_SuccessfulTest() throws Exception {
         String token = getToken("user101", "pass");
         UserUpdatePasswordRequestDto dto = new UserUpdatePasswordRequestDto("Artemiy");
@@ -81,8 +81,8 @@ public class UserRestControllerIT extends SpringSimpleContextTest {
     }
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/UserRestController/updateUserPassword_WithEmptyPasswordValueTest/BeforeTest.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/UserRestController/updateUserPassword_WithEmptyPasswordValueTest/AfterTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/user/UserRestController/updateUserPassword_WithEmptyPasswordValueTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/user/UserRestController/updateUserPassword_WithEmptyPasswordValueTest/AfterTest.sql")
     public void updateUserPassword_WithEmptyPasswordValueTest() throws Exception {
         String token = getToken("user101", "pass");
         UserUpdatePasswordRequestDto dto = new UserUpdatePasswordRequestDto("");
@@ -96,8 +96,8 @@ public class UserRestControllerIT extends SpringSimpleContextTest {
 
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/UserRestController/updateUserEmail_SuccessfulTest/BeforeTest.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/UserRestController/updateUserEmail_SuccessfulTest/AfterTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/user/UserRestController/updateUserEmail_SuccessfulTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/user/UserRestController/updateUserEmail_SuccessfulTest/AfterTest.sql")
     public void updateUserEmail_SuccessfulTest() throws Exception {
         String token = getToken("user101", "pass");
         UserUpdateEmailRequestDto dto = new UserUpdateEmailRequestDto("user101@newEmail.ru");
@@ -120,8 +120,8 @@ public class UserRestControllerIT extends SpringSimpleContextTest {
     }
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/UserRestController/updateUserEmail_WithExistedEmailTest/BeforeTest.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/UserRestController/updateUserEmail_WithExistedEmailTest/AfterTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/user/UserRestController/updateUserEmail_WithExistedEmailTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/user/UserRestController/updateUserEmail_WithExistedEmailTest/AfterTest.sql")
     public void updateUserEmail_WithExistedEmailTest() throws Exception {
         String token = getToken("user101", "pass");
         UserUpdateEmailRequestDto dto = new UserUpdateEmailRequestDto("user101test@gmail.com");
@@ -135,8 +135,8 @@ public class UserRestControllerIT extends SpringSimpleContextTest {
     }
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/UserRestController/updateUserPhone_SuccessfulTest/BeforeTest.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/UserRestController/updateUserPhone_SuccessfulTest/AfterTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/user/UserRestController/updateUserPhone_SuccessfulTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/user/UserRestController/updateUserPhone_SuccessfulTest/AfterTest.sql")
     public void updateUserPhone_SuccessfulTest() throws Exception {
         String token = getToken("user101", "pass");
         UserUpdatePhoneRequestDto dto = new UserUpdatePhoneRequestDto("89050001122");
@@ -159,8 +159,8 @@ public class UserRestControllerIT extends SpringSimpleContextTest {
     }
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/UserRestController/updateUserPhone_WithExistedPhoneTest/BeforeTest.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/UserRestController/updateUserPhone_WithExistedPhoneTest/AfterTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/user/UserRestController/updateUserPhone_WithExistedPhoneTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/user/UserRestController/updateUserPhone_WithExistedPhoneTest/AfterTest.sql")
     public void updateUserPhone_WithExistedPhoneTest() throws Exception {
         String token = getToken("user101", "pass");
         UserUpdatePhoneRequestDto dto = new UserUpdatePhoneRequestDto("89999999101");
