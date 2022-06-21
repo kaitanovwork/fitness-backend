@@ -53,7 +53,7 @@ public class SubMenu {
     private List<Recipe> recipes = new ArrayList<>();
 
     public void addRecipe(Recipe recipe) {
-        if(!recipes.contains(recipe)) {
+        if (!recipes.contains(recipe)) {
             recipes.add(recipe);
         }
     }
