@@ -1,6 +1,8 @@
 package kz.kaitanov.fitnessbackend.web.config.init;
 
+import kz.kaitanov.fitnessbackend.model.Role;
 import kz.kaitanov.fitnessbackend.model.User;
+import kz.kaitanov.fitnessbackend.model.enums.RoleName;
 import kz.kaitanov.fitnessbackend.repository.model.UserRepository;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.RoleService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +22,7 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        /*Role adminRole = new Role();
+        Role adminRole = new Role();
         Role userRole = new Role();
         adminRole.setName(RoleName.ADMIN);
         userRole.setName(RoleName.USER);
@@ -36,7 +38,7 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
         admin.setPassword(passwordEncoder.encode("password"));
         admin.setRole(adminRole);
         saveUser(user);
-        saveUser(admin);*/
+        saveUser(admin);
     }
 
     @Transactional

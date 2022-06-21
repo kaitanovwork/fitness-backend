@@ -164,7 +164,7 @@ public class AdminProductRestControllerIT extends SpringSimpleContextTest {
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminProductRestController/getProductById_SuccessfulTest/AfterTest.sql")
     public void getProductByName_SuccessfulTest() throws Exception {
         String token = getToken("username", "password");
-        mockMvc.perform(get("/api/v1/admin/product/productName/{productName}", "Onion")
+        mockMvc.perform(get("/api/v1/admin/product/name/{name}", "Onion")
                         .header("Authorization", token)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -284,7 +284,7 @@ public class AdminProductRestControllerIT extends SpringSimpleContextTest {
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminProductRestController/getProductByName_WithNonExistingName/AfterTest.sql")
     public void  getProductByName_WithNonExistingName() throws Exception {
         String token = getToken("username", "password");
-        mockMvc.perform(get("/api/v1/admin/product/productName/{productName}", "Carrot")
+        mockMvc.perform(get("/api/v1/admin/product/name/{name}", "Carrot")
                         .header("Authorization", token)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

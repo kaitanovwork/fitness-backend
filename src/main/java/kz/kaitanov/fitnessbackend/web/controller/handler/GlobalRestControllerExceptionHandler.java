@@ -1,6 +1,7 @@
 package kz.kaitanov.fitnessbackend.web.controller.handler;
 
 import kz.kaitanov.fitnessbackend.model.dto.response.api.Response;
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -22,6 +23,12 @@ public class GlobalRestControllerExceptionHandler {
     @ExceptionHandler
     public Response<Void> onGlobalException(Exception exception) {
         return Response.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage());
+    }
+
+    @ResponseBody
+    @ExceptionHandler
+    public Response<Void> onPropertyReferenceException(PropertyReferenceException exception) {
+        return Response.error(exception.getMessage());
     }
 
     @ResponseBody

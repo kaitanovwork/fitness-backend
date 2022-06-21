@@ -18,5 +18,4 @@ public interface UserService extends AbstractService<User, Long>, UserDetailsSer
     Optional<User> findByIdWithRoles(Long id);
 
     User addCoach(User user, User coach);
-
 }

@@ -12,13 +12,12 @@ import kz.kaitanov.fitnessbackend.model.dto.response.UserResponseDto;
 import kz.kaitanov.fitnessbackend.model.dto.response.api.Response;
 import kz.kaitanov.fitnessbackend.model.enums.RoleName;
 import kz.kaitanov.fitnessbackend.service.interfaces.dto.UserResponseDtoService;
-import kz.kaitanov.fitnessbackend.service.interfaces.model.RoleService;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.UserService;
 import kz.kaitanov.fitnessbackend.web.config.util.ApiValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,11 +26,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Optional;
 
 @Tag(name = "AdminUserRestController", description = "CRUD  операции над пользователями")
@@ -43,18 +40,20 @@ public class AdminUserRestController {
 
     private final UserService userService;
     private final UserResponseDtoService userResponseDtoService;
-    private final RoleService roleService;
 
     @Operation(summary = "Создание нового пользователя")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Новый пользователь успешно создан")
     })
     @PostMapping
-    public Response<UserResponseDto> saveUser(@RequestBody @Valid UserRegistrationRequestDto userRegistrationRequestDto) {
-        User user = userService.save(UserMapper.toEntity(userRegistrationRequestDto));
-        return Response.ok(UserMapper.toDto(user));
+    public Response<UserResponseDto> saveUser(@RequestBody @Valid UserRegistrationRequestDto dto) {
+        ApiValidationUtil.requireFalse(userService.existsByUsername(dto.username()), "username is being used by another user");
+        ApiValidationUtil.requireFalse(dto.email() != null && userService.existsByEmail(dto.email()), "email is being used by another user");
+        ApiValidationUtil.requireFalse(dto.phone() != null && userService.existsByPhone(dto.phone()), "phone is being used by another user");
+        return Response.ok(UserMapper.toDto(userService.save(UserMapper.toEntity(dto))));
     }
 
+    //TODO добавить валидацию на существование username email phone. Удалить из запроса password
     @Operation(summary = "Обновление существующего пользователя")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Существующий пользователь успешно обновлен"),
@@ -64,9 +63,7 @@ public class AdminUserRestController {
     public Response<UserResponseDto> updateUser(@RequestBody @Valid UserUpdateRequestDto userUpdateRequestDto) {
         ApiValidationUtil.requireTrue(userService.existsById(userUpdateRequestDto.id()),
                 String.format("User by id %d not found", userUpdateRequestDto.id()));
-
-        User user = userService.update(UserMapper.toEntity(userUpdateRequestDto));
-        return Response.ok(UserMapper.toDto(user));
+        return Response.ok(UserMapper.toDto(userService.update(UserMapper.toEntity(userUpdateRequestDto))));
     }
 
     @Operation(summary = "Получение списка всех пользователей")
@@ -74,24 +71,8 @@ public class AdminUserRestController {
             @ApiResponse(responseCode = "200", description = "Список всех пользователей успешно получен")
     })
     @GetMapping
-    public Response<List<UserResponseDto>> getUserList() {
-        return Response.ok(userResponseDtoService.findAll());
-    }
-
-    @Operation(summary = "Получение постраничного списка всех пользователей")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Постраничный список всех пользователей успешно получен")
-    })
-    @GetMapping("/users")
-    public Response<Page<UserResponseDto>> getPaginatedUsers(
-            @RequestParam(required = false, defaultValue = "0", value = "page") Optional<Integer> page,
-            @RequestParam(required = false, defaultValue = "0", value = "sortBy") Optional<String> sortBy) {
-        return Response.ok(userResponseDtoService.findAllPaginated(
-                PageRequest.of(
-                        page.orElse(0),
-                        5,
-                        Sort.Direction.ASC,
-                        sortBy.orElse("id"))));
+    public Response<Page<UserResponseDto>> getUserPage(@PageableDefault(sort = "id") Pageable pageable) {
+        return Response.ok(userResponseDtoService.findAll(pageable));
     }
 
     @Operation(summary = "Получение пользователя по id")
@@ -162,14 +143,14 @@ public class AdminUserRestController {
     @PutMapping("/{userId}/coach/{coachId}")
     public Response<UserResponseDto> updateUserCoach(@PathVariable Long userId,
                                                      @PathVariable Long coachId) {
-
         Optional<User> user = userService.findById(userId);
         ApiValidationUtil.requireTrue(user.isPresent(), String.format("User by id %d not found", userId));
         Optional<User> coach = userService.findByIdWithRoles(coachId);
         ApiValidationUtil.requireTrue(coach.isPresent(), String.format("Coach by id %d not found", coachId));
-        ApiValidationUtil.requireTrue(coach.get().getRole().equals(RoleName.COACH),
-                String.format("Coach by id %d not found", coachId));
+        ApiValidationUtil.requireTrue(coach.get().getRole().getName().equals(RoleName.COACH), String.format("Coach by id %d not found", coachId));
         return Response.ok(UserMapper.toDto(userService.addCoach(user.get(), coach.get())));
     }
 
+    //TODO добавить эндпоинт для удаления тренера у юзера
+    //TODO добавить эндпоинт для изменения пароля у юзера
 }

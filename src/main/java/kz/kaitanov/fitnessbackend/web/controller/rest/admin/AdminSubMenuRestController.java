@@ -73,6 +73,7 @@ public class AdminSubMenuRestController {
         return Response.ok(subMenuOptional.get());
     }
 
+    //TODO добавить пагинацию
     @Operation(summary = "Эндпоинт для получения списка суб-меню")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Список суб-меню успешно получен"),
@@ -93,4 +94,8 @@ public class AdminSubMenuRestController {
         subMenuService.deleteById(subMenuId);
         return Response.ok();
     }
+
+    //TODO добавить добавление и обновление SubMenu
+    //TODO добавить возможность добавлять рецепты пачкой
+    //TODO добавить возможностьудалять рецепты пачкой
 }

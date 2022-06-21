@@ -73,9 +73,10 @@ public class AdminProductRestController {
         return Response.ok(productService.update(ProductMapper.updateName(product.get(), dto)));
     }
 
+    //TODO сделать пагинацю
     @Operation(summary = "Получене списка всех продуктов")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Список всех продуктов успешно получен"),
+            @ApiResponse(responseCode = "200", description = "Список всех продуктов с пагинацией успешно получен"),
     })
     @GetMapping
     public Response<List<Product>> getProductList() {
@@ -97,12 +98,12 @@ public class AdminProductRestController {
     @Operation(summary = "Получение продукта по имени")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Продукт успешно найден"),
-            @ApiResponse(responseCode = "400", description = "Продукт с указанным именем не найден ")
+            @ApiResponse(responseCode = "400", description = "Продукт с указанным именем не найден")
     })
-    @GetMapping("/productName/{productName}")
-    public Response<Product> getProductByName(@PathVariable String productName) {
-        Optional<Product> product = productService.findByName(productName);
-        ApiValidationUtil.requireTrue(product.isPresent(), String.format("Product with name %s not found", productName));
+    @GetMapping("/name/{name}")
+    public Response<Product> getProductByName(@PathVariable String name) {
+        Optional<Product> product = productService.findByName(name);
+        ApiValidationUtil.requireTrue(product.isPresent(), String.format("Product with name %s not found", name));
         return Response.ok(product.get());
     }
 

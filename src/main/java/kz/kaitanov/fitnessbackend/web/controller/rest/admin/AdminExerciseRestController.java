@@ -51,7 +51,7 @@ public class AdminExerciseRestController {
     @Operation(summary = "Обновление существующего упражнения")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Существующее упражнение успешно обновлено"),
-            @ApiResponse(responseCode = "400", description = "Упражнение с таким именем не найдено")
+            @ApiResponse(responseCode = "400", description = "Упражнение с указанным id не найдено")
     })
     @PutMapping
     public Response<Exercise> updateExercise(@RequestBody @Valid ExerciseUpdateRequestDto dto) {
@@ -63,7 +63,7 @@ public class AdminExerciseRestController {
     @Operation(summary = "Эндпоинт для обновление наименования")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Наименование упражнения успешно обновлено"),
-            @ApiResponse(responseCode = "400", description = "Упраженение с таким id не найдено")
+            @ApiResponse(responseCode = "400", description = "Упраженение с таким id не найдено, либо упражнение с указанным именем уже существует")
     })
     @PutMapping("/name")
     public Response<Exercise> updateExerciseName(@RequestBody @Valid ExerciseUpdateNameRequestDto dto) {
@@ -73,9 +73,10 @@ public class AdminExerciseRestController {
         return Response.ok(exerciseService.update(ExerciseMapper.updateName(exercise.get(), dto)));
     }
 
+    //TODO добавить пагинацию
     @Operation(summary = "Получение списка всех упражнений")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Список всех упражнений успешно получен")
+            @ApiResponse(responseCode = "200", description = "Список всех упражнений с пагинацией успешно получен")
     })
     @GetMapping
     public Response<List<Exercise>> getExerciseList() {
