@@ -11,23 +11,27 @@ import java.util.Optional;
 @Service
 public class SubMenuServiceImpl extends AbstractServiceImpl<SubMenu, Long> implements SubMenuService {
 
-    SubMenuRepository subMenuRepository;
+    private final SubMenuRepository subMenuRepository;
 
-    public SubMenuServiceImpl (SubMenuRepository subMenuRepository) {
+    public SubMenuServiceImpl(SubMenuRepository subMenuRepository) {
         super(subMenuRepository);
         this.subMenuRepository = subMenuRepository;
     }
 
-    public SubMenu addRecipeToSubMenu (SubMenu subMenu, Recipe recipe) {
+    @Override
+    public SubMenu addRecipeToSubMenu(SubMenu subMenu, Recipe recipe) {
         subMenu.addRecipe(recipe);
         return update(subMenu);
     }
 
-    public SubMenu deleteRecipeFromSubMenu (SubMenu subMenu, Recipe recipe) {
+    @Override
+    public SubMenu deleteRecipeFromSubMenu(SubMenu subMenu, Recipe recipe) {
         subMenu.deleteRecipe(recipe);
         return update(subMenu);
     }
+
+    @Override
     public Optional<SubMenu> findByIdWithRecipes(Long id) {
-        return  subMenuRepository.findByIdWithRecipes(id);
-   }
+        return subMenuRepository.findByIdWithRecipes(id);
+    }
 }

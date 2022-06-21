@@ -12,8 +12,12 @@ import kz.kaitanov.fitnessbackend.service.interfaces.model.SubMenuService;
 import kz.kaitanov.fitnessbackend.web.config.util.ApiValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.Positive;
 import java.util.List;
@@ -35,10 +39,10 @@ public class AdminSubMenuRestController {
             @ApiResponse(responseCode = "400", description = "Указан несуществующий id для суб-меню или рецепта")
     })
     @PutMapping("/{subMenuId}/recipe/{recipeId}")
-    public Response<SubMenu> addRecipeToSubMenu (@PathVariable @Positive Long subMenuId, @PathVariable @Positive  Long recipeId) {
-        Optional<SubMenu> subMenuOptional = subMenuService.findById(subMenuId);
+    public Response<SubMenu> addRecipeToSubMenu(@PathVariable @Positive Long subMenuId, @PathVariable @Positive Long recipeId) {
+        Optional<SubMenu> subMenuOptional = subMenuService.findByIdWithRecipes(subMenuId);
         ApiValidationUtil.requireTrue(subMenuOptional.isPresent(), String.format("SubMenu with id %d not found", subMenuId));
-        Optional <Recipe> recipeOptional = recipeService.findById(recipeId);
+        Optional<Recipe> recipeOptional = recipeService.findById(recipeId);
         ApiValidationUtil.requireTrue(recipeOptional.isPresent(), String.format("Recipe with id %d not found", recipeId));
         return Response.ok(subMenuService.addRecipeToSubMenu(subMenuOptional.get(), recipeOptional.get()));
     }
@@ -46,16 +50,17 @@ public class AdminSubMenuRestController {
     @Operation(summary = "Эндпоинт для удаление рецепта из суб-меню")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Рецепт успешно удален из суб-меню"),
-            @ApiResponse(responseCode = "400", description =  "Продукт или ")
+            @ApiResponse(responseCode = "400", description = "Продукт или ")
     })
     @DeleteMapping("{subMenuId}/recipe/{recipeId}")
-    public Response<SubMenu> deleteRecipeFromSubMenu (@PathVariable @Positive Long subMenuId, @PathVariable @Positive Long recipeId) {
+    public Response<SubMenu> deleteRecipeFromSubMenu(@PathVariable @Positive Long subMenuId, @PathVariable @Positive Long recipeId) {
         Optional<SubMenu> subMenuOptional = subMenuService.findByIdWithRecipes(subMenuId);
         ApiValidationUtil.requireTrue(subMenuOptional.isPresent(), String.format("SubMenu with id %d not found", subMenuId));
-        Optional <Recipe> recipeOptional = recipeService.findById(recipeId);
+        Optional<Recipe> recipeOptional = recipeService.findById(recipeId);
         ApiValidationUtil.requireTrue(recipeOptional.isPresent(), String.format("Recipe with id %d not found", recipeId));
         return Response.ok(subMenuService.deleteRecipeFromSubMenu(subMenuOptional.get(), recipeOptional.get()));
     }
+
     @Operation(summary = "Эндпоинт для получения суб-меню по id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Суб-меню успешно получено"),
@@ -84,7 +89,7 @@ public class AdminSubMenuRestController {
     })
     @DeleteMapping("/{subMenuId}")
     public Response<Void> deleteSubMenuById(@PathVariable @Positive Long subMenuId) {
-        ApiValidationUtil.requireTrue(subMenuService.existsById(subMenuId),String.format("SubMenu with id %d not found", subMenuId));
+        ApiValidationUtil.requireTrue(subMenuService.existsById(subMenuId), String.format("SubMenu with id %d not found", subMenuId));
         subMenuService.deleteById(subMenuId);
         return Response.ok();
     }

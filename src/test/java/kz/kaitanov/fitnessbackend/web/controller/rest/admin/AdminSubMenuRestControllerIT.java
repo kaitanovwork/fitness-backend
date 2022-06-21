@@ -11,9 +11,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import static org.hamcrest.Matchers.hasItems;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class AdminSubMenuRestControllerIT extends SpringSimpleContextTest {
@@ -38,15 +38,14 @@ public class AdminSubMenuRestControllerIT extends SpringSimpleContextTest {
 
         assertTrue(entityManager.createQuery(
                         """
-                                SELECT COUNT(sm.id) > 0
-                                FROM SubMenu sm
-                                WHERE sm.id = :id AND sm.recipes.size = :recipes
+                                SELECT COUNT(s.id) > 0
+                                FROM SubMenu s
+                                WHERE s.id = :id AND s.recipes.size = :recipes
                                 """,
                         Boolean.class)
                 .setParameter("id", 101L)
                 .setParameter("recipes", 1)
                 .getSingleResult());
-
     }
 
     @Test
@@ -62,15 +61,14 @@ public class AdminSubMenuRestControllerIT extends SpringSimpleContextTest {
 
         assertTrue(entityManager.createQuery(
                         """
-                                SELECT COUNT(sm.id) > 0
-                                FROM SubMenu sm
-                                WHERE sm.id = :id AND sm.recipes.size = :recipes
+                                SELECT COUNT(s.id) > 0
+                                FROM SubMenu s
+                                WHERE s.id = :id AND s.recipes.size = :recipes
                                 """,
                         Boolean.class)
                 .setParameter("id", 101L)
                 .setParameter("recipes", 0)
                 .getSingleResult());
-
     }
 
     @Test
@@ -86,7 +84,6 @@ public class AdminSubMenuRestControllerIT extends SpringSimpleContextTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.id", Is.is(101)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.programType", Is.is(ProgramType.WEIGHT_GAIN.name())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.weekDay", Is.is(WeekDay.MONDAY.name())));
-
     }
 
     @Test
@@ -115,11 +112,12 @@ public class AdminSubMenuRestControllerIT extends SpringSimpleContextTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)));
 
-        assertFalse(entityManager.createQuery("""
-                                SELECT COUNT(sm.id) > 0
-                                FROM SubMenu sm
-                                WHERE sm.id = :id
-                           """,Boolean.class )
+        assertFalse(entityManager.createQuery(
+                        """
+                                     SELECT COUNT(s.id) > 0
+                                     FROM SubMenu s
+                                     WHERE s.id = :id
+                                """, Boolean.class)
                 .setParameter("id", 101L)
                 .getSingleResult());
     }
@@ -135,7 +133,6 @@ public class AdminSubMenuRestControllerIT extends SpringSimpleContextTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.error", Is.is("SubMenu with id 102 not found")));
-
     }
 
     @Test
@@ -203,5 +200,3 @@ public class AdminSubMenuRestControllerIT extends SpringSimpleContextTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.error", Is.is("SubMenu with id 102 not found")));
     }
 }
-
-
