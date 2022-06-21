@@ -49,8 +49,18 @@ public class SubMenu {
     @JoinTable(
             name = "submenus_recipes",
             joinColumns = @JoinColumn(name = "submenus_id"),
-            inverseJoinColumns = @JoinColumn(name = "resipes_id"))
+            inverseJoinColumns = @JoinColumn(name = "recipes_id"))
     private List<Recipe> recipes = new ArrayList<>();
+
+    public void addRecipe(Recipe recipe) {
+        if(!recipes.contains(recipe)) {
+            recipes.add(recipe);
+        }
+    }
+
+    public void deleteRecipe(Recipe recipe) {
+        recipes.remove(recipe);
+    }
 
     @Override
     public boolean equals(Object o) {
