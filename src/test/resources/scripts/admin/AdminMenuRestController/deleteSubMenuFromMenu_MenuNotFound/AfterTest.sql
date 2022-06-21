@@ -2,9 +2,9 @@ TRUNCATE TABLE users CASCADE;
 
 TRUNCATE TABLE roles CASCADE;
 
-TRUNCATE TABLE fitness_backend_test_db.public.menus CASCADE;
+TRUNCATE TABLE menus CASCADE;
 
-TRUNCATE TABLE fitness_backend_test_db.public.subMenus CASCADE;
+TRUNCATE TABLE submenus CASCADE;
 
-TRUNCATE TABLE menus_subMenus CASCADE;
+TRUNCATE TABLE menus_submenus CASCADE;
 

@@ -5,5 +5,5 @@ INSERT INTO users (id, age, email, first_name, gender, last_name, password, phon
 VALUES (101, 20, 'email@email.ru', 'firstName', 'MALE', 'lastName',
         '$2a$12$WCVxn9WOBQceif5B5QQQ/eSgdQZx0eZVtD9h8EaeBa.PfN6uHUr/G', '111-00', 'username', 101);
 
-INSERT INTO fitness_backend_test_db.public.menus (id, program_type)
+INSERT INTO menus (id, program_type)
 VALUES (101, 'WEIGHT_GAIN');
