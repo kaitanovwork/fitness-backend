@@ -9,10 +9,14 @@ import kz.kaitanov.fitnessbackend.model.converter.ProductMapper;
 import kz.kaitanov.fitnessbackend.model.dto.request.product.ProductPersistRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.product.ProductUpdateNameRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.product.ProductUpdateRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.response.ProductResponseDto;
 import kz.kaitanov.fitnessbackend.model.dto.response.api.Response;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.ProductService;
 import kz.kaitanov.fitnessbackend.web.config.util.ApiValidationUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -78,8 +82,8 @@ public class AdminProductRestController {
             @ApiResponse(responseCode = "200", description = "Список всех продуктов успешно получен"),
     })
     @GetMapping
-    public Response<List<Product>> getProductList() {
-        return Response.ok(productService.findAll());
+    public Response<Page<ProductResponseDto>> getProductPage(@PageableDefault(sort = "id") Pageable pageable) {
+        return Response.ok(productService.findAll(pageable));
     }
 
     @Operation(summary = "Получение продукта по id")
