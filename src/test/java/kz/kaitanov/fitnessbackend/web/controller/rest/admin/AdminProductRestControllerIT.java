@@ -8,6 +8,7 @@ import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -121,9 +122,9 @@ public class AdminProductRestControllerIT extends SpringSimpleContextTest {
     }
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminProductRestController/getProductList_SuccessfulTest/BeforeTest.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminProductRestController/getProductList_SuccessfulTest/AfterTest.sql")
-    public void getProductList_SuccessfulTest() throws Exception {
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminProductRestController/getProductPage_SuccessfulTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminProductRestController/getProductPage_SuccessfulTest/AfterTest.sql")
+    public void getProductPage_SuccessfulTest() throws Exception {
         String token = getToken("username", "password");
         mockMvc.perform(get("/api/v1/admin/product")
                         .header("Authorization", token)
@@ -131,13 +132,13 @@ public class AdminProductRestControllerIT extends SpringSimpleContextTest {
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].id", hasItems(101,102)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].name", hasItems("Onion", "Carrot")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].calorie", hasItems(20, 55)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].protein", hasItems(25, 13)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].fat", hasItems(1, 1)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].carbohydrate", hasItems(5, 1)));
-
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].id", hasItems(101,102)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].name", hasItems("Onion", "Carrot")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].calorie", hasItems(20, 55)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].protein", hasItems(25, 13)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].fat", hasItems(1, 1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].carbohydrate", hasItems(5, 1)));
+;
     }
 
     @Test
@@ -238,7 +239,7 @@ public class AdminProductRestControllerIT extends SpringSimpleContextTest {
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminProductRestController/updateProductName_WithTheSameName/AfterTest.sql")
     public void updateProductName_WithTheSameName() throws Exception {
         ProductUpdateNameRequestDto dto = new ProductUpdateNameRequestDto(101L, "Onion");
-        String token = getToken("username", "password");
+        String token = getToken("admin", "password");
         mockMvc.perform(put("/api/v1/admin/product/name")
                         .header("Authorization", token)
                         .contentType(MediaType.APPLICATION_JSON)
