@@ -1,3 +1,9 @@
+TRUNCATE TABLE users CASCADE;
+
+TRUNCATE TABLE exercises CASCADE;
+
+TRUNCATE TABLE roles CASCADE;
+
 INSERT INTO fitness_backend_test_db.public.exercises (id, approach_count, area, muscle_group, name, repeat_count)
 VALUES (101, 10, 'HOME', 'Biceps', 'TestExercise1', 10),
        (102, 12, 'GYM', 'Legs', 'TestExercise2', 12),

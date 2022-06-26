@@ -2,17 +2,14 @@ package kz.kaitanov.fitnessbackend.web.controller.rest.admin;
 
 import kz.kaitanov.fitnessbackend.SpringSimpleContextTest;
 import kz.kaitanov.fitnessbackend.model.Exercise;
-import kz.kaitanov.fitnessbackend.model.dto.request.JwtRequest;
 import kz.kaitanov.fitnessbackend.model.dto.request.exercise.ExercisePersistRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.exercise.ExerciseUpdateNameRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.exercise.ExerciseUpdateRequestDto;
 import kz.kaitanov.fitnessbackend.model.enums.Area;
 import org.hamcrest.core.Is;
-import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.hamcrest.Matchers.hasItems;
@@ -28,9 +25,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/getExerciseList_SuccessfulTest/BeforeTest.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/getExerciseList_SuccessfulTest/AfterTest.sql")
-    public void getExerciseList_SuccessfulTest() throws Exception {
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/getExercisePage_SuccessfulTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/getExercisePage_SuccessfulTest/AfterTest.sql")
+    public void getExercisePage_SuccessfulTest() throws Exception {
         String token = getToken("username", "pass");
 
         mockMvc.perform(get("/api/v1/admin/exercise")
@@ -38,11 +35,11 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].name", hasItems("TestExercise1", "TestExercise2", "TestExercise3", "TestExercise4")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].muscleGroup", hasItems("Biceps", "Legs", "Triceps", "Shoulders")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].repeatCount", hasItems(10, 12, 12, 15)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].approachCount", hasItems(10, 12, 8, 6)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].area", hasItems("HOME", "GYM", "HOME", "GYM")));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].name", hasItems("TestExercise1", "TestExercise2", "TestExercise3", "TestExercise4")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].muscleGroup", hasItems("Biceps", "Legs", "Triceps", "Shoulders")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].repeatCount", hasItems(10, 12, 12, 15)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].approachCount", hasItems(10, 12, 8, 6)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].area", hasItems("HOME", "GYM", "HOME", "GYM")));
     }
 
     @Test

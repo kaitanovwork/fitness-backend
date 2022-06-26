@@ -9,10 +9,14 @@ import kz.kaitanov.fitnessbackend.model.converter.ExerciseMapper;
 import kz.kaitanov.fitnessbackend.model.dto.request.exercise.ExercisePersistRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.exercise.ExerciseUpdateNameRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.exercise.ExerciseUpdateRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.response.ExerciseResponseDto;
 import kz.kaitanov.fitnessbackend.model.dto.response.api.Response;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.ExerciseService;
 import kz.kaitanov.fitnessbackend.web.config.util.ApiValidationUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -73,14 +77,13 @@ public class AdminExerciseRestController {
         return Response.ok(exerciseService.update(ExerciseMapper.updateName(exercise.get(), dto)));
     }
 
-    //TODO добавить пагинацию
     @Operation(summary = "Получение списка всех упражнений")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Список всех упражнений с пагинацией успешно получен")
     })
     @GetMapping
-    public Response<List<Exercise>> getExerciseList() {
-        return Response.ok(exerciseService.findAll());
+    public Response<Page<ExerciseResponseDto>> getExercisePage(@PageableDefault(sort = "id") Pageable pageable) {
+        return Response.ok(exerciseService.findAll(pageable));
     }
 
     @Operation(summary = "Получение упражнения по id")
