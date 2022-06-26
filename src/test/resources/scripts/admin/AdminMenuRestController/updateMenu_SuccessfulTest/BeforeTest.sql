@@ -1,3 +1,5 @@
+TRUNCATE TABLE roles CASCADE;
+
 INSERT INTO roles (id, name)
 VALUES (101, 'ADMIN');
 

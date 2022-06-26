@@ -7,4 +7,13 @@ VALUES (101, 20, 'email@email.ru', 'firstName', 'MALE', 'lastName',
 
 INSERT INTO menus (id, program_type)
 VALUES (101, 'WEIGHT_GAIN'),
-       (102, 'WEIGHT_LOSS');
+       (102, 'WEIGHT_LOSS'),
+       (103, 'WEIGHT_GAIN'),
+       (104, 'WEIGHT_LOSS'),
+       (105, 'WEIGHT_GAIN'),
+       (106, 'WEIGHT_LOSS'),
+       (107, 'WEIGHT_GAIN'),
+       (108, 'WEIGHT_LOSS'),
+       (109, 'WEIGHT_GAIN'),
+       (110, 'WEIGHT_LOSS'),
+       (111, 'WEIGHT_GAIN');
