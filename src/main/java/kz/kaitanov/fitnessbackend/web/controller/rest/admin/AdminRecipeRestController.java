@@ -10,11 +10,16 @@ import kz.kaitanov.fitnessbackend.model.converter.RecipeMapper;
 import kz.kaitanov.fitnessbackend.model.dto.request.recipe.RecipePersistRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.recipe.RecipeUpdateNameRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.recipe.RecipeUpdateRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.response.RecipeResponseDto;
 import kz.kaitanov.fitnessbackend.model.dto.response.api.Response;
+import kz.kaitanov.fitnessbackend.service.interfaces.dto.RecipeResponseDtoService;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.ProductService;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.RecipeService;
 import kz.kaitanov.fitnessbackend.web.config.util.ApiValidationUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,6 +44,7 @@ public class AdminRecipeRestController {
 
     private final RecipeService recipeService;
     private final ProductService productService;
+    private final RecipeResponseDtoService recipeResponseDtoService;
 
     @Operation(summary = "Эндпоинт для создание нового рецепта")
     @ApiResponses(value = {
@@ -104,14 +110,13 @@ public class AdminRecipeRestController {
         return Response.ok(recipeService.deleteProductFromRecipe(recipe.get(), product.get()));
     }
 
-    //TODO добавить пагинацию
     @Operation(summary = "Эндпоинт для получения списка всех рецептов")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Список всех рецептов успешно получен")
     })
     @GetMapping
-    public Response<List<Recipe>> getRecipeList() {
-        return Response.ok(recipeService.findAll());
+    public Response<Page<RecipeResponseDto>> getRecipePage(@PageableDefault(sort = "id") Pageable pageable) {
+        return Response.ok(recipeResponseDtoService.findAll(pageable));
     }
 
     @Operation(summary = "Эндпоинт для получения рецепта по id")

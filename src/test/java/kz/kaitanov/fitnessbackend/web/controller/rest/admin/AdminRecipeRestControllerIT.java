@@ -297,9 +297,9 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
     }
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminRecipeRestController/getRecipeList_SuccessfulTest/BeforeTest.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminRecipeRestController/getRecipeList_SuccessfulTest/AfterTest.sql")
-    public void getRecipeList_SuccessfulTest() throws Exception {
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminRecipeRestController/getRecipePage_SuccessfulTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminRecipeRestController/getRecipePage_SuccessfulTest/AfterTest.sql")
+    public void getRecipePage_SuccessfulTest() throws Exception {
 
         String token = getToken("username", "password");
 
@@ -308,12 +308,12 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].calorie", hasItems(1500, 2000)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].carbohydrate", hasItems(200, 100)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].description", hasItems("With chicken", "With beef")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].fat", hasItems(200, 300)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].name", hasItems("Caesar salad", "Udon")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].protein", hasItems(200, 400)));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].calorie", hasItems(1500, 2000)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].carbohydrate", hasItems(200, 100)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].description", hasItems("With chicken", "With beef")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].fat", hasItems(200, 300)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].name", hasItems("Caesar salad", "Udon")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].protein", hasItems(200, 400)));
     }
 
     @Test

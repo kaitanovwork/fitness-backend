@@ -13,4 +13,5 @@ public record UserResponseDto(
         Integer age,
         Gender gender,
         User coach) {
+
 }
