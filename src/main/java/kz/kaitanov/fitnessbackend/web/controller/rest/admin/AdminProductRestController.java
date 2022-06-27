@@ -9,8 +9,6 @@ import kz.kaitanov.fitnessbackend.model.converter.ProductMapper;
 import kz.kaitanov.fitnessbackend.model.dto.request.product.ProductPersistRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.product.ProductUpdateNameRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.product.ProductUpdateRequestDto;
-import kz.kaitanov.fitnessbackend.model.dto.response.ProductResponseDto;
-import kz.kaitanov.fitnessbackend.model.dto.response.UserResponseDto;
 import kz.kaitanov.fitnessbackend.model.dto.response.api.Response;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.ProductService;
 import kz.kaitanov.fitnessbackend.web.config.util.ApiValidationUtil;
@@ -30,7 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
-import java.util.List;
 import java.util.Optional;
 
 @Tag(name = "AdminProductRestController", description = "CRUD операции над продуктами")
@@ -83,7 +80,7 @@ public class AdminProductRestController {
             @ApiResponse(responseCode = "200", description = "Список всех продуктов с пагинацией успешно получен"),
     })
     @GetMapping
-    public Response<Page<ProductResponseDto>> getProductPage(@PageableDefault(sort = "id") Pageable pageable) {
+    public Response<Page<Product>> getProductPage(@PageableDefault(sort = "id") Pageable pageable) {
         return Response.ok(productService.findAll(pageable));
     }
 

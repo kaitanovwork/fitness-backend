@@ -8,7 +8,6 @@ import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -239,7 +238,7 @@ public class AdminProductRestControllerIT extends SpringSimpleContextTest {
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminProductRestController/updateProductName_WithTheSameName/AfterTest.sql")
     public void updateProductName_WithTheSameName() throws Exception {
         ProductUpdateNameRequestDto dto = new ProductUpdateNameRequestDto(101L, "Onion");
-        String token = getToken("admin", "password");
+        String token = getToken("username", "password");
         mockMvc.perform(put("/api/v1/admin/product/name")
                         .header("Authorization", token)
                         .contentType(MediaType.APPLICATION_JSON)

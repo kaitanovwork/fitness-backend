@@ -1,9 +1,6 @@
 package kz.kaitanov.fitnessbackend.service.interfaces.model;
 
 import kz.kaitanov.fitnessbackend.model.Product;
-import kz.kaitanov.fitnessbackend.model.converter.UserMapper;
-import kz.kaitanov.fitnessbackend.model.dto.response.ProductResponseDto;
-import kz.kaitanov.fitnessbackend.model.dto.response.UserResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -15,5 +12,5 @@ public interface ProductService extends AbstractService<Product, Long> {
 
     Optional<Product> findByName(String name);
 
-    Page<ProductResponseDto> findAll(Pageable pageable);
+    Page<Product> findAll(Pageable pageable);
 }
