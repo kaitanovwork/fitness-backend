@@ -299,5 +299,16 @@ public class AdminMenuRestControllerIT extends SpringSimpleContextTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.numberOfElements", Is.is(10)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.totalElements", Is.is(11)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].programType", hasItems(ProgramType.WEIGHT_GAIN.toString(), ProgramType.WEIGHT_LOSS.toString())));
+
+        String token1 = getToken("username", "password");
+        mockMvc.perform(get("/api/v1/admin/menu?size=5&page=1&sort=id,desc")
+                .header("Authorization", token1))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].id", hasItems(106, 105, 104, 103, 102)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.numberOfElements", Is.is(5)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.totalElements", Is.is(11)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].programType", hasItems(ProgramType.WEIGHT_GAIN.toString(), ProgramType.WEIGHT_LOSS.toString())));
     }
 }

@@ -91,7 +91,6 @@ public class AdminMenuRestController {
         return Response.ok(menuService.deleteSubMenuFromMenu(menu.get(), subMenu.get()));
     }
 
-    //TODO добавить пагинацию
     @Operation(summary = "Эндпоинт для получения списка всех меню")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Список всех меню успешно получен")
