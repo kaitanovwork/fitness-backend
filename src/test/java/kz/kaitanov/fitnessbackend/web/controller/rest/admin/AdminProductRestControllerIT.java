@@ -137,7 +137,14 @@ public class AdminProductRestControllerIT extends SpringSimpleContextTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].protein", hasItems(25, 13)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].fat", hasItems(1, 1)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].carbohydrate", hasItems(5, 1)));
-;
+
+        mockMvc.perform(get("/api/v1/admin/product?page=1&size=5&sort=name")
+                        .header("Authorization", token)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.totalPages", Is.is(2)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.number", Is.is(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.totalElements", Is.is(8)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.numberOfElements", Is.is(3)));
     }
 
     @Test
