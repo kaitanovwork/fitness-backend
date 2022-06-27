@@ -10,9 +10,7 @@ import kz.kaitanov.fitnessbackend.model.converter.RecipeMapper;
 import kz.kaitanov.fitnessbackend.model.dto.request.recipe.RecipePersistRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.recipe.RecipeUpdateNameRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.recipe.RecipeUpdateRequestDto;
-import kz.kaitanov.fitnessbackend.model.dto.response.RecipeResponseDto;
 import kz.kaitanov.fitnessbackend.model.dto.response.api.Response;
-import kz.kaitanov.fitnessbackend.service.interfaces.dto.RecipeResponseDtoService;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.ProductService;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.RecipeService;
 import kz.kaitanov.fitnessbackend.web.config.util.ApiValidationUtil;
@@ -32,7 +30,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
-import java.util.List;
 import java.util.Optional;
 
 @Tag(name = "AdminRecipeRestController", description = "CRUD операции над рецептами")
@@ -44,7 +41,6 @@ public class AdminRecipeRestController {
 
     private final RecipeService recipeService;
     private final ProductService productService;
-    private final RecipeResponseDtoService recipeResponseDtoService;
 
     @Operation(summary = "Эндпоинт для создание нового рецепта")
     @ApiResponses(value = {
@@ -115,8 +111,8 @@ public class AdminRecipeRestController {
             @ApiResponse(responseCode = "200", description = "Список всех рецептов успешно получен")
     })
     @GetMapping
-    public Response<Page<RecipeResponseDto>> getRecipePage(@PageableDefault(sort = "id") Pageable pageable) {
-        return Response.ok(recipeResponseDtoService.findAll(pageable));
+    public Response<Page<Recipe>> getRecipePage(@PageableDefault(sort = "id") Pageable pageable) {
+        return Response.ok(recipeService.findAll(pageable));
     }
 
     @Operation(summary = "Эндпоинт для получения рецепта по id")
