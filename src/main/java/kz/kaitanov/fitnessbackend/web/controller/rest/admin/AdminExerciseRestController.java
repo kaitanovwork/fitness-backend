@@ -9,7 +9,6 @@ import kz.kaitanov.fitnessbackend.model.converter.ExerciseMapper;
 import kz.kaitanov.fitnessbackend.model.dto.request.exercise.ExercisePersistRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.exercise.ExerciseUpdateNameRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.exercise.ExerciseUpdateRequestDto;
-import kz.kaitanov.fitnessbackend.model.dto.response.ExerciseResponseDto;
 import kz.kaitanov.fitnessbackend.model.dto.response.api.Response;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.ExerciseService;
 import kz.kaitanov.fitnessbackend.web.config.util.ApiValidationUtil;
@@ -29,7 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
-import java.util.List;
 import java.util.Optional;
 
 @Tag(name = "AdminExerciseRestController", description = "CRUD операции над упражнениями")
@@ -82,7 +80,7 @@ public class AdminExerciseRestController {
             @ApiResponse(responseCode = "200", description = "Список всех упражнений с пагинацией успешно получен")
     })
     @GetMapping
-    public Response<Page<ExerciseResponseDto>> getExercisePage(@PageableDefault(sort = "id") Pageable pageable) {
+    public Response<Page<Exercise>> getExercisePage(@PageableDefault(sort = "id") Pageable pageable) {
         return Response.ok(exerciseService.findAll(pageable));
     }
 

@@ -4,7 +4,6 @@ import kz.kaitanov.fitnessbackend.model.Exercise;
 import kz.kaitanov.fitnessbackend.model.dto.request.exercise.ExercisePersistRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.exercise.ExerciseUpdateNameRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.exercise.ExerciseUpdateRequestDto;
-import kz.kaitanov.fitnessbackend.model.dto.response.ExerciseResponseDto;
 
 public final class ExerciseMapper {
 
@@ -31,15 +30,5 @@ public final class ExerciseMapper {
         return exercise;
     }
 
-    public static ExerciseResponseDto toDto(Exercise exercise) {
-        return new ExerciseResponseDto(
-                exercise.getId(),
-                exercise.getName(),
-                exercise.getMuscleGroup(),
-                exercise.getRepeatCount(),
-                exercise.getApproachCount(),
-                exercise.getArea()
-        );
-    }
 }
 

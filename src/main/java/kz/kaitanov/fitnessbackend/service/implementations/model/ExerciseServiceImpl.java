@@ -2,7 +2,6 @@ package kz.kaitanov.fitnessbackend.service.implementations.model;
 
 import kz.kaitanov.fitnessbackend.model.Exercise;
 import kz.kaitanov.fitnessbackend.model.converter.ExerciseMapper;
-import kz.kaitanov.fitnessbackend.model.dto.response.ExerciseResponseDto;
 import kz.kaitanov.fitnessbackend.repository.model.ExerciseRepository;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.ExerciseService;
 import org.springframework.data.domain.Page;
@@ -25,7 +24,7 @@ public class ExerciseServiceImpl extends AbstractServiceImpl<Exercise, Long> imp
     }
 
     @Override
-    public Page<ExerciseResponseDto> findAll(Pageable pageable) {
-        return exerciseRepository.findAll(pageable).map(ExerciseMapper::toDto);
+    public Page<Exercise> findAll(Pageable pageable) {
+        return exerciseRepository.findAll(pageable);
     }
 }
