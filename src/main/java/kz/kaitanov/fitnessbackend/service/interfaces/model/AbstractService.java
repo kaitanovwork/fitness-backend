@@ -1,13 +1,16 @@
 package kz.kaitanov.fitnessbackend.service.interfaces.model;
 
-import java.util.List;
+import kz.kaitanov.fitnessbackend.model.SubMenu;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.Optional;
 
 public interface AbstractService<T, PK> {
 
     Optional<T> findById(PK id);
 
-    List<T> findAll();
+    Page<SubMenu> findAll(Pageable pageable);
 
     T save(T entity);
 

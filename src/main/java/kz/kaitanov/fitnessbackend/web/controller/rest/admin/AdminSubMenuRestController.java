@@ -11,6 +11,9 @@ import kz.kaitanov.fitnessbackend.service.interfaces.model.RecipeService;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.SubMenuService;
 import kz.kaitanov.fitnessbackend.web.config.util.ApiValidationUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -73,14 +76,13 @@ public class AdminSubMenuRestController {
         return Response.ok(subMenuOptional.get());
     }
 
-    //TODO добавить пагинацию
     @Operation(summary = "Эндпоинт для получения списка суб-меню")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Список суб-меню успешно получен"),
     })
     @GetMapping
-    public Response<List<SubMenu>> getSubMenuList() {
-        return Response.ok(subMenuService.findAll());
+    public Response<Page<SubMenu>> getSubMenuPage(@PageableDefault(sort = "id") Pageable pageable) {
+        return Response.ok(subMenuService.findAll(pageable));
     }
 
     @Operation(summary = "Эндпоинт для удаления суб-меню по id")
