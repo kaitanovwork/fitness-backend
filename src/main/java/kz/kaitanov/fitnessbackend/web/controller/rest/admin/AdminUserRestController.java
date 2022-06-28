@@ -61,10 +61,15 @@ public class AdminUserRestController {
     })
     @PutMapping
     public Response<UserResponseDto> updateUser(@RequestBody @Valid UserUpdateRequestDto dto) {
-        ApiValidationUtil.requireTrue(userService.existsById(dto.id()),
-                String.format("User by id %d not found", dto.id()));
-        User user = UserMapper.updatePassword(UserMapper.toEntity(dto), new UserUpdatePasswordRequestDto(null));
-        return Response.ok(UserMapper.toDto(userService.update(user)));
+        Optional<User> user = userService.findById(dto.id());
+        ApiValidationUtil.requireTrue(user.isPresent(), String.format("User by id %d not found", dto.id()));
+        ApiValidationUtil.requireFalse(userService.existsByUsername(dto.username()),
+                "username is being used by another user");
+        ApiValidationUtil.requireFalse(dto.email() != null && userService.existsByEmail(dto.email()),
+                "email is being used by another user");
+        ApiValidationUtil.requireFalse(dto.phone() != null && userService.existsByPhone(dto.phone()),
+                "phone is being used by another user");
+        return Response.ok(UserMapper.toDto(userService.update(UserMapper.updateUser(user.get(), dto))));
     }
 
     @Operation(summary = "Получение списка всех пользователей")
@@ -175,10 +180,6 @@ public class AdminUserRestController {
                                                         @RequestBody @Valid UserUpdatePasswordRequestDto dto) {
         Optional<User> user = userService.findById(userId);
         ApiValidationUtil.requireTrue(user.isPresent(), String.format("User by id %d not found", userId));
-        user.get().setPassword(dto.password());
-        return Response.ok(UserMapper.toDto(userService.updatePassword(user.get())));
+        return Response.ok(UserMapper.toDto(userService.updatePassword(UserMapper.updatePassword(user.get(), dto))));
     }
-
-
-
 }
