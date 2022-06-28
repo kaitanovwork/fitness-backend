@@ -7,4 +7,13 @@ VALUES (101, 20, 'email@email.ru', 'firstName', 'MALE', 'lastName',
 
 INSERT INTO submenus (id, program_type, week_day) VALUES
 (101, 'WEIGHT_GAIN', 'MONDAY'),
-(102, 'WEIGHT_GAIN', 'TUESDAY');
+(102, 'WEIGHT_GAIN', 'TUESDAY'),
+(103, 'WEIGHT_GAIN', 'MONDAY'),
+(104, 'WEIGHT_GAIN', 'MONDAY'),
+(105, 'WEIGHT_GAIN', 'MONDAY'),
+(106, 'WEIGHT_GAIN', 'MONDAY'),
+(107, 'WEIGHT_GAIN', 'MONDAY'),
+(108, 'WEIGHT_GAIN', 'MONDAY'),
+(109, 'WEIGHT_GAIN', 'MONDAY'),
+(110, 'WEIGHT_GAIN', 'MONDAY'),
+(111, 'WEIGHT_GAIN', 'MONDAY');
