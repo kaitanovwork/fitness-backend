@@ -40,6 +40,13 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].repeatCount", hasItems(10, 12, 12, 15)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].approachCount", hasItems(10, 12, 8, 6)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].area", hasItems("HOME", "GYM", "HOME", "GYM")));
+
+        mockMvc.perform(get("/api/v1/admin/exercise?page=1&size=5&sort=name,desc")
+                        .header("Authorization", token))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.totalPages", Is.is(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.number", Is.is(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.totalElements", Is.is(5)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.numberOfElements", Is.is(0)));
     }
 
     @Test
