@@ -12,8 +12,8 @@ public record UserUpdateRequestDto(
         @NotBlank String password,
         String firstName,
         String lastName,
-        String email,
-        String phone,
+        @NotBlank String email,
+        @NotBlank String phone,
         Integer age,
         Gender gender) {
 }
