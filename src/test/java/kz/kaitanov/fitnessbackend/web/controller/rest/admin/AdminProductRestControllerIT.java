@@ -121,9 +121,9 @@ public class AdminProductRestControllerIT extends SpringSimpleContextTest {
     }
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminProductRestController/getProductList_SuccessfulTest/BeforeTest.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminProductRestController/getProductList_SuccessfulTest/AfterTest.sql")
-    public void getProductList_SuccessfulTest() throws Exception {
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminProductRestController/getProductPage_SuccessfulTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminProductRestController/getProductPage_SuccessfulTest/AfterTest.sql")
+    public void getProductPage_SuccessfulTest() throws Exception {
         String token = getToken("username", "password");
         mockMvc.perform(get("/api/v1/admin/product")
                         .header("Authorization", token)
@@ -131,13 +131,20 @@ public class AdminProductRestControllerIT extends SpringSimpleContextTest {
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].id", hasItems(101,102)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].name", hasItems("Onion", "Carrot")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].calorie", hasItems(20, 55)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].protein", hasItems(25, 13)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].fat", hasItems(1, 1)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].carbohydrate", hasItems(5, 1)));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].id", hasItems(101,102)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].name", hasItems("Onion", "Carrot")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].calorie", hasItems(20, 55)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].protein", hasItems(25, 13)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].fat", hasItems(1, 1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].carbohydrate", hasItems(5, 1)));
 
+        mockMvc.perform(get("/api/v1/admin/product?page=1&size=5&sort=name")
+                        .header("Authorization", token)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.totalPages", Is.is(2)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.number", Is.is(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.totalElements", Is.is(8)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.numberOfElements", Is.is(3)));
     }
 
     @Test
