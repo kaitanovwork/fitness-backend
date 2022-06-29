@@ -88,8 +88,8 @@ public class AdminSubMenuRestControllerIT extends SpringSimpleContextTest {
     }
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminSubMenuRestController/getSubMenuList_successfulTest/BeforeTest.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminSubMenuRestController/getSubMenuList_successfulTest/AfterTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminSubMenuRestController/getSubMenuPage_successfulTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminSubMenuRestController/getSubMenuPage_successfulTest/AfterTest.sql")
     public void getSubMenuPage_SuccessfulTest() throws Exception {
         String token = getToken("username", "password");
         mockMvc.perform(get("/api/v1/admin/sub-menu")
@@ -102,7 +102,18 @@ public class AdminSubMenuRestControllerIT extends SpringSimpleContextTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].weekDay", hasItems("MONDAY", "TUESDAY")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.numberOfElements", Is.is(10)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.totalElements", Is.is(11)));
+
+        mockMvc.perform(get("/api/v1/admin/sub-menu?size=5&page=1&sort=id,desc")
+                        .header("Authorization", token))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].id", hasItems(105, 104, 103, 102, 101)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.numberOfElements", Is.is(5)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.totalElements", Is.is(11)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].programType", hasItems(ProgramType.WEIGHT_GAIN.toString(), ProgramType.WEIGHT_LOSS.toString())));
     }
+
 
     @Test
     @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminSubMenuRestController/deleteSubMenuById_SuccessfulTest/BeforeTest.sql")
