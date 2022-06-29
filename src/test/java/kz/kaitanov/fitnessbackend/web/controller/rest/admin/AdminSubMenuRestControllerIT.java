@@ -108,10 +108,11 @@ public class AdminSubMenuRestControllerIT extends SpringSimpleContextTest {
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].id", hasItems(105, 104, 103, 102, 101)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].id", hasItems(106, 105, 104, 103, 102)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].programType", hasItems("WEIGHT_GAIN", "WEIGHT_GAIN")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].weekDay", hasItems("MONDAY", "TUESDAY")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.numberOfElements", Is.is(5)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.totalElements", Is.is(11)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].programType", hasItems(ProgramType.WEIGHT_GAIN.toString(), ProgramType.WEIGHT_LOSS.toString())));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.totalElements", Is.is(11)));
     }
 
 
