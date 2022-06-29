@@ -84,16 +84,11 @@ public class AdminMenuRestController {
     })
     @PutMapping("/{menuId}/subMenu")
     public Response<Menu> addManySubMenuToMenu(@PathVariable @Positive Long menuId,
-                                               @RequestParam(name = "arrayOfSubMenuId") Long[] subMenuIds) {
+                                               @RequestParam(name = "subMenuIds") Long[] subMenuIds) {
         Optional<Menu> menuOptional = menuService.findByIdWithSubMenus(menuId);
         ApiValidationUtil.requireTrue(menuOptional.isPresent(), String.format("Menu by id %d not found", menuId));
         Menu menu = menuOptional.get();
-        Optional<SubMenu> subMenu;
-        for (Long subMenuId : subMenuIds) {
-            subMenu = subMenuService.findById(subMenuId);
-            ApiValidationUtil.requireTrue(subMenu.isPresent(), String.format("SubMenu by id %d not found", subMenuId));
-            menu = menuService.addSubMenuToMenu(menu, subMenu.get());
-        }
+        menu = menuService.addManySubMenuToMenu(menu, subMenuService.findById(subMenuIds));
         return Response.ok(menu);
     }
 
@@ -117,16 +112,11 @@ public class AdminMenuRestController {
     })
     @DeleteMapping("/{menuId}/subMenu")
     public Response<Menu> deleteManySubMenuFromMenu(@PathVariable @Positive Long menuId,
-                                                    @RequestParam(name = "arrayOfSubMenuId") Long[] subMenuIds) {
+                                                    @RequestParam(name = "subMenuIds") Long[] subMenuIds) {
         Optional<Menu> menuOptional = menuService.findByIdWithSubMenus(menuId);
         ApiValidationUtil.requireTrue(menuOptional.isPresent(), String.format("Menu by id %d not found", menuId));
         Menu menu = menuOptional.get();
-        Optional<SubMenu> subMenu;
-        for (Long subMenuId : subMenuIds) {
-            subMenu = subMenuService.findById(subMenuId);
-            ApiValidationUtil.requireTrue(subMenu.isPresent(), String.format("SubMenu by id %d not found", subMenuId));
-            menu = menuService.deleteSubMenuFromMenu(menu, subMenu.get());
-        }
+        menu = menuService.deleteManySubMenuToMenu(menu, subMenuService.findById(subMenuIds));
         return Response.ok(menu);
     }
 

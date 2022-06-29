@@ -4,8 +4,11 @@ import kz.kaitanov.fitnessbackend.model.Recipe;
 import kz.kaitanov.fitnessbackend.model.SubMenu;
 import kz.kaitanov.fitnessbackend.repository.model.SubMenuRepository;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.SubMenuService;
+import kz.kaitanov.fitnessbackend.web.config.util.ApiValidationUtil;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -33,5 +36,19 @@ public class SubMenuServiceImpl extends AbstractServiceImpl<SubMenu, Long> imple
     @Override
     public Optional<SubMenu> findByIdWithRecipes(Long id) {
         return subMenuRepository.findByIdWithRecipes(id);
+    }
+
+    @Override
+    public List<SubMenu> findById(Long[] ids) {
+        List<SubMenu> subMenuList = new ArrayList<>();
+        Optional<SubMenu> subMenu = null;
+        for (Long subMenuid : ids) {
+            subMenu = subMenuRepository.findById(subMenuid);
+            if (subMenu.isPresent()) {
+                subMenuList.add(subMenu.get());
+            }
+        }
+        ApiValidationUtil.requireTrue(subMenuList.size() > 0, String.format(" SubMenu with such id's not found"));
+        return subMenuList;
     }
 }
