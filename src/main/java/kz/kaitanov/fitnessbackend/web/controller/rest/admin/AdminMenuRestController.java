@@ -14,6 +14,9 @@ import kz.kaitanov.fitnessbackend.service.interfaces.model.MenuService;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.SubMenuService;
 import kz.kaitanov.fitnessbackend.web.config.util.ApiValidationUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -88,14 +91,13 @@ public class AdminMenuRestController {
         return Response.ok(menuService.deleteSubMenuFromMenu(menu.get(), subMenu.get()));
     }
 
-    //TODO добавить пагинацию
     @Operation(summary = "Эндпоинт для получения списка всех меню")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Список всех меню успешно получен")
     })
     @GetMapping
-    public Response<List<Menu>> getMenuList() {
-        return Response.ok(menuService.findAll());
+    public Response<Page<Menu>> getMenuPage(@PageableDefault(sort = "id") Pageable pageable) {
+        return Response.ok(menuService.findAll(pageable));
     }
 
     @Operation(summary = "Эндпоинт для получения меню по id")

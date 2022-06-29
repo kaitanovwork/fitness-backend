@@ -29,4 +29,6 @@ public final class ExerciseMapper {
         exercise.setName(dto.name());
         return exercise;
     }
+
 }
+

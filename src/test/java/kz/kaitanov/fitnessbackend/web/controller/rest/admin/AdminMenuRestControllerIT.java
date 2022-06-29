@@ -285,9 +285,9 @@ public class AdminMenuRestControllerIT extends SpringSimpleContextTest {
     }
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminMenuRestController/getMenuList_SuccessfulTest/BeforeTest.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminMenuRestController/getMenuList_SuccessfulTest/AfterTest.sql")
-    public void getMenuList_SuccessfulTest() throws Exception {
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminMenuRestController/getMenuPage_SuccessfulTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminMenuRestController/getMenuPage_SuccessfulTest/AfterTest.sql")
+    public void getMenuPage_SuccessfulTest() throws Exception {
         String token = getToken("username", "password");
 
         mockMvc.perform(get("/api/v1/admin/menu")
@@ -295,7 +295,19 @@ public class AdminMenuRestControllerIT extends SpringSimpleContextTest {
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].id", hasItems(101, 102)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].programType", hasItems(ProgramType.WEIGHT_GAIN.toString(), ProgramType.WEIGHT_LOSS.toString())));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].id", hasItems(101, 102, 103, 104, 105, 106, 107, 108, 109, 110)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.numberOfElements", Is.is(10)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.totalElements", Is.is(11)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].programType", hasItems(ProgramType.WEIGHT_GAIN.toString(), ProgramType.WEIGHT_LOSS.toString())));
+
+        mockMvc.perform(get("/api/v1/admin/menu?size=5&page=1&sort=id,desc")
+                .header("Authorization", token))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].id", hasItems(106, 105, 104, 103, 102)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.numberOfElements", Is.is(5)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.totalElements", Is.is(11)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].programType", hasItems(ProgramType.WEIGHT_GAIN.toString(), ProgramType.WEIGHT_LOSS.toString())));
     }
 }

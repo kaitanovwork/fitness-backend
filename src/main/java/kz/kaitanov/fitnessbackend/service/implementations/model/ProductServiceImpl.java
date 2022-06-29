@@ -3,6 +3,8 @@ package kz.kaitanov.fitnessbackend.service.implementations.model;
 import kz.kaitanov.fitnessbackend.model.Product;
 import kz.kaitanov.fitnessbackend.repository.model.ProductRepository;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.ProductService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -37,4 +39,9 @@ public class ProductServiceImpl extends AbstractServiceImpl<Product, Long> imple
         }
         return products;
     }
+
+    public Page<Product> findAll(Pageable pageable) {
+        return productRepository.findAll(pageable);
+    }
+
 }

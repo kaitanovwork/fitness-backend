@@ -4,6 +4,8 @@ import kz.kaitanov.fitnessbackend.model.Menu;
 import kz.kaitanov.fitnessbackend.model.SubMenu;
 import kz.kaitanov.fitnessbackend.repository.model.MenuRepository;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.MenuService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -16,6 +18,11 @@ public class MenuServiceImp extends AbstractServiceImpl<Menu, Long> implements M
     public MenuServiceImp(MenuRepository menuRepository) {
         super(menuRepository);
         this.menuRepository = menuRepository;
+    }
+
+    @Override
+    public Page<Menu> findAll(Pageable pageable) {
+        return menuRepository.findAll(pageable);
     }
 
     @Override
