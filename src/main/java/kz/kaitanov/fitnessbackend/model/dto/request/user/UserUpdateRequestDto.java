@@ -9,7 +9,6 @@ import javax.validation.constraints.Positive;
 public record UserUpdateRequestDto(
         @NotNull @Positive Long id,
         @NotBlank String username,
-        @NotBlank String password,
         String firstName,
         String lastName,
         String email,
