@@ -39,7 +39,7 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].muscleGroup", hasItems("Biceps", "Legs", "Triceps", "Shoulders")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].repeatCount", hasItems(10, 12, 12, 15)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].approachCount", hasItems(10, 12, 8, 6)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].area", hasItems("HOME", "GYM", "HOME", "GYM")));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].area", hasItems("ARMS", "LEGS", "BREAST", "CHEST")));
 
         mockMvc.perform(get("/api/v1/admin/exercise?page=1&size=5&sort=name,desc")
                         .header("Authorization", token))
@@ -54,7 +54,7 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/saveExercise_SuccessfulTest/AfterTest.sql")
     public void saveExercise_SuccessfulTest() throws Exception {
         String token = getToken("username", "pass");
-        ExercisePersistRequestDto dto = new ExercisePersistRequestDto("push", "back", 3, 10, Area.GYM);
+        ExercisePersistRequestDto dto = new ExercisePersistRequestDto("push", "back", 3, 10, Area.CHEST);
 
         mockMvc.perform(post("/api/v1/admin/exercise")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -90,7 +90,7 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/saveExercise_WithExistingNameTest/AfterTest.sql")
     public void saveExercise_WithExistingNameTest() throws Exception {
         String token = getToken("username", "pass");
-        ExercisePersistRequestDto dto = new ExercisePersistRequestDto("TestExercise1", "back", 3, 10, Area.GYM);
+        ExercisePersistRequestDto dto = new ExercisePersistRequestDto("TestExercise1", "back", 3, 10, Area.BREAST);
 
         mockMvc.perform(post("/api/v1/admin/exercise")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -108,7 +108,7 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/updateExercise_SuccessfulTest/AfterTest.sql")
     public void updateExercise_SuccessfulTest() throws Exception {
         String token = getToken("username", "pass");
-        ExerciseUpdateRequestDto exerciseUpdateRequestDto = new ExerciseUpdateRequestDto(101L, "Biceps", 20, 15, Area.HOME);
+        ExerciseUpdateRequestDto exerciseUpdateRequestDto = new ExerciseUpdateRequestDto(101L, "Biceps", 20, 15, Area.ARMS);
 
         mockMvc.perform(put("/api/v1/admin/exercise")
                         .header("authorization", token)
@@ -145,7 +145,7 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
     public void updateExercise_WithNotExistingExerciseTest() throws Exception {
 
         String token = getToken("username", "pass");
-        ExerciseUpdateRequestDto exerciseUpdateRequestDto = new ExerciseUpdateRequestDto(102L, "Biceps", 20, 15, Area.HOME);
+        ExerciseUpdateRequestDto exerciseUpdateRequestDto = new ExerciseUpdateRequestDto(102L, "Biceps", 20, 15, Area.ARMS);
 
         mockMvc.perform(put("/api/v1/admin/exercise")
                         .header("authorization", token)
@@ -208,7 +208,7 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/getExerciseById_SuccessfulTest/AfterTest.sql")
     public void getExerciseById_SuccessfulTest() throws Exception {
         String token = getToken("username", "pass");
-        Exercise exercise = new Exercise(101L, "TestExercise1", "Biceps", 10, 10, Area.HOME);
+        Exercise exercise = new Exercise(101L, "TestExercise1", "Biceps", 10, 10, Area.ARMS);
 
         mockMvc.perform(get("/api/v1/admin/exercise/{exerciseId}", "101")
                         .contentType(MediaType.APPLICATION_JSON)
