@@ -2,9 +2,13 @@ package kz.kaitanov.fitnessbackend.service.implementations.model;
 
 import kz.kaitanov.fitnessbackend.model.Recipe;
 import kz.kaitanov.fitnessbackend.model.SubMenu;
+import kz.kaitanov.fitnessbackend.model.converter.UserMapper;
+import kz.kaitanov.fitnessbackend.model.dto.response.UserResponseDto;
 import kz.kaitanov.fitnessbackend.repository.model.SubMenuRepository;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.SubMenuService;
 import kz.kaitanov.fitnessbackend.web.config.util.ApiValidationUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -19,6 +23,11 @@ public class SubMenuServiceImpl extends AbstractServiceImpl<SubMenu, Long> imple
     public SubMenuServiceImpl(SubMenuRepository subMenuRepository) {
         super(subMenuRepository);
         this.subMenuRepository = subMenuRepository;
+    }
+
+    @Override
+    public Page<SubMenu> findAll(Pageable pageable) {
+        return subMenuRepository.findAll(pageable);
     }
 
     @Override

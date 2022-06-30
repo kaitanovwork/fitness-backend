@@ -28,7 +28,17 @@ public final class UserMapper {
         User user = new User();
         user.setId(dto.id());
         user.setUsername(dto.username());
-        user.setPassword(dto.password());
+        user.setFirstName(dto.firstName());
+        user.setLastName(dto.lastName());
+        user.setEmail(dto.email());
+        user.setPhone(dto.phone());
+        user.setAge(dto.age());
+        user.setGender(dto.gender());
+        return user;
+    }
+
+    public static User updateUser(User user, UserUpdateRequestDto dto) {
+        user.setUsername(dto.username());
         user.setFirstName(dto.firstName());
         user.setLastName(dto.lastName());
         user.setEmail(dto.email());
