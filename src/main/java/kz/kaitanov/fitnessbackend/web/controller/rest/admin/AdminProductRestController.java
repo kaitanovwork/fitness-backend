@@ -13,6 +13,9 @@ import kz.kaitanov.fitnessbackend.model.dto.response.api.Response;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.ProductService;
 import kz.kaitanov.fitnessbackend.web.config.util.ApiValidationUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
-import java.util.List;
 import java.util.Optional;
 
 @Tag(name = "AdminProductRestController", description = "CRUD операции над продуктами")
@@ -73,14 +75,13 @@ public class AdminProductRestController {
         return Response.ok(productService.update(ProductMapper.updateName(product.get(), dto)));
     }
 
-    //TODO сделать пагинацю
     @Operation(summary = "Получене списка всех продуктов")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Список всех продуктов с пагинацией успешно получен"),
     })
     @GetMapping
-    public Response<List<Product>> getProductList() {
-        return Response.ok(productService.findAll());
+    public Response<Page<Product>> getProductPage(@PageableDefault(sort = "id") Pageable pageable) {
+        return Response.ok(productService.findAll(pageable));
     }
 
     @Operation(summary = "Получение продукта по id")
