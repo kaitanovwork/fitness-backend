@@ -56,7 +56,7 @@ public class AdminRecipeRestController {
     @Operation(summary = "Эндпоинт для обновление существующего рецепта")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Рецепт успешно обновлен"),
-            @ApiResponse(responseCode = "400", description = "Рецпет не найден")
+            @ApiResponse(responseCode = "400", description = "Рецепт не найден")
     })
     @PutMapping
     public Response<Recipe> updateRecipe(@RequestBody @Valid RecipeUpdateRequestDto dto) {

@@ -4,5 +4,6 @@ import javax.validation.constraints.NotBlank;
 
 public record RecipePersistRequestDto(
         @NotBlank String name,
-        String description) {
+        String description,
+        String picUrl) {
 }

@@ -24,7 +24,7 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
     public void saveRecipe_SuccessfulTest() throws Exception {
 
         String token = getToken("username", "password");
-        RecipePersistRequestDto dto = new RecipePersistRequestDto("name", "description");
+        RecipePersistRequestDto dto = new RecipePersistRequestDto("name", "description", "picUrl");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/admin/recipe")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -40,11 +40,12 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
                         """
                                 SELECT COUNT(r.id) > 0
                                 FROM Recipe r
-                                WHERE r.name = :name AND r.description = :description
+                                WHERE r.name = :name AND r.description = :description AND r.picUrl = :picUrl 
                                 """,
                         Boolean.class)
                 .setParameter("name", dto.name())
                 .setParameter("description", dto.description())
+                .setParameter("picUrl", dto.picUrl())
                 .getSingleResult());
     }
 
@@ -54,7 +55,7 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
     public void saveRecipe_NameRecipeIsUsed() throws Exception {
 
         String token = getToken("username", "password");
-        RecipePersistRequestDto dto = new RecipePersistRequestDto("name", "description");
+        RecipePersistRequestDto dto = new RecipePersistRequestDto("name", "description", "picUrl");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/admin/recipe")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -72,7 +73,7 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
     public void updateRecipe_SuccessfulTest() throws Exception {
 
         String token = getToken("username", "password");
-        RecipeUpdateRequestDto dto = new RecipeUpdateRequestDto(101L, "description");
+        RecipeUpdateRequestDto dto = new RecipeUpdateRequestDto(101L, "description", "picUrl");
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/admin/recipe")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -88,11 +89,12 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
                         """
                                 SELECT COUNT(r.id) > 0
                                 FROM Recipe r
-                                WHERE r.id = :id AND r.description = :description
+                                WHERE r.id = :id AND r.description = :description AND r.picUrl = :picUrl
                                 """,
                         Boolean.class)
                 .setParameter("id", 101L)
                 .setParameter("description", dto.description())
+                .setParameter("picUrl", dto.picUrl())
                 .getSingleResult());
     }
 
@@ -102,7 +104,7 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
     public void updateRecipe_RecipeNotFound() throws Exception {
 
         String token = getToken("username", "password");
-        RecipeUpdateRequestDto dto = new RecipeUpdateRequestDto(102L, "description");
+        RecipeUpdateRequestDto dto = new RecipeUpdateRequestDto(102L, "description", "picUrl");
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/admin/recipe")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -345,7 +347,9 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
     @Test
     @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminRecipeRestController/getRecipeById_RecipeNotFound/BeforeTest.sql")
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminRecipeRestController/getRecipeById_RecipeNotFound/AfterTest.sql")
-    public void getRecipeById_RecipeNotFound() throws Exception {
+    public void
+
+    getRecipeById_RecipeNotFound() throws Exception {
 
         String token = getToken("username", "password");
 

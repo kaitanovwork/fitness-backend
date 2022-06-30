@@ -37,6 +37,8 @@ public class Recipe {
 
     private String description;
 
+    private String picUrl;
+
     private Integer calorie;
 
     private Integer protein;
@@ -69,12 +71,14 @@ public class Recipe {
         if (o == null || getClass() != o.getClass()) return false;
         Recipe recipe = (Recipe) o;
         return Objects.equals(name, recipe.name) && Objects.equals(calorie, recipe.calorie)
+                && Objects.equals(picUrl, recipe.picUrl)
                 && Objects.equals(protein, recipe.protein) && Objects.equals(fat, recipe.fat)
                 && Objects.equals(carbohydrate, recipe.carbohydrate) && Objects.equals(description, recipe.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, calorie, protein, fat, carbohydrate);
+        return Objects.hash(name, description, picUrl, calorie, protein, fat, carbohydrate);
     }
+
 }
