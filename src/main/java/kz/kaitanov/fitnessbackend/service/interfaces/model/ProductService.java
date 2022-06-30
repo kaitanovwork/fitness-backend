@@ -11,5 +11,5 @@ public interface ProductService extends AbstractService<Product, Long> {
 
     Optional<Product> findByName(String name);
 
-    List<Product> findById(Long[] id);
+    List<Product> findByIds(Long[] id);
 }

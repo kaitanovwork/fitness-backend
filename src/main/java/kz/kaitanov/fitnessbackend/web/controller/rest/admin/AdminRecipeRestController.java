@@ -32,7 +32,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-import java.util.List;
 import java.util.Optional;
 
 @Tag(name = "AdminRecipeRestController", description = "CRUD операции над рецептами")
@@ -151,9 +150,7 @@ public class AdminRecipeRestController {
     public Response<Recipe> addProductsToRecipe(@PathVariable @Positive Long recipeId, @RequestParam @NotNull Long[] productsId) {
         Optional<Recipe> recipe = recipeService.findByIdWithProducts(recipeId);
         ApiValidationUtil.requireTrue(recipe.isPresent(), String.format("Recipe by id %d not found", recipeId));
-        List<Product> products = productService.findById(productsId);
-        ApiValidationUtil.requireTrue(products.size() > 0, String.format("Product by id %d not found", productsId));
-        return Response.ok(recipeService.addProductsToRecipe(recipe.get(), products));
+        return Response.ok(recipeService.addProductsToRecipe(recipe.get(), productService.findByIds(productsId)));
     }
 
     @Operation(summary = "Эндпоинт для удаления продуктов пачкой из рецепта по id")
@@ -165,8 +162,6 @@ public class AdminRecipeRestController {
     public Response<Recipe> deleteProductsFromRecipe(@PathVariable @Positive Long recipeId, @RequestParam @NotNull Long[] productsId) {
         Optional<Recipe> recipe = recipeService.findByIdWithProducts(recipeId);
         ApiValidationUtil.requireTrue(recipe.isPresent(), String.format("Recipe by id %d not found", recipeId));
-        List<Product> products = productService.findById(productsId);
-        ApiValidationUtil.requireTrue(products.size() > 0, String.format("Product by id %d not found", productsId));
-        return Response.ok(recipeService.deleteProductsFromRecipe(recipe.get(), products));
+        return Response.ok(recipeService.deleteProductsFromRecipe(recipe.get(), productService.findByIds(productsId)));
     }
 }

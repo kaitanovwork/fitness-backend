@@ -5,7 +5,7 @@ import kz.kaitanov.fitnessbackend.repository.model.ProductRepository;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.ProductService;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,12 +29,7 @@ public class ProductServiceImpl extends AbstractServiceImpl<Product, Long> imple
     }
 
     @Override
-    public List<Product> findById(Long[] id) {
-        List<Product> products = new ArrayList<>();
-        for (Long productsId : id) {
-            Optional<Product> product = productRepository.findById(productsId);
-            product.ifPresent(products::add);
-        }
-        return products;
+    public List<Product> findByIds(Long[] id) {
+        return productRepository.findAllById(Arrays.asList(id));
     }
 }
