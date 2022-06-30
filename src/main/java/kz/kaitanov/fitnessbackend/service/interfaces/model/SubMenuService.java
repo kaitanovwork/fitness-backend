@@ -16,6 +16,8 @@ public interface SubMenuService extends AbstractService<SubMenu, Long> {
 
     SubMenu deleteRecipeFromSubMenu(SubMenu subMenu, Recipe recipe);
 
+    Page<SubMenu> findAll(Pageable pageable);
+
     Optional<SubMenu> findByIdWithRecipes(Long id);
 
     List<SubMenu> findByIds(Long[] ids);
