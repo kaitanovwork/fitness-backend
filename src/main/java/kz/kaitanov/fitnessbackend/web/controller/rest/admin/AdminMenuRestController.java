@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.util.List;
 import java.util.Optional;
 
 @Tag(name = "AdminMenuRestController", description = "CRUD операции над меню")
@@ -84,10 +85,12 @@ public class AdminMenuRestController {
     })
     @PutMapping("/{menuId}/subMenu")
     public Response<Menu> addSubMenusToMenu(@PathVariable @Positive Long menuId,
-                                               @RequestParam(name = "subMenuIds") Long[] subMenuIds) {
+                                            @RequestParam(name = "subMenuIds") Long[] subMenuIds) {
         Optional<Menu> menuOptional = menuService.findByIdWithSubMenus(menuId);
         ApiValidationUtil.requireTrue(menuOptional.isPresent(), String.format("Menu by id %d not found", menuId));
-        return Response.ok(menuService.addSubMenusToMenu(menuOptional.get(), subMenuService.findByIds(subMenuIds)));
+        List<SubMenu> subMenuList = subMenuService.findByIds(subMenuIds);
+        ApiValidationUtil.requireTrue(subMenuList.size() > 0, String.format("SubMenus with such id's not found"));
+        return Response.ok(menuService.addSubMenusToMenu(menuOptional.get(), subMenuList));
     }
 
     @Operation(summary = "Эндпоинт для удаления подменю из меню по id")
@@ -113,7 +116,9 @@ public class AdminMenuRestController {
                                                     @RequestParam(name = "subMenuIds") Long[] subMenuIds) {
         Optional<Menu> menuOptional = menuService.findByIdWithSubMenus(menuId);
         ApiValidationUtil.requireTrue(menuOptional.isPresent(), String.format("Menu by id %d not found", menuId));
-        return Response.ok(menuService.deleteSubMenusToMenu(menuOptional.get(), subMenuService.findByIds(subMenuIds)));
+        List<SubMenu> subMenuList = subMenuService.findByIds(subMenuIds);
+        ApiValidationUtil.requireTrue(subMenuList.size() > 0, String.format("SubMenus with such id's not found"));
+        return Response.ok(menuService.deleteSubMenusToMenu(menuOptional.get(), subMenuList));
     }
 
     @Operation(summary = "Эндпоинт для получения списка всех меню")

@@ -4,7 +4,8 @@ import kz.kaitanov.fitnessbackend.model.Recipe;
 import kz.kaitanov.fitnessbackend.model.SubMenu;
 import kz.kaitanov.fitnessbackend.repository.model.SubMenuRepository;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.SubMenuService;
-import kz.kaitanov.fitnessbackend.web.config.util.ApiValidationUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -19,6 +20,11 @@ public class SubMenuServiceImpl extends AbstractServiceImpl<SubMenu, Long> imple
     public SubMenuServiceImpl(SubMenuRepository subMenuRepository) {
         super(subMenuRepository);
         this.subMenuRepository = subMenuRepository;
+    }
+
+    @Override
+    public Page<SubMenu> findAll(Pageable pageable) {
+        return subMenuRepository.findAll(pageable);
     }
 
     @Override
@@ -40,9 +46,6 @@ public class SubMenuServiceImpl extends AbstractServiceImpl<SubMenu, Long> imple
 
     @Override
     public List<SubMenu> findByIds(Long[] ids) {
-        List<Long> idList = Arrays.asList(ids);
-        List<SubMenu> subMenuList = subMenuRepository.findAllById(idList);
-        ApiValidationUtil.requireTrue(subMenuList.size() > 0, String.format(" SubMenu with such id's not found"));
-        return subMenuList;
+        return subMenuRepository.findAllById(Arrays.asList(ids));
     }
 }
