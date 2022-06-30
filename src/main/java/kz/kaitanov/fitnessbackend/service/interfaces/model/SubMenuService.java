@@ -10,8 +10,6 @@ import java.util.Optional;
 
 public interface SubMenuService extends AbstractService<SubMenu, Long> {
 
-    Page<SubMenu> findAll(Pageable pageable);
-
     SubMenu addRecipeToSubMenu(SubMenu subMenu, Recipe recipe);
 
     SubMenu deleteRecipeFromSubMenu(SubMenu subMenu, Recipe recipe);
