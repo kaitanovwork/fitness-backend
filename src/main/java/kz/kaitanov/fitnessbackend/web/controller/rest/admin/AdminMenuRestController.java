@@ -83,13 +83,11 @@ public class AdminMenuRestController {
             @ApiResponse(responseCode = "400", description = "Меню или подменю не найдены")
     })
     @PutMapping("/{menuId}/subMenu")
-    public Response<Menu> addManySubMenuToMenu(@PathVariable @Positive Long menuId,
+    public Response<Menu> addSubMenusToMenu(@PathVariable @Positive Long menuId,
                                                @RequestParam(name = "subMenuIds") Long[] subMenuIds) {
         Optional<Menu> menuOptional = menuService.findByIdWithSubMenus(menuId);
         ApiValidationUtil.requireTrue(menuOptional.isPresent(), String.format("Menu by id %d not found", menuId));
-        Menu menu = menuOptional.get();
-        menu = menuService.addManySubMenuToMenu(menu, subMenuService.findById(subMenuIds));
-        return Response.ok(menu);
+        return Response.ok(menuService.addSubMenusToMenu(menuOptional.get(), subMenuService.findByIds(subMenuIds)));
     }
 
     @Operation(summary = "Эндпоинт для удаления подменю из меню по id")
@@ -111,13 +109,11 @@ public class AdminMenuRestController {
             @ApiResponse(responseCode = "400", description = "Меню или подменю не найдены")
     })
     @DeleteMapping("/{menuId}/subMenu")
-    public Response<Menu> deleteManySubMenuFromMenu(@PathVariable @Positive Long menuId,
+    public Response<Menu> deleteSubMenusFromMenu(@PathVariable @Positive Long menuId,
                                                     @RequestParam(name = "subMenuIds") Long[] subMenuIds) {
         Optional<Menu> menuOptional = menuService.findByIdWithSubMenus(menuId);
         ApiValidationUtil.requireTrue(menuOptional.isPresent(), String.format("Menu by id %d not found", menuId));
-        Menu menu = menuOptional.get();
-        menu = menuService.deleteManySubMenuToMenu(menu, subMenuService.findById(subMenuIds));
-        return Response.ok(menu);
+        return Response.ok(menuService.deleteSubMenusToMenu(menuOptional.get(), subMenuService.findByIds(subMenuIds)));
     }
 
     @Operation(summary = "Эндпоинт для получения списка всех меню")

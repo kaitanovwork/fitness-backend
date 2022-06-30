@@ -14,5 +14,5 @@ public interface SubMenuService extends AbstractService<SubMenu, Long> {
 
     Optional<SubMenu> findByIdWithRecipes(Long id);
 
-    List<SubMenu> findById(Long[] ids);
+    List<SubMenu> findByIds(Long[] ids);
 }

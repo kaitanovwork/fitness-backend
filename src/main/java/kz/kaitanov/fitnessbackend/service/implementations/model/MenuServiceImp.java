@@ -27,7 +27,7 @@ public class MenuServiceImp extends AbstractServiceImpl<Menu, Long> implements M
     }
 
     @Override
-    public Menu addManySubMenuToMenu(Menu menu, List<SubMenu> subMenuList) {
+    public Menu addSubMenusToMenu(Menu menu, List<SubMenu> subMenuList) {
         for (SubMenu submenu : subMenuList) {
             menu.addSubMenu(submenu);
         }
@@ -35,7 +35,7 @@ public class MenuServiceImp extends AbstractServiceImpl<Menu, Long> implements M
     }
 
     @Override
-    public Menu deleteManySubMenuToMenu(Menu menu, List<SubMenu> subMenuList) {
+    public Menu deleteSubMenusToMenu(Menu menu, List<SubMenu> subMenuList) {
         for (SubMenu submenu : subMenuList) {
             menu.deleteSubMenu(submenu);
         }

@@ -19,7 +19,7 @@ public interface MenuService extends AbstractService<Menu, Long> {
 
     Page<Menu> findAll(Pageable pageable);
 
-    Menu addManySubMenuToMenu(Menu menu, List<SubMenu> subMenuList);
+    Menu addSubMenusToMenu(Menu menu, List<SubMenu> subMenuList);
 
-    Menu deleteManySubMenuToMenu(Menu menu, List<SubMenu> subMenuList);
+    Menu deleteSubMenusToMenu(Menu menu, List<SubMenu> subMenuList);
 }

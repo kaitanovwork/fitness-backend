@@ -7,7 +7,7 @@ import kz.kaitanov.fitnessbackend.service.interfaces.model.SubMenuService;
 import kz.kaitanov.fitnessbackend.web.config.util.ApiValidationUtil;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,15 +39,9 @@ public class SubMenuServiceImpl extends AbstractServiceImpl<SubMenu, Long> imple
     }
 
     @Override
-    public List<SubMenu> findById(Long[] ids) {
-        List<SubMenu> subMenuList = new ArrayList<>();
-        Optional<SubMenu> subMenu = null;
-        for (Long subMenuid : ids) {
-            subMenu = subMenuRepository.findById(subMenuid);
-            if (subMenu.isPresent()) {
-                subMenuList.add(subMenu.get());
-            }
-        }
+    public List<SubMenu> findByIds(Long[] ids) {
+        List<Long> idList = Arrays.asList(ids);
+        List<SubMenu> subMenuList = subMenuRepository.findAllById(idList);
         ApiValidationUtil.requireTrue(subMenuList.size() > 0, String.format(" SubMenu with such id's not found"));
         return subMenuList;
     }
