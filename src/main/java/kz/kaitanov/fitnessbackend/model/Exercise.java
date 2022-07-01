@@ -1,6 +1,7 @@
 package kz.kaitanov.fitnessbackend.model;
 
 import kz.kaitanov.fitnessbackend.model.enums.Area;
+import kz.kaitanov.fitnessbackend.model.enums.Category;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -53,6 +54,11 @@ public class Exercise {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Area area;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Category category;
 
     @Override
     public boolean equals(Object o) {
