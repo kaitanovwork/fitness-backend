@@ -14,6 +14,7 @@ public final class ExerciseMapper {
         exercise.setRepeatCount(dto.repeatCount());
         exercise.setApproachCount(dto.approachCount());
         exercise.setArea(dto.area());
+        exercise.setCategory(dto.category());
         return exercise;
     }
 
@@ -22,6 +23,7 @@ public final class ExerciseMapper {
         exercise.setRepeatCount(dto.repeatCount());
         exercise.setApproachCount(dto.approachCount());
         exercise.setArea(dto.area());
+        exercise.setCategory(dto.category());
         return exercise;
     }
 

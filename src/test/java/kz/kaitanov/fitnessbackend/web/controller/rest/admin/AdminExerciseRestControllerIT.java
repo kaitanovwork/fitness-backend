@@ -6,6 +6,7 @@ import kz.kaitanov.fitnessbackend.model.dto.request.exercise.ExercisePersistRequ
 import kz.kaitanov.fitnessbackend.model.dto.request.exercise.ExerciseUpdateNameRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.exercise.ExerciseUpdateRequestDto;
 import kz.kaitanov.fitnessbackend.model.enums.Area;
+import kz.kaitanov.fitnessbackend.model.enums.Category;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -39,7 +40,8 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].muscleGroup", hasItems("Biceps", "Legs", "Triceps", "Shoulders")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].repeatCount", hasItems(10, 12, 12, 15)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].approachCount", hasItems(10, 12, 8, 6)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].area", hasItems("ARMS", "LEGS", "BREAST", "CHEST")));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].area", hasItems("ARMS", "LEGS", "BREAST", "CHEST")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].category", hasItems("STRENGTH", "CARDIO")));
 
         mockMvc.perform(get("/api/v1/admin/exercise?page=1&size=5&sort=name,desc")
                         .header("Authorization", token))
@@ -54,7 +56,7 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/saveExercise_SuccessfulTest/AfterTest.sql")
     public void saveExercise_SuccessfulTest() throws Exception {
         String token = getToken("username", "pass");
-        ExercisePersistRequestDto dto = new ExercisePersistRequestDto("push", "back", 3, 10, Area.CHEST);
+        ExercisePersistRequestDto dto = new ExercisePersistRequestDto("push", "back", 3, 10, Area.CHEST, Category.STRENGTH);
 
         mockMvc.perform(post("/api/v1/admin/exercise")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -67,14 +69,15 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.muscleGroup", Is.is(dto.muscleGroup())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.repeatCount", Is.is(dto.repeatCount())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.approachCount", Is.is(dto.approachCount())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.area", Is.is(dto.area().name())));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.area", Is.is(dto.area().name())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.category", Is.is(dto.category().name())));
 
         assertTrue(entityManager.createQuery(
                         """
                                 SELECT COUNT(e.id) > 0
                                 FROM Exercise e
                                 WHERE e.name = :name AND e.muscleGroup = :muscleGroup AND e.repeatCount = :repeatCount AND e.approachCount = :approachCount
-                                AND e.area = :area
+                                AND e.area = :area AND e.category = :category
                                 """,
                         Boolean.class)
                 .setParameter("name", dto.name())
@@ -82,6 +85,7 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
                 .setParameter("repeatCount", dto.repeatCount())
                 .setParameter("approachCount", dto.approachCount())
                 .setParameter("area", dto.area())
+                .setParameter("category", dto.category())
                 .getSingleResult());
     }
 
@@ -90,7 +94,7 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/saveExercise_WithExistingNameTest/AfterTest.sql")
     public void saveExercise_WithExistingNameTest() throws Exception {
         String token = getToken("username", "pass");
-        ExercisePersistRequestDto dto = new ExercisePersistRequestDto("TestExercise1", "back", 3, 10, Area.BREAST);
+        ExercisePersistRequestDto dto = new ExercisePersistRequestDto("TestExercise1", "back", 3, 10, Area.BREAST, Category.STRENGTH);
 
         mockMvc.perform(post("/api/v1/admin/exercise")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -108,7 +112,7 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/updateExercise_SuccessfulTest/AfterTest.sql")
     public void updateExercise_SuccessfulTest() throws Exception {
         String token = getToken("username", "pass");
-        ExerciseUpdateRequestDto exerciseUpdateRequestDto = new ExerciseUpdateRequestDto(101L, "Biceps", 20, 15, Area.ARMS);
+        ExerciseUpdateRequestDto exerciseUpdateRequestDto = new ExerciseUpdateRequestDto(101L, "Biceps", 20, 15, Area.ARMS, Category.STRENGTH);
 
         mockMvc.perform(put("/api/v1/admin/exercise")
                         .header("authorization", token)
@@ -121,20 +125,23 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.muscleGroup", Is.is(exerciseUpdateRequestDto.muscleGroup())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.repeatCount", Is.is(exerciseUpdateRequestDto.repeatCount())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.approachCount", Is.is(exerciseUpdateRequestDto.approachCount())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.area", Is.is(exerciseUpdateRequestDto.area().name())));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.area", Is.is(exerciseUpdateRequestDto.area().name())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.category", Is.is(exerciseUpdateRequestDto.category().name())));
 
         assertTrue(entityManager.createQuery(
                         """
                                 SELECT COUNT(u.id) > 0
                                 FROM Exercise u
                                 WHERE u.id = :id AND u.muscleGroup = :muscleGroup AND u.repeatCount = :repeatCount AND u.approachCount = :approachCount
-                                AND u.area = :area""",
+                                AND u.area = :area AND u.category = :category
+                                """,
                         Boolean.class)
                 .setParameter("id", exerciseUpdateRequestDto.id())
                 .setParameter("muscleGroup", exerciseUpdateRequestDto.muscleGroup())
                 .setParameter("repeatCount", exerciseUpdateRequestDto.repeatCount())
                 .setParameter("approachCount", exerciseUpdateRequestDto.approachCount())
                 .setParameter("area", exerciseUpdateRequestDto.area())
+                .setParameter("category", exerciseUpdateRequestDto.category())
                 .getSingleResult());
 
     }
@@ -145,7 +152,7 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
     public void updateExercise_WithNotExistingExerciseTest() throws Exception {
 
         String token = getToken("username", "pass");
-        ExerciseUpdateRequestDto exerciseUpdateRequestDto = new ExerciseUpdateRequestDto(102L, "Biceps", 20, 15, Area.ARMS);
+        ExerciseUpdateRequestDto exerciseUpdateRequestDto = new ExerciseUpdateRequestDto(102L, "Biceps", 20, 15, Area.ARMS, Category.CARDIO);
 
         mockMvc.perform(put("/api/v1/admin/exercise")
                         .header("authorization", token)
@@ -208,7 +215,7 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
     @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminExerciseRestController/getExerciseById_SuccessfulTest/AfterTest.sql")
     public void getExerciseById_SuccessfulTest() throws Exception {
         String token = getToken("username", "pass");
-        Exercise exercise = new Exercise(101L, "TestExercise1", "Biceps", 10, 10, Area.ARMS);
+        Exercise exercise = new Exercise(101L, "TestExercise1", "Biceps", 10, 10, Area.ARMS, Category.STRENGTH);
 
         mockMvc.perform(get("/api/v1/admin/exercise/{exerciseId}", "101")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -220,7 +227,8 @@ public class AdminExerciseRestControllerIT extends SpringSimpleContextTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.muscleGroup", Is.is(exercise.getMuscleGroup())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.repeatCount", Is.is(exercise.getRepeatCount())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.approachCount", Is.is(exercise.getApproachCount())))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.area", Is.is(exercise.getArea().name())));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.area", Is.is(exercise.getArea().name())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.category", Is.is(exercise.getCategory().name())));
     }
 
     @Test
