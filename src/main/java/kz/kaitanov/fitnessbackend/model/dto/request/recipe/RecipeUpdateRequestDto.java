@@ -6,5 +6,6 @@ import javax.validation.constraints.Positive;
 
 public record RecipeUpdateRequestDto(
         @NotNull @Positive Long id,
-        @NotBlank String description) {
+        @NotBlank String description,
+        @NotBlank String picUrl) {
 }
