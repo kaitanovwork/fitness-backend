@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -29,6 +31,10 @@ public class ProductServiceImpl extends AbstractServiceImpl<Product, Long> imple
     }
 
     @Override
+    public List<Product> findByIds(Long[] id) {
+        return productRepository.findAllById(Arrays.asList(id));
+    }
+
     public Page<Product> findAll(Pageable pageable) {
         return productRepository.findAll(pageable);
     }

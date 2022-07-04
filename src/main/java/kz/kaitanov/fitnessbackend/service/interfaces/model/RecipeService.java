@@ -5,6 +5,7 @@ import kz.kaitanov.fitnessbackend.model.Recipe;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface RecipeService extends AbstractService<Recipe, Long> {
@@ -18,4 +19,8 @@ public interface RecipeService extends AbstractService<Recipe, Long> {
     Optional<Recipe> findByIdWithProducts(Long id);
 
     Page<Recipe> findAll(Pageable pageable);
+
+    Recipe addProductsToRecipe(Recipe recipe, List<Product> products);
+
+    Recipe deleteProductsFromRecipe(Recipe recipe, List<Product> products);
 }

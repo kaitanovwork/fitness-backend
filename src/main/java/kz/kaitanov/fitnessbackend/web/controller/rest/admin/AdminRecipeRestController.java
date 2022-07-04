@@ -26,9 +26,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.util.Optional;
 
@@ -139,6 +141,27 @@ public class AdminRecipeRestController {
         return Response.ok();
     }
 
-    //TODO добавить эндпоинт для добавления продуктов пачкой
-    //TODO добавить эндпоинт для удаления продуктов пачкой
+    @Operation(summary = "Эндпоинт для добавления продуктов в рецепт пачкой")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Продукты успешно добавлены"),
+            @ApiResponse(responseCode = "400", description = "Рецепт или продукт не найден")
+    })
+    @PutMapping("/{recipeId}/product")
+    public Response<Recipe> addProductsToRecipe(@PathVariable @Positive Long recipeId, @RequestParam @NotNull Long[] productsId) {
+        Optional<Recipe> recipe = recipeService.findByIdWithProducts(recipeId);
+        ApiValidationUtil.requireTrue(recipe.isPresent(), String.format("Recipe by id %d not found", recipeId));
+        return Response.ok(recipeService.addProductsToRecipe(recipe.get(), productService.findByIds(productsId)));
+    }
+
+    @Operation(summary = "Эндпоинт для удаления продуктов пачкой из рецепта по id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Продукты успешно удалены"),
+            @ApiResponse(responseCode = "400", description = "Рецепт или продукт не найден")
+    })
+    @DeleteMapping("/{recipeId}/product")
+    public Response<Recipe> deleteProductsFromRecipe(@PathVariable @Positive Long recipeId, @RequestParam @NotNull Long[] productsId) {
+        Optional<Recipe> recipe = recipeService.findByIdWithProducts(recipeId);
+        ApiValidationUtil.requireTrue(recipe.isPresent(), String.format("Recipe by id %d not found", recipeId));
+        return Response.ok(recipeService.deleteProductsFromRecipe(recipe.get(), productService.findByIds(productsId)));
+    }
 }
