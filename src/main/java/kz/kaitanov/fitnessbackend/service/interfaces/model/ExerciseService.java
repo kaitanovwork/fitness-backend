@@ -9,4 +9,7 @@ public interface ExerciseService extends AbstractService<Exercise, Long> {
     boolean existsByName(String name);
 
     Page<Exercise> findAll(Pageable pageable);
+
+    Page<Exercise> findExerciseByUser(Long exerciseId, Pageable pageable);
+
 }

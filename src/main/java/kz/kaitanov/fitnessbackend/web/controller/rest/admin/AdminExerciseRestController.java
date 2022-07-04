@@ -65,7 +65,7 @@ public class AdminExerciseRestController {
     @Operation(summary = "Эндпоинт для обновление наименования")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Наименование упражнения успешно обновлено"),
-            @ApiResponse(responseCode = "400", description = "Упраженение с таким id не найдено, либо упражнение с указанным именем уже существует")
+            @ApiResponse(responseCode = "400", description = "Упражнение с таким id не найдено, либо упражнение с указанным именем уже существует")
     })
     @PutMapping("/name")
     public Response<Exercise> updateExerciseName(@RequestBody @Valid ExerciseUpdateNameRequestDto dto) {
