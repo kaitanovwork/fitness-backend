@@ -9,7 +9,7 @@ public interface ExerciseRepository extends JpaRepository<Exercise, Long> {
     @Query("""
             SELECT CASE WHEN COUNT(e) > 0 THEN true ELSE false END
             FROM Exercise e
-            WHERE e.name = :name
+            WHERE e.name = :name 
             """)
     boolean existsByName(String name);
 }

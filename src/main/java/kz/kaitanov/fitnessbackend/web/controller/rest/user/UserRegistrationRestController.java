@@ -31,7 +31,7 @@ public class UserRegistrationRestController {
 
     @Operation(summary = "Эндпоинт для регистрации нового пользователя")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Новый пользователь успешно зарегестрирован"),
+            @ApiResponse(responseCode = "200", description = "Новый пользователь успешно зарегистрирован"),
             @ApiResponse(responseCode = "400", description = "Клиент допустил ошибки в запросе")
     })
     @PostMapping
