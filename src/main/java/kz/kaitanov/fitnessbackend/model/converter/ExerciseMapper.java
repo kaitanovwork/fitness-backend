@@ -10,7 +10,7 @@ public final class ExerciseMapper {
     public static Exercise toEntity(ExercisePersistRequestDto dto) {
         Exercise exercise = new Exercise();
         exercise.setName(dto.name());
-        exercise.setMuscleGroup(dto.muscleGroup());
+        exercise.setMuscleGroups(dto.muscleGroup());
         exercise.setRepeatCount(dto.repeatCount());
         exercise.setApproachCount(dto.approachCount());
         exercise.setArea(dto.area());
@@ -19,7 +19,7 @@ public final class ExerciseMapper {
     }
 
     public static Exercise updateExercise(Exercise exercise, ExerciseUpdateRequestDto dto) {
-        exercise.setMuscleGroup(dto.muscleGroup());
+        exercise.setMuscleGroups(dto.muscleGroup());
         exercise.setRepeatCount(dto.repeatCount());
         exercise.setApproachCount(dto.approachCount());
         exercise.setArea(dto.area());
