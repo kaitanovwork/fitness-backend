@@ -22,23 +22,23 @@ public class ApplicationRunnerImpl implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-    //  Role adminRole = new Role();
-    //  Role userRole = new Role();
-    //  adminRole.setName(RoleName.ADMIN);
-    //  userRole.setName(RoleName.USER);
-    //  adminRole = roleService.save(adminRole);
-    //  userRole = roleService.save(userRole);
+        Role adminRole = new Role();
+        Role userRole = new Role();
+        adminRole.setName(RoleName.ADMIN);
+        userRole.setName(RoleName.USER);
+        adminRole = roleService.save(adminRole);
+        userRole = roleService.save(userRole);
 
-    //  User user = new User();
-    //  user.setUsername("user");
-    //  user.setPassword(passwordEncoder.encode("password"));
-    //  user.setRole(userRole);
-    //  User admin = new User();
-    //  admin.setUsername("admin");
-    //  admin.setPassword(passwordEncoder.encode("password"));
-    //  admin.setRole(adminRole);
-    //  saveUser(user);
-    //  saveUser(admin);
+        User user = new User();
+        user.setUsername("user");
+        user.setPassword(passwordEncoder.encode("password"));
+        user.setRole(userRole);
+        User admin = new User();
+        admin.setUsername("admin");
+        admin.setPassword(passwordEncoder.encode("password"));
+        admin.setRole(adminRole);
+        saveUser(user);
+        saveUser(admin);
     }
 
     @Transactional
