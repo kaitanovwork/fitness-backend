@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -77,6 +78,21 @@ public class AdminMenuRestController {
         return Response.ok(menuService.addSubMenuToMenu(menu.get(), subMenu.get()));
     }
 
+    @Operation(summary = "Эндпоинт для добавления пачки подменю в меню")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Пачка подменю успешно добавлена"),
+            @ApiResponse(responseCode = "400", description = "Меню или подменю не найдены")
+    })
+    @PutMapping("/{menuId}/subMenu")
+    public Response<Menu> addSubMenusToMenu(@PathVariable @Positive Long menuId,
+                                            @RequestParam(name = "subMenuIds") Long[] subMenuIds) {
+        Optional<Menu> menuOptional = menuService.findByIdWithSubMenus(menuId);
+        ApiValidationUtil.requireTrue(menuOptional.isPresent(), String.format("Menu by id %d not found", menuId));
+        List<SubMenu> subMenuList = subMenuService.findByIds(subMenuIds);
+        ApiValidationUtil.requireTrue(subMenuList.size() > 0, String.format("SubMenus with such id's not found"));
+        return Response.ok(menuService.addSubMenusToMenu(menuOptional.get(), subMenuList));
+    }
+
     @Operation(summary = "Эндпоинт для удаления подменю из меню по id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Подменю успешно удалено"),
@@ -89,6 +105,20 @@ public class AdminMenuRestController {
         Optional<SubMenu> subMenu = subMenuService.findById(subMenuId);
         ApiValidationUtil.requireTrue(subMenu.isPresent(), String.format("SubMenu by id %d not found", subMenuId));
         return Response.ok(menuService.deleteSubMenuFromMenu(menu.get(), subMenu.get()));
+    }
+    @Operation(summary = "Эндпоинт для удаления пачки подменю из меню по id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Пачка подменю успешно удалена"),
+            @ApiResponse(responseCode = "400", description = "Меню или подменю не найдены")
+    })
+    @DeleteMapping("/{menuId}/subMenu")
+    public Response<Menu> deleteSubMenusFromMenu(@PathVariable @Positive Long menuId,
+                                                    @RequestParam(name = "subMenuIds") Long[] subMenuIds) {
+        Optional<Menu> menuOptional = menuService.findByIdWithSubMenus(menuId);
+        ApiValidationUtil.requireTrue(menuOptional.isPresent(), String.format("Menu by id %d not found", menuId));
+        List<SubMenu> subMenuList = subMenuService.findByIds(subMenuIds);
+        ApiValidationUtil.requireTrue(subMenuList.size() > 0, String.format("SubMenus with such id's not found"));
+        return Response.ok(menuService.deleteSubMenusToMenu(menuOptional.get(), subMenuList));
     }
 
     @Operation(summary = "Эндпоинт для получения списка всех меню")
@@ -123,7 +153,4 @@ public class AdminMenuRestController {
         menuService.deleteById(menuId);
         return Response.ok();
     }
-
-    //TODO добавить возможность добавлять subMenu пачкой
-    //TODO добавить возможность удалять menu пачкой
 }

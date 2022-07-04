@@ -9,7 +9,5 @@ INSERT INTO menus (id, program_type)
 VALUES (101, 'WEIGHT_GAIN');
 
 INSERT INTO submenus (id, program_type, week_day)
-VALUES (101, 'WEIGHT_GAIN','WEDNESDAY');
-
-INSERT INTO menus_submenus (menus_id, subMenus_id)
-VALUES (101, 101);
+VALUES (101, 'WEIGHT_GAIN','WEDNESDAY'),
+       (102, 'WEIGHT_LOSS','MONDAY');

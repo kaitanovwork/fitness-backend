@@ -6,6 +6,7 @@ import kz.kaitanov.fitnessbackend.model.SubMenu;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface MenuService extends AbstractService<Menu, Long> {
@@ -17,4 +18,8 @@ public interface MenuService extends AbstractService<Menu, Long> {
     Optional<Menu> findByIdWithSubMenus(Long id);
 
     Page<Menu> findAll(Pageable pageable);
+
+    Menu addSubMenusToMenu(Menu menu, List<SubMenu> subMenuList);
+
+    Menu deleteSubMenusToMenu(Menu menu, List<SubMenu> subMenuList);
 }

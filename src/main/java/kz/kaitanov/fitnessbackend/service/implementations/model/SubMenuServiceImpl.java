@@ -6,10 +6,13 @@ import kz.kaitanov.fitnessbackend.model.converter.UserMapper;
 import kz.kaitanov.fitnessbackend.model.dto.response.UserResponseDto;
 import kz.kaitanov.fitnessbackend.repository.model.SubMenuRepository;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.SubMenuService;
+import kz.kaitanov.fitnessbackend.web.config.util.ApiValidationUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -42,5 +45,10 @@ public class SubMenuServiceImpl extends AbstractServiceImpl<SubMenu, Long> imple
     @Override
     public Optional<SubMenu> findByIdWithRecipes(Long id) {
         return subMenuRepository.findByIdWithRecipes(id);
+    }
+
+    @Override
+    public List<SubMenu> findByIds(Long[] ids) {
+        return subMenuRepository.findAllById(Arrays.asList(ids));
     }
 }
