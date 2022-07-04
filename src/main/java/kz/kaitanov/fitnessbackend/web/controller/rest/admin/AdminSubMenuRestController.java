@@ -7,8 +7,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kz.kaitanov.fitnessbackend.model.Recipe;
 import kz.kaitanov.fitnessbackend.model.SubMenu;
 import kz.kaitanov.fitnessbackend.model.dto.response.api.Response;
-import kz.kaitanov.fitnessbackend.service.implementations.dto.UserResponseDtoServiceImpl;
-import kz.kaitanov.fitnessbackend.service.interfaces.dto.UserResponseDtoService;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.RecipeService;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.SubMenuService;
 import kz.kaitanov.fitnessbackend.web.config.util.ApiValidationUtil;
@@ -17,15 +15,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Positive;
-import java.util.List;
 import java.util.Optional;
 
 @Tag(name = "AdminSubMenuRestController", description = "CRUD операции над суб-меню")
