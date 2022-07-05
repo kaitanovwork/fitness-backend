@@ -23,4 +23,6 @@ public interface RecipeService extends AbstractService<Recipe, Long> {
     Recipe addProductsToRecipe(Recipe recipe, List<Product> products);
 
     Recipe deleteProductsFromRecipe(Recipe recipe, List<Product> products);
+
+    List<Recipe> findByIds(Long[] recipesId);
 }
