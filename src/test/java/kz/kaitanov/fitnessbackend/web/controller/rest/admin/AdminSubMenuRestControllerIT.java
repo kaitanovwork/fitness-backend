@@ -362,13 +362,13 @@ public class AdminSubMenuRestControllerIT extends SpringSimpleContextTest {
 
         assertTrue(entityManager.createQuery(
                         """
-                                SELECT COUNT(r.id) > 0
-                                FROM Recipe r
-                                WHERE r.id = :id AND r.products.size = :products
+                                SELECT COUNT(s.id) > 0
+                                FROM SubMenu s
+                                WHERE s.id = :id AND s.recipes.size = :recipes
                                 """,
                         Boolean.class)
                 .setParameter("id", 101L)
-                .setParameter("products", 0)
+                .setParameter("recipes", 0)
                 .getSingleResult());
     }
 

@@ -60,7 +60,7 @@ public class SubMenuServiceImpl extends AbstractServiceImpl<SubMenu, Long> imple
     @Override
     public SubMenu deleteRecipesFromSubMenu(SubMenu subMenu, List<Recipe> recipes) {
         for (Recipe recipe : recipes) {
-            subMenu.addRecipe(recipe);
+            subMenu.deleteRecipe(recipe);
         }
         return update(subMenu);
     }

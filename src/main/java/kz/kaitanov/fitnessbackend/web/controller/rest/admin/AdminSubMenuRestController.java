@@ -138,7 +138,7 @@ public class AdminSubMenuRestController {
         return Response.ok(subMenuService.addRecipesToSubMenu(subMenu.get(), recipeService.findByIds(recipesId)));
     }
 
-    @Operation(summary = "Эндпоинт для удаление рецепта из суб-меню")
+    @Operation(summary = "Эндпоинт для удаления рецептов пачкой из суб-меню")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Рецепты успешно удалены из суб-меню"),
             @ApiResponse(responseCode = "400", description = "Рецепт или суб-меню не найдены")
