@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -72,5 +73,10 @@ public class RecipeServiceImpl extends AbstractServiceImpl<Recipe, Long> impleme
         }
         calcCalorie(recipe);
         return update(recipe);
+    }
+
+    @Override
+    public List<Recipe> findByIds(Long[] recipesId) {
+        return recipeRepository.findAllById(Arrays.asList(recipesId));
     }
 }

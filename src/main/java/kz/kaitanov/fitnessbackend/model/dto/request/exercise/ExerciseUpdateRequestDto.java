@@ -10,7 +10,6 @@ import java.util.List;
 
 public record ExerciseUpdateRequestDto(
         @NotNull @Positive Long id,
-        @NotBlank List<String> muscleGroup,
         @NotNull @Positive Integer repeatCount,
         @NotNull @Positive Integer approachCount,
         @NotNull Area area,
