@@ -6,15 +6,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kz.kaitanov.fitnessbackend.model.Recipe;
 import kz.kaitanov.fitnessbackend.model.SubMenu;
+import kz.kaitanov.fitnessbackend.model.converter.SubMenuMapper;
+import kz.kaitanov.fitnessbackend.model.dto.request.subMenu.SubMenuPersistRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.request.subMenu.SubMenuUpdateRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.response.api.Response;
-import kz.kaitanov.fitnessbackend.service.implementations.dto.UserResponseDtoServiceImpl;
-import kz.kaitanov.fitnessbackend.service.interfaces.dto.UserResponseDtoService;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+
 import kz.kaitanov.fitnessbackend.service.interfaces.model.RecipeService;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.SubMenuService;
 import kz.kaitanov.fitnessbackend.web.config.util.ApiValidationUtil;
@@ -23,7 +19,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.util.Optional;
 
@@ -36,6 +43,27 @@ public class AdminSubMenuRestController {
 
     private final SubMenuService subMenuService;
     private final RecipeService recipeService;
+
+    @Operation(summary = "Эндпоинт для создания нового суб-меню")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Новое суб-меню успешно создано")
+    })
+    @PostMapping
+    public Response<SubMenu> saveSubMenu(@RequestBody @Valid SubMenuPersistRequestDto dto) {
+        return Response.ok(subMenuService.save(SubMenuMapper.toEntity(dto)));
+    }
+
+    @Operation(summary = "Эндпоинт для обновления существующего суб-меню")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Суб-меню успешно обновлено"),
+            @ApiResponse(responseCode = "400", description = "Суб-меню не найдено")
+    })
+    @PutMapping
+    public Response<SubMenu> updateSubMenu(@RequestBody @Valid SubMenuUpdateRequestDto dto) {
+        Optional<SubMenu> subMenu = subMenuService.findById(dto.id());
+        ApiValidationUtil.requireTrue(subMenu.isPresent(), String.format("SubMenu with id %d not found", dto.id()));
+        return Response.ok(subMenuService.update(SubMenuMapper.updateSubMenu(subMenu.get(), dto)));
+    }
 
     @Operation(summary = "Эндпоинт для добавление рецепта к суб-меню")
     @ApiResponses(value = {
@@ -54,7 +82,7 @@ public class AdminSubMenuRestController {
     @Operation(summary = "Эндпоинт для удаление рецепта из суб-меню")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Рецепт успешно удален из суб-меню"),
-            @ApiResponse(responseCode = "400", description = "Продукт или ")
+            @ApiResponse(responseCode = "400", description = "Рецепт или суб-меню не найдены")
     })
     @DeleteMapping("{subMenuId}/recipe/{recipeId}")
     public Response<SubMenu> deleteRecipeFromSubMenu(@PathVariable @Positive Long subMenuId, @PathVariable @Positive Long recipeId) {
@@ -98,7 +126,27 @@ public class AdminSubMenuRestController {
         return Response.ok();
     }
 
-    //TODO добавить добавление и обновление SubMenu
-    //TODO добавить возможность добавлять рецепты пачкой
-    //TODO добавить возможностьудалять рецепты пачкой
+    @Operation(summary = "Эндпоинт для добавления рецептов пачкой к суб-меню")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Рецепты успешно добавлены к суб-меню"),
+            @ApiResponse(responseCode = "400", description = "Указаны несуществующие id для суб-меню или рецепта")
+    })
+    @PutMapping("/{subMenuId}/recipe")
+    public Response<SubMenu> addRecipesToSubMenu(@PathVariable @Positive Long subMenuId, @RequestParam @NotNull Long[] recipesId) {
+        Optional<SubMenu> subMenu = subMenuService.findByIdWithRecipes(subMenuId);
+        ApiValidationUtil.requireTrue(subMenu.isPresent(), String.format("SubMenu with id %d not found", subMenuId));
+        return Response.ok(subMenuService.addRecipesToSubMenu(subMenu.get(), recipeService.findByIds(recipesId)));
+    }
+
+    @Operation(summary = "Эндпоинт для удаления рецептов пачкой из суб-меню")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Рецепты успешно удалены из суб-меню"),
+            @ApiResponse(responseCode = "400", description = "Рецепт или суб-меню не найдены")
+    })
+    @DeleteMapping("{subMenuId}/recipe")
+    public Response<SubMenu> deleteRecipesFromSubMenu(@PathVariable @Positive Long subMenuId, @RequestParam @NotNull Long[] recipesId) {
+        Optional<SubMenu> subMenu = subMenuService.findByIdWithRecipes(subMenuId);
+        ApiValidationUtil.requireTrue(subMenu.isPresent(), String.format("SubMenu with id %d not found", subMenuId));
+        return Response.ok(subMenuService.deleteRecipesFromSubMenu(subMenu.get(), recipeService.findByIds(recipesId)));
+    }
 }

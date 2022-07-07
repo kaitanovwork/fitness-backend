@@ -24,7 +24,7 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
     public void saveRecipe_SuccessfulTest() throws Exception {
 
         String token = getToken("username", "password");
-        RecipePersistRequestDto dto = new RecipePersistRequestDto("name", "description");
+        RecipePersistRequestDto dto = new RecipePersistRequestDto("name", "description", "picUrl");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/admin/recipe")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -40,11 +40,12 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
                         """
                                 SELECT COUNT(r.id) > 0
                                 FROM Recipe r
-                                WHERE r.name = :name AND r.description = :description
+                                WHERE r.name = :name AND r.description = :description AND r.picUrl = :picUrl
                                 """,
                         Boolean.class)
                 .setParameter("name", dto.name())
                 .setParameter("description", dto.description())
+                .setParameter("picUrl", dto.picUrl())
                 .getSingleResult());
     }
 
@@ -54,7 +55,7 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
     public void saveRecipe_NameRecipeIsUsed() throws Exception {
 
         String token = getToken("username", "password");
-        RecipePersistRequestDto dto = new RecipePersistRequestDto("name", "description");
+        RecipePersistRequestDto dto = new RecipePersistRequestDto("name", "description", "picUrl");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/admin/recipe")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -72,7 +73,7 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
     public void updateRecipe_SuccessfulTest() throws Exception {
 
         String token = getToken("username", "password");
-        RecipeUpdateRequestDto dto = new RecipeUpdateRequestDto(101L, "description");
+        RecipeUpdateRequestDto dto = new RecipeUpdateRequestDto(101L, "description", "picUrl");
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/admin/recipe")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -88,11 +89,12 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
                         """
                                 SELECT COUNT(r.id) > 0
                                 FROM Recipe r
-                                WHERE r.id = :id AND r.description = :description
+                                WHERE r.id = :id AND r.description = :description AND r.picUrl = :picUrl
                                 """,
                         Boolean.class)
                 .setParameter("id", 101L)
                 .setParameter("description", dto.description())
+                .setParameter("picUrl", dto.picUrl())
                 .getSingleResult());
     }
 
@@ -102,7 +104,7 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
     public void updateRecipe_RecipeNotFound() throws Exception {
 
         String token = getToken("username", "password");
-        RecipeUpdateRequestDto dto = new RecipeUpdateRequestDto(102L, "description");
+        RecipeUpdateRequestDto dto = new RecipeUpdateRequestDto(102L, "description", "picUrl");
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/admin/recipe")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -297,23 +299,28 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
     }
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminRecipeRestController/getRecipeList_SuccessfulTest/BeforeTest.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminRecipeRestController/getRecipeList_SuccessfulTest/AfterTest.sql")
-    public void getRecipeList_SuccessfulTest() throws Exception {
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminRecipeRestController/getRecipePage_SuccessfulTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminRecipeRestController/getRecipePage_SuccessfulTest/AfterTest.sql")
+    public void getRecipePage_SuccessfulTest() throws Exception {
 
         String token = getToken("username", "password");
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/admin/recipe")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/admin/recipe?size=4&page=2&sort=fat")
                         .header("authorization", token))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].calorie", hasItems(1500, 2000)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].carbohydrate", hasItems(200, 100)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].description", hasItems("With chicken", "With beef")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].fat", hasItems(200, 300)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].name", hasItems("Caesar salad", "Udon")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].protein", hasItems(200, 400)));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.totalElements", Is.is(11)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.totalPages", Is.is(3)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.number", Is.is(2)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.numberOfElements", Is.is(3)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].id", hasItems(110, 108, 111)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].calorie", hasItems(1500, 1000, 1400)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].carbohydrate", hasItems(110, 130)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].description", hasItems("With spinach")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].fat", hasItems(330, 350, 370)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].name", hasItems("Salad with corn", "Tuna salad")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].protein", hasItems(440, 450, 470)));
     }
 
     @Test
@@ -383,6 +390,92 @@ public class AdminRecipeRestControllerIT extends SpringSimpleContextTest {
         String token = getToken("username", "password");
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/admin/recipe/{recipeId}", 102)
+                        .header("authorization", token))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error", Is.is("Recipe by id 102 not found")));
+    }
+
+    @Test
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminRecipeRestController/addProductsToRecipe_SuccessfulTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminRecipeRestController/addProductsToRecipe_SuccessfulTest/AfterTest.sql")
+    public void addProductsToRecipe_SuccessfulTest() throws Exception {
+
+        String token = getToken("username", "password");
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/admin/recipe/{recipeId}/product?productsId=101&productsId=102", 101)
+                        .header("authorization", token))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.products[*].id", hasItems(101, 102)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.products[*].calorie", hasItems(300, 250)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.products[*].carbohydrate", hasItems(50, 40)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.products[*].fat", hasItems(50, 60)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.products[*].name", hasItems("Tuna", "Potatoes")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.products[*].protein", hasItems(100, 150)));
+
+        assertTrue(entityManager.createQuery(
+                        """
+                                SELECT COUNT(r.id) > 0
+                                FROM Recipe r
+                                WHERE r.id = :id AND r.products.size = :products
+                                """,
+                        Boolean.class)
+                .setParameter("id", 101L)
+                .setParameter("products", 2)
+                .getSingleResult());
+    }
+
+    @Test
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminRecipeRestController/addProductsToRecipe_RecipeNotFound/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminRecipeRestController/addProductsToRecipe_RecipeNotFound/AfterTest.sql")
+    public void addProductsToRecipe_RecipeNotFound() throws Exception {
+
+        String token = getToken("username", "password");
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/admin/recipe/{recipeId}/product?productsId=101&productsId=102", 102)
+                        .header("authorization", token))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error", Is.is("Recipe by id 102 not found")));
+    }
+
+    @Test
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminRecipeRestController/deleteProductsFromRecipe_SuccessfulTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminRecipeRestController/deleteProductsFromRecipe_SuccessfulTest/AfterTest.sql")
+    public void deleteProductsFromRecipe_SuccessfulTest() throws Exception {
+
+        String token = getToken("username", "password");
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/admin/recipe/{recipeId}/product?productsId=101&productsId=102", 101)
+                        .header("authorization", token))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)));
+
+        assertTrue(entityManager.createQuery(
+                        """
+                                SELECT COUNT(r.id) > 0
+                                FROM Recipe r
+                                WHERE r.id = :id AND r.products.size = :products
+                                """,
+                        Boolean.class)
+                .setParameter("id", 101L)
+                .setParameter("products", 0)
+                .getSingleResult());
+    }
+
+    @Test
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminRecipeRestController/deleteProductsFromRecipe_RecipeNotFound/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminRecipeRestController/deleteProductsFromRecipe_RecipeNotFound/AfterTest.sql")
+    public void deleteProductsFromRecipe_RecipeNotFound() throws Exception {
+
+        String token = getToken("username", "password");
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/admin/recipe/{recipeId}/product?productsId=101&productsId=102", 102)
                         .header("authorization", token))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))

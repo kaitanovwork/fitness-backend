@@ -37,6 +37,8 @@ public class Recipe {
 
     private String description;
 
+    private String picUrl;
+
     private Integer calorie;
 
     private Integer protein;

@@ -5,6 +5,9 @@ INSERT INTO users (id, age, email, first_name, gender, last_name, password, phon
 VALUES (101, 20, 'email@email.ru', 'firstName', 'MALE', 'lastName',
         '$2a$12$WCVxn9WOBQceif5B5QQQ/eSgdQZx0eZVtD9h8EaeBa.PfN6uHUr/G', '111-00', 'username', 101);
 
-INSERT INTO menus (id, program_type)
-VALUES (101, 'WEIGHT_GAIN'),
-       (102, 'WEIGHT_LOSS');
+INSERT INTO recipes (id, calorie, carbohydrate, description, fat, name, protein)
+VALUES (101, 1000, 130, 'With tuna and potatoes', 350, 'Tuna salad', 470);
+
+INSERT INTO products (id, calorie, carbohydrate, fat, name, protein)
+VALUES (101, 300, 50, 50, 'Tuna', 100),
+       (102, 250, 40, 60, 'Potatoes', 150);

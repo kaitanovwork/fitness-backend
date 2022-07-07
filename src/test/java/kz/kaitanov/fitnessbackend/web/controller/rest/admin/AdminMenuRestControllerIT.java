@@ -285,9 +285,9 @@ public class AdminMenuRestControllerIT extends SpringSimpleContextTest {
     }
 
     @Test
-    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminMenuRestController/getMenuList_SuccessfulTest/BeforeTest.sql")
-    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminMenuRestController/getMenuList_SuccessfulTest/AfterTest.sql")
-    public void getMenuList_SuccessfulTest() throws Exception {
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminMenuRestController/getMenuPage_SuccessfulTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminMenuRestController/getMenuPage_SuccessfulTest/AfterTest.sql")
+    public void getMenuPage_SuccessfulTest() throws Exception {
         String token = getToken("username", "password");
 
         mockMvc.perform(get("/api/v1/admin/menu")
@@ -295,7 +295,130 @@ public class AdminMenuRestControllerIT extends SpringSimpleContextTest {
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].id", hasItems(101, 102)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data[*].programType", hasItems(ProgramType.WEIGHT_GAIN.toString(), ProgramType.WEIGHT_LOSS.toString())));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].id", hasItems(101, 102, 103, 104, 105, 106, 107, 108, 109, 110)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.numberOfElements", Is.is(10)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.totalElements", Is.is(11)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].programType", hasItems(ProgramType.WEIGHT_GAIN.toString(), ProgramType.WEIGHT_LOSS.toString())));
+
+        mockMvc.perform(get("/api/v1/admin/menu?size=5&page=1&sort=id,desc")
+                .header("Authorization", token))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].id", hasItems(106, 105, 104, 103, 102)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.numberOfElements", Is.is(5)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.totalElements", Is.is(11)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[*].programType", hasItems(ProgramType.WEIGHT_GAIN.toString(), ProgramType.WEIGHT_LOSS.toString())));
+    }
+
+    @Test
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminMenuRestController/addSubMenusToMenu_SuccessfulTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminMenuRestController/addSubMenusToMenu_SuccessfulTest/AfterTest.sql")
+    public void addSubMenusToMenu_SuccessfulTest() throws Exception {
+
+        String token = getToken("username", "password");
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/admin/menu/{menuId}/subMenu?subMenuIds={subMenuId1}&subMenuIds={subMenuId2}", 101, 101, 102)
+                        .header("authorization", token))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.subMenus[*].id", hasItems(101, 102)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.subMenus[*].programType", hasItems("WEIGHT_GAIN", "WEIGHT_LOSS")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.subMenus[*].weekDay", hasItems("WEDNESDAY", "MONDAY")));
+
+        assertTrue(entityManager.createQuery(
+                        """
+                                SELECT COUNT(m.id) > 0
+                                FROM Menu m
+                                WHERE m.id = :id AND m.subMenus.size = :subMenus
+                                """,
+                        Boolean.class)
+                .setParameter("id", 101L)
+                .setParameter("subMenus", 2)
+                .getSingleResult());
+    }
+
+    @Test
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminMenuRestController/addSubMenusToMenu_MenuNotFound/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminMenuRestController/addSubMenusToMenu_MenuNotFound/AfterTest.sql")
+    public void addSubMenusToMenu_MenuNotFound() throws Exception {
+
+        String token = getToken("username", "password");
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/admin/menu/{menuId}/subMenu?subMenuIds={subMenuId1}&subMenuIds={subMenuId2}", 102, 101, 102)
+                        .header("authorization", token))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error", Is.is("Menu by id 102 not found")));
+    }
+    @Test
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminMenuRestController/addSubMenusToMenu_SubMenusNotFound/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminMenuRestController/addSubMenusToMenu_SubMenusNotFound/AfterTest.sql")
+    public void addSubMenusToMenu_SubMenusNotFound() throws Exception {
+
+        String token = getToken("username", "password");
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/admin/menu/{menuId}/subMenu?subMenuIds={subMenuId1}&subMenuIds={subMenuId2}", 101, 103, 104)
+                        .header("authorization", token))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error", Is.is("SubMenus with such id's not found")));
+    }
+
+    @Test
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminMenuRestController/deleteSubMenusFromMenu_SuccessfulTest/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminMenuRestController/deleteSubMenusFromMenu_SuccessfulTest/AfterTest.sql")
+    public void deleteSubMenusFromMenu_SuccessfulTest() throws Exception {
+
+        String token = getToken("username", "password");
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/admin/menu/{menuId}/subMenu?subMenuIds={subMenuId1}&subMenuIds={subMenuId2}", 101, 101, 102)
+                        .header("authorization", token))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(true)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(200)));
+
+        assertTrue(entityManager.createQuery(
+                        """
+                                SELECT COUNT(m.id) > 0
+                                FROM Menu m
+                                WHERE m.id = :id AND m.subMenus.size = :subMenus
+                                """,
+                        Boolean.class)
+                .setParameter("id", 101L)
+                .setParameter("subMenus", 0)
+                .getSingleResult());
+    }
+
+    @Test
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminMenuRestController/deleteSubMenusFromMenu_MenuNotFound/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminMenuRestController/deleteSubMenusFromMenu_MenuNotFound/AfterTest.sql")
+    public void deleteSubMenusFromMenu_MenuNotFound() throws Exception {
+        String token = getToken("username", "password");
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/admin/menu/{menuId}/subMenu?subMenuIds={subMenuId1}&subMenuIds={subMenuId2}", 102, 101, 102)
+                        .header("authorization", token))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error", Is.is("Menu by id 102 not found")));
+    }
+
+    @Test
+    @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, value = "/scripts/admin/AdminMenuRestController/deleteSubMenusFromMenu_SubMenusNotFound/BeforeTest.sql")
+    @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, value = "/scripts/admin/AdminMenuRestController/deleteSubMenusFromMenu_SubMenusNotFound/AfterTest.sql")
+    public void deleteSubMenuFromMenus_SubMenusNotFound() throws Exception {
+
+        String token = getToken("username", "password");
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/admin/menu/{menuId}/subMenu?subMenuIds={subMenuId1}&subMenuIds={subMenuId2}", 101, 103, 104)
+                        .header("authorization", token))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.success", Is.is(false)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Is.is(400)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error", Is.is("SubMenus with such id's not found")));
     }
 }

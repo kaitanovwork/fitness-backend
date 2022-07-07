@@ -15,6 +15,9 @@ import kz.kaitanov.fitnessbackend.service.interfaces.model.ProductService;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.RecipeService;
 import kz.kaitanov.fitnessbackend.web.config.util.ApiValidationUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,11 +26,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-import java.util.List;
 import java.util.Optional;
 
 @Tag(name = "AdminRecipeRestController", description = "CRUD операции над рецептами")
@@ -104,14 +108,13 @@ public class AdminRecipeRestController {
         return Response.ok(recipeService.deleteProductFromRecipe(recipe.get(), product.get()));
     }
 
-    //TODO добавить пагинацию
     @Operation(summary = "Эндпоинт для получения списка всех рецептов")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Список всех рецептов успешно получен")
     })
     @GetMapping
-    public Response<List<Recipe>> getRecipeList() {
-        return Response.ok(recipeService.findAll());
+    public Response<Page<Recipe>> getRecipePage(@PageableDefault(sort = "id") Pageable pageable) {
+        return Response.ok(recipeService.findAll(pageable));
     }
 
     @Operation(summary = "Эндпоинт для получения рецепта по id")
@@ -138,6 +141,27 @@ public class AdminRecipeRestController {
         return Response.ok();
     }
 
-    //TODO добавить эндпоинт для добавления продуктов пачкой
-    //TODO добавить эндпоинт для удаления продуктов пачкой
+    @Operation(summary = "Эндпоинт для добавления продуктов в рецепт пачкой")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Продукты успешно добавлены"),
+            @ApiResponse(responseCode = "400", description = "Рецепт или продукт не найден")
+    })
+    @PutMapping("/{recipeId}/product")
+    public Response<Recipe> addProductsToRecipe(@PathVariable @Positive Long recipeId, @RequestParam @NotNull Long[] productsId) {
+        Optional<Recipe> recipe = recipeService.findByIdWithProducts(recipeId);
+        ApiValidationUtil.requireTrue(recipe.isPresent(), String.format("Recipe by id %d not found", recipeId));
+        return Response.ok(recipeService.addProductsToRecipe(recipe.get(), productService.findByIds(productsId)));
+    }
+
+    @Operation(summary = "Эндпоинт для удаления продуктов пачкой из рецепта по id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Продукты успешно удалены"),
+            @ApiResponse(responseCode = "400", description = "Рецепт или продукт не найден")
+    })
+    @DeleteMapping("/{recipeId}/product")
+    public Response<Recipe> deleteProductsFromRecipe(@PathVariable @Positive Long recipeId, @RequestParam @NotNull Long[] productsId) {
+        Optional<Recipe> recipe = recipeService.findByIdWithProducts(recipeId);
+        ApiValidationUtil.requireTrue(recipe.isPresent(), String.format("Recipe by id %d not found", recipeId));
+        return Response.ok(recipeService.deleteProductsFromRecipe(recipe.get(), productService.findByIds(productsId)));
+    }
 }

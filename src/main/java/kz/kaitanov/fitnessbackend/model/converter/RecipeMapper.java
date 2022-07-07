@@ -11,11 +11,13 @@ public final class RecipeMapper {
         Recipe recipe = new Recipe();
         recipe.setName(dto.name());
         recipe.setDescription(dto.description());
+        recipe.setPicUrl(dto.picUrl());
         return recipe;
     }
 
     public static Recipe updateRecipe(Recipe recipe, RecipeUpdateRequestDto dto) {
         recipe.setDescription(dto.description());
+        recipe.setPicUrl(dto.picUrl());
         return recipe;
     }
 

@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import kz.kaitanov.fitnessbackend.model.User;
 import kz.kaitanov.fitnessbackend.model.dto.request.JwtRequest;
 import kz.kaitanov.fitnessbackend.model.dto.response.JwtResponse;
 import kz.kaitanov.fitnessbackend.model.dto.response.api.Response;
@@ -11,8 +12,10 @@ import kz.kaitanov.fitnessbackend.web.config.util.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +32,7 @@ public class JwtAuthenticationRestController {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
     private final JwtTokenUtil jwtTokenUtil;
+    private final PasswordEncoder passwordEncoder;
 
     @Operation(summary = "Получение токена")
     @ApiResponses(value = {
@@ -38,6 +42,17 @@ public class JwtAuthenticationRestController {
     public Response<JwtResponse> createAuthenticationToken(@RequestBody @Valid JwtRequest jwtRequest) {
         authenticate(jwtRequest.username(), jwtRequest.password());
         final UserDetails userDetails = userDetailsService.loadUserByUsername(jwtRequest.username());
+        return Response.ok(new JwtResponse(jwtTokenUtil.generateToken(userDetails)));
+    }
+
+    @Operation(summary = "Обновление токена")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Токен успешно обновлен")
+    })
+    @PostMapping("/refresh")
+    public Response<JwtResponse> refreshToken() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
         return Response.ok(new JwtResponse(jwtTokenUtil.generateToken(userDetails)));
     }
 

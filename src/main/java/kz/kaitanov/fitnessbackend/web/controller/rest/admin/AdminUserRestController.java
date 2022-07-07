@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import kz.kaitanov.fitnessbackend.model.User;
 import kz.kaitanov.fitnessbackend.model.converter.UserMapper;
 import kz.kaitanov.fitnessbackend.model.dto.request.user.UserRegistrationRequestDto;
+import kz.kaitanov.fitnessbackend.model.dto.request.user.UserUpdatePasswordRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.user.UserUpdateRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.response.UserResponseDto;
 import kz.kaitanov.fitnessbackend.model.dto.response.api.Response;
@@ -53,17 +54,22 @@ public class AdminUserRestController {
         return Response.ok(UserMapper.toDto(userService.save(UserMapper.toEntity(dto))));
     }
 
-    //TODO добавить валидацию на существование username email phone. Удалить из запроса password
     @Operation(summary = "Обновление существующего пользователя")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Существующий пользователь успешно обновлен"),
             @ApiResponse(responseCode = "400", description = "Пользователь не найден")
     })
     @PutMapping
-    public Response<UserResponseDto> updateUser(@RequestBody @Valid UserUpdateRequestDto userUpdateRequestDto) {
-        ApiValidationUtil.requireTrue(userService.existsById(userUpdateRequestDto.id()),
-                String.format("User by id %d not found", userUpdateRequestDto.id()));
-        return Response.ok(UserMapper.toDto(userService.update(UserMapper.toEntity(userUpdateRequestDto))));
+    public Response<UserResponseDto> updateUser(@RequestBody @Valid UserUpdateRequestDto dto) {
+        Optional<User> user = userService.findById(dto.id());
+        ApiValidationUtil.requireTrue(user.isPresent(), String.format("User by id %d not found", dto.id()));
+        ApiValidationUtil.requireFalse(userService.existsByUsername(dto.username()),
+                "username is being used by another user");
+        ApiValidationUtil.requireFalse(dto.email() != null && userService.existsByEmail(dto.email()),
+                "email is being used by another user");
+        ApiValidationUtil.requireFalse(dto.phone() != null && userService.existsByPhone(dto.phone()),
+                "phone is being used by another user");
+        return Response.ok(UserMapper.toDto(userService.update(UserMapper.updateUser(user.get(), dto))));
     }
 
     @Operation(summary = "Получение списка всех пользователей")
@@ -151,6 +157,29 @@ public class AdminUserRestController {
         return Response.ok(UserMapper.toDto(userService.addCoach(user.get(), coach.get())));
     }
 
-    //TODO добавить эндпоинт для удаления тренера у юзера
-    //TODO добавить эндпоинт для изменения пароля у юзера
+    @Operation(summary = "Удаление тренера пользователя")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Тренер успешно удален"),
+            @ApiResponse(responseCode = "400", description = "Тренер не найден")
+    })
+    @DeleteMapping ("/{userId}/coach")
+    public Response<UserResponseDto> deleteUserCoach(@PathVariable Long userId) {
+        Optional<User> user = userService.findById(userId);
+        ApiValidationUtil.requireTrue(user.isPresent(), String.format("User by id %d not found", userId));
+        ApiValidationUtil.requireTrue(user.get().getCoach() != null, String.format("User by id %d doesn't have a coach", userId));
+        return Response.ok(UserMapper.toDto(userService.addCoach(user.get(), null)));
+    }
+
+    @Operation(summary = "Обновление пароля пользователя")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Пароль пользователя успешно обновлен"),
+            @ApiResponse(responseCode = "400", description = "Пользователь не найден")
+    })
+    @PutMapping("/{userId}/password")
+    public Response<UserResponseDto> updateUserPassword(@PathVariable Long userId,
+                                                        @RequestBody @Valid UserUpdatePasswordRequestDto dto) {
+        Optional<User> user = userService.findById(userId);
+        ApiValidationUtil.requireTrue(user.isPresent(), String.format("User by id %d not found", userId));
+        return Response.ok(UserMapper.toDto(userService.updatePassword(UserMapper.updatePassword(user.get(), dto))));
+    }
 }
