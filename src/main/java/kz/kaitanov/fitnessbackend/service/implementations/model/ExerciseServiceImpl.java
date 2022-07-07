@@ -27,4 +27,9 @@ public class ExerciseServiceImpl extends AbstractServiceImpl<Exercise, Long> imp
     public Page<Exercise> findAll(Pageable pageable) {
         return exerciseRepository.findAll(pageable);
     }
+
+    @Override
+    public Page<Exercise> findById(Long userId, Pageable pageable) {
+        return exerciseRepository.findById(userId, pageable);
+    }
 }
