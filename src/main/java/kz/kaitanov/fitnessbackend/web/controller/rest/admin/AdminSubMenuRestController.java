@@ -10,7 +10,6 @@ import kz.kaitanov.fitnessbackend.model.converter.SubMenuMapper;
 import kz.kaitanov.fitnessbackend.model.dto.request.subMenu.SubMenuPersistRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.subMenu.SubMenuUpdateRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.response.api.Response;
-
 import kz.kaitanov.fitnessbackend.service.interfaces.model.RecipeService;
 import kz.kaitanov.fitnessbackend.service.interfaces.model.SubMenuService;
 import kz.kaitanov.fitnessbackend.web.config.util.ApiValidationUtil;
