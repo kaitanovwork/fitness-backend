@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -69,6 +70,9 @@ public class User implements UserDetails {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "coach_id")
     private User coach;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private UserStatistics userStatistics;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
