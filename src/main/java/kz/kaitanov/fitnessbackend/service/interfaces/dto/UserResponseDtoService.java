@@ -19,4 +19,5 @@ public interface UserResponseDtoService {
     Optional<UserResponseDto> findByEmail(String email);
 
     Optional<UserResponseDto> findByPhone(String phone);
+    Integer getUsersWithUserRoleCount();
 }

@@ -43,4 +43,9 @@ public class UserResponseDtoServiceImpl implements UserResponseDtoService {
     public Optional<UserResponseDto> findByPhone(String phone) {
         return userResponseDtoRepository.findDtoByPhone(phone);
     }
+    @Override
+    public Integer getUsersWithUserRoleCount() {
+        Integer i = 0;
+        return userResponseDtoRepository.getUsersWithUserRole();
+    }
 }

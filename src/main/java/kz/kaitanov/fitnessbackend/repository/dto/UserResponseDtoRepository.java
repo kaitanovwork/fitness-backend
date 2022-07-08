@@ -37,4 +37,11 @@ public interface UserResponseDtoRepository extends JpaRepository<User, Long> {
             WHERE u.phone = :phone
             """)
     Optional<UserResponseDto> findDtoByPhone(@Param("phone") String phone);
+
+    @Query("""
+    SELECT COUNT (u.id)
+    FROM User u
+    WHERE u.role.name = 'USER'
+    """)
+    Integer getUsersWithUserRole();
 }
