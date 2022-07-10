@@ -1,6 +1,7 @@
 package kz.kaitanov.fitnessbackend.model;
 
 import kz.kaitanov.fitnessbackend.model.enums.Gender;
+import kz.kaitanov.fitnessbackend.model.enums.ProgramType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -58,9 +59,15 @@ public class User implements UserDetails {
 
     private Integer age;
 
+    private Integer height;
+
+    private Integer weight;
+
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+    @Enumerated(EnumType.STRING)
+    private ProgramType programType;
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id", nullable = false)
@@ -98,13 +105,13 @@ public class User implements UserDetails {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof User)) return false;
         User user = (User) o;
-        return Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(email, user.email) && Objects.equals(phone, user.phone) && Objects.equals(age, user.age) && gender == user.gender;
+        return Objects.equals(getId(), user.getId()) && Objects.equals(getUsername(), user.getUsername()) && Objects.equals(getPassword(), user.getPassword()) && Objects.equals(getFirstName(), user.getFirstName()) && Objects.equals(getLastName(), user.getLastName()) && Objects.equals(getEmail(), user.getEmail()) && Objects.equals(getPhone(), user.getPhone()) && Objects.equals(getAge(), user.getAge()) && Objects.equals(getHeight(), user.getHeight()) && Objects.equals(getWeight(), user.getWeight()) && getGender() == user.getGender() && getProgramType() == user.getProgramType() && Objects.equals(getRole(), user.getRole()) && Objects.equals(getCoach(), user.getCoach());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(username, password, firstName, lastName, email, phone, age, gender);
+        return Objects.hash(getId(), getUsername(), getPassword(), getFirstName(), getLastName(), getEmail(), getPhone(), getAge(), getHeight(), getWeight(), getGender(), getProgramType(), getRole(), getCoach());
     }
 }

@@ -2,7 +2,7 @@ package kz.kaitanov.fitnessbackend.service.implementations.dto;
 
 import kz.kaitanov.fitnessbackend.model.converter.UserMapper;
 import kz.kaitanov.fitnessbackend.model.dto.response.UserResponseDto;
-import kz.kaitanov.fitnessbackend.repository.dto.UserResponseDtoRepository;
+import kz.kaitanov.fitnessbackend.repository.model.dto.UserResponseDtoRepository;
 import kz.kaitanov.fitnessbackend.repository.model.UserRepository;
 import kz.kaitanov.fitnessbackend.service.interfaces.dto.UserResponseDtoService;
 import lombok.RequiredArgsConstructor;
