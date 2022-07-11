@@ -20,7 +20,10 @@ public final class UserMapper {
         user.setEmail(dto.email());
         user.setPhone(dto.phone());
         user.setAge(dto.age());
+        user.setHeight(dto.height());
+        user.setWeight(dto.weight());
         user.setGender(dto.gender());
+        user.setProgramType(dto.programType());
         return user;
     }
 
@@ -33,7 +36,10 @@ public final class UserMapper {
         user.setEmail(dto.email());
         user.setPhone(dto.phone());
         user.setAge(dto.age());
+        user.setHeight(dto.height());
+        user.setWeight(dto.weight());
         user.setGender(dto.gender());
+        user.setProgramType(dto.programType());
         return user;
     }
 
@@ -44,7 +50,10 @@ public final class UserMapper {
         user.setEmail(dto.email());
         user.setPhone(dto.phone());
         user.setAge(dto.age());
+        user.setHeight(dto.height());
+        user.setWeight(dto.weight());
         user.setGender(dto.gender());
+        user.setProgramType(dto.programType());
         return user;
     }
 
@@ -52,7 +61,10 @@ public final class UserMapper {
         user.setFirstName(dto.firstName());
         user.setLastName(dto.lastName());
         user.setAge(dto.age());
+        user.setHeight(dto.height());
+        user.setWeight(dto.weight());
         user.setGender(dto.gender());
+        user.setProgramType(dto.programType());
         return user;
     }
 
@@ -81,7 +93,10 @@ public final class UserMapper {
                 user.getPhone(),
                 user.getAge(),
                 user.getGender(),
-                user.getCoach()
+                user.getCoach(),
+                user.getHeight(),
+                user.getWeight(),
+                user.getProgramType()
         );
     }
 }

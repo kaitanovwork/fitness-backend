@@ -2,6 +2,7 @@ package kz.kaitanov.fitnessbackend.model.dto.response;
 
 import kz.kaitanov.fitnessbackend.model.User;
 import kz.kaitanov.fitnessbackend.model.enums.Gender;
+import kz.kaitanov.fitnessbackend.model.enums.ProgramType;
 
 public record UserResponseDto(
         Long id,
@@ -12,5 +13,8 @@ public record UserResponseDto(
         String phone,
         Integer age,
         Gender gender,
-        User coach) {
+        User coach,
+        Integer height,
+        Integer weight,
+        ProgramType programType) {
 }
