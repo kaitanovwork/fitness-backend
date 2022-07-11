@@ -6,6 +6,7 @@ import kz.kaitanov.fitnessbackend.model.dto.request.user.UserUpdatePasswordReque
 import kz.kaitanov.fitnessbackend.model.dto.request.user.UserUpdatePhoneRequestDto;
 import kz.kaitanov.fitnessbackend.model.dto.request.user.UserUpdateProfileRequestDto;
 import kz.kaitanov.fitnessbackend.model.enums.Gender;
+import kz.kaitanov.fitnessbackend.model.enums.ProgramType;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -26,7 +27,7 @@ public class UserRestControllerIT extends SpringSimpleContextTest {
     public void updateUserProfile_SuccessfulTest() throws Exception {
 
         String token = getToken("user103", "pass");
-        UserUpdateProfileRequestDto dto = new UserUpdateProfileRequestDto("firstName", "lastName", 20, Gender.MALE);
+        UserUpdateProfileRequestDto dto = new UserUpdateProfileRequestDto("firstName", "lastName", 20,Gender.MALE,175,80, ProgramType.WEIGHT_GAIN);
         mockMvc.perform(put("/api/v1/user/profile")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", token)
@@ -36,18 +37,24 @@ public class UserRestControllerIT extends SpringSimpleContextTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.firstName", Is.is(dto.firstName())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.lastName", Is.is(dto.lastName())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.age", Is.is(dto.age())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.height", Is.is(dto.height())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.weight", Is.is(dto.weight())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.programType", Is.is(dto.programType().toString())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.gender", Is.is(dto.gender().toString())));
 
         assertTrue(entityManager.createQuery(
                         """
                                 SELECT COUNT(u.id) > 0
                                 FROM User u
-                                WHERE u.firstName = :firstName AND u.lastName = :lastName AND u.age = :age AND u.gender = :gender
+                                WHERE u.firstName = :firstName AND u.lastName = :lastName AND u.age = :age AND u.gender = :gender AND u.height = :height  AND u.weight = :weight AND u.programType = :programType
                                 """, Boolean.class)
                 .setParameter("firstName", dto.firstName())
                 .setParameter("lastName", dto.lastName())
                 .setParameter("age", dto.age())
                 .setParameter("gender", dto.gender())
+                .setParameter("height", dto.height())
+                .setParameter("weight", dto.weight())
+                .setParameter("programType", dto.programType())
                 .getSingleResult());
     }
 

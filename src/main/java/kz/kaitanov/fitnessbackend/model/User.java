@@ -1,6 +1,7 @@
 package kz.kaitanov.fitnessbackend.model;
 
 import kz.kaitanov.fitnessbackend.model.enums.Gender;
+import kz.kaitanov.fitnessbackend.model.enums.ProgramType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,24 +9,10 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
+import java.util.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -51,6 +38,14 @@ public class User implements UserDetails {
 
     private String lastName;
 
+    @ManyToMany
+    @JoinTable(
+            name = "users_exercises",
+            joinColumns = @JoinColumn(name = "users_id"),
+            inverseJoinColumns = @JoinColumn(name = "exercises_id")
+    )
+    private List<Exercise> exercises = new ArrayList<>();
+
     @Column(unique = true)
     private String email;
 
@@ -59,9 +54,15 @@ public class User implements UserDetails {
 
     private Integer age;
 
+    private Integer height;
+
+    private Integer weight;
+
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+    @Enumerated(EnumType.STRING)
+    private ProgramType programType;
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id", nullable = false)
@@ -70,9 +71,6 @@ public class User implements UserDetails {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "coach_id")
     private User coach;
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private UserStatistics userStatistics;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -102,13 +100,13 @@ public class User implements UserDetails {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof User)) return false;
         User user = (User) o;
-        return Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(email, user.email) && Objects.equals(phone, user.phone) && Objects.equals(age, user.age) && gender == user.gender;
+        return Objects.equals(getId(), user.getId()) && Objects.equals(getUsername(), user.getUsername()) && Objects.equals(getPassword(), user.getPassword()) && Objects.equals(getFirstName(), user.getFirstName()) && Objects.equals(getLastName(), user.getLastName()) && Objects.equals(getEmail(), user.getEmail()) && Objects.equals(getPhone(), user.getPhone()) && Objects.equals(getAge(), user.getAge()) && Objects.equals(getHeight(), user.getHeight()) && Objects.equals(getWeight(), user.getWeight()) && getGender() == user.getGender() && getProgramType() == user.getProgramType() && Objects.equals(getRole(), user.getRole()) && Objects.equals(getCoach(), user.getCoach());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(username, password, firstName, lastName, email, phone, age, gender);
+        return Objects.hash(getId(), getUsername(), getPassword(), getFirstName(), getLastName(), getEmail(), getPhone(), getAge(), getHeight(), getWeight(), getGender(), getProgramType(), getRole(), getCoach());
     }
 }
