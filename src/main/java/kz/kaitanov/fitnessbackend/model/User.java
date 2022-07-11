@@ -72,6 +72,9 @@ public class User implements UserDetails {
     @JoinColumn(name = "coach_id")
     private User coach;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private UserStatistics userStatistics;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(role);
